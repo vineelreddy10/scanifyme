@@ -1,8 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { FrappeProvider } from 'frappe-react-sdk'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
+import Items from './pages/Items'
+import ActivateQR from './pages/ActivateQR'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth()
@@ -16,7 +18,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
   
   if (!isAuthenticated) {
-    // Redirect to Frappe Desk login - after login, user will be redirected back
     window.location.href = '/login'
     return null
   }
@@ -25,7 +26,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 }
 
 const AppRoutes = () => {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isLoading } = useAuth()
   
   if (isLoading) {
     return (
@@ -50,6 +51,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/items"
+        element={
+          <ProtectedRoute>
+            <Items />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/activate-qr"
+        element={
+          <ProtectedRoute>
+            <ActivateQR />
           </ProtectedRoute>
         }
       />
