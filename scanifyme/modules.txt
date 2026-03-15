@@ -1,2 +1,10 @@
-Scanifyme
-Masters
+scanifyme_core
+qr_management
+ownership
+items
+recovery
+messaging
+notifications
+public_portal
+admin_ops
+reports

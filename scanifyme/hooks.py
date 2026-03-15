@@ -1,9 +1,19 @@
 app_name = "scanifyme"
-app_title = "Scanifyme"
-app_publisher = "vineel"
-app_description = "scanifyme"
-app_email = "vineelreddykamireddy@gmail.com"
+app_title = "ScanifyMe"
+app_publisher = "ScanifyMe"
+app_description = "QR-based item recovery platform"
+app_email = "support@scanifyme.app"
 app_license = "mit"
+
+# Fixtures to load on app installation
+fixtures = [
+	{
+		"dt": "Role",
+		"filters": [
+			["name", "in", ["ScanifyMe User", "ScanifyMe Operations", "ScanifyMe Support", "ScanifyMe Admin"]]
+		],
+	}
+]
 
 # Apps
 # ------------------
@@ -11,15 +21,15 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "scanifyme",
-# 		"logo": "/assets/scanifyme/logo.png",
-# 		"title": "Scanifyme",
-# 		"route": "/scanifyme",
-# 		"has_permission": "scanifyme.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+	{
+		"name": "scanifyme",
+		"logo": "/assets/scanifyme/images/logo.svg",
+		"title": "ScanifyMe",
+		"route": "/app/scanifyme",
+		"has_permission": "scanifyme.api.permission.has_app_permission",
+	}
+]
 
 # Includes in <head>
 # ------------------
@@ -251,4 +261,7 @@ app_license = "mit"
 # ignore_translatable_strings_from = []
 
 
-website_route_rules = [{'from_route': '/frontend/<path:app_path>', 'to_route': 'frontend'},]
+website_route_rules = [
+	{"from_route": "/frontend/<path:app_path>", "to_route": "frontend"},
+	{"from_route": "/s/<path:token>", "to_route": "public_portal/scan"},
+]
