@@ -99,15 +99,44 @@ Example: `https://scanifyme.app/s/X7K9M4PQ`
 
 ---
 
+## Routing Architecture
+
+### SPA Mount Point
+- React SPA mounted at `/frontend`
+- BrowserRouter uses `basename="/frontend"`
+
+### Route Structure (relative to /frontend)
+| Path | Component | Purpose |
+|------|-----------|---------|
+| `/` | Dashboard | Main dashboard with QR stats |
+| `/settings` | Settings | Settings management |
+| `/items` | Items | Items management (placeholder) |
+| `/activate-qr` | ActivateQR | QR code activation (placeholder) |
+
+### Full URLs
+- Dashboard: `/frontend/`
+- Settings: `/frontend/settings`
+- Items: `/frontend/items`
+- Activate QR: `/frontend/activate-qr`
+
+### Desk Integration (Admin)
+- QR Batch: `/app/qr-batch`
+- QR Code Tag: `/app/qr-code-tag`
+- Settings: `/app/settings`
+
+### Public Finder
+- Scan URL: `/s/<token>`
+
+---
+
 ## Frontend Routes
 
 | Route | Auth | Purpose |
 |-------|------|---------|
-| `/dashboard` | Auth | Main dashboard with QR stats |
+| `/` | Auth | Main dashboard with QR stats (maps to /frontend/) |
 | `/settings` | Auth | Settings management |
 | `/items` | Auth | Items management (placeholder) |
 | `/activate-qr` | Auth | QR code activation (placeholder) |
-| `/` | Auth | Redirects to dashboard |
 
 **Note**: Unauthenticated users are redirected to Frappe Desk login (`/login`)
 

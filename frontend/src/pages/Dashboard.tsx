@@ -72,8 +72,8 @@ const Dashboard = () => {
               <h1 className="text-xl font-bold text-gray-900">ScanifyMe</h1>
               <div className="flex space-x-4">
                 <button
-                  onClick={() => navigate('/dashboard')}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  onClick={() => navigate('/')}
+                  className="text-indigo-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Dashboard
                 </button>

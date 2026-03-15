@@ -39,7 +39,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route
-        path="/dashboard"
+        path="/"
         element={
           <ProtectedRoute>
             <Dashboard />
@@ -70,8 +70,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
@@ -82,7 +81,7 @@ function App() {
       socketPort={import.meta.env.DEV ? '9000' : undefined}
     >
       <AuthProvider>
-        <BrowserRouter>
+        <BrowserRouter basename="/frontend">
           <AppRoutes />
         </BrowserRouter>
       </AuthProvider>
