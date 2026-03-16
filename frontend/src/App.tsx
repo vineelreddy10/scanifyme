@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
 import Items from './pages/Items'
+import ItemDetail from './pages/ItemDetail'
 import ActivateQR from './pages/ActivateQR'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -63,6 +64,14 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/items/:id"
+        element={
+          <ProtectedRoute>
+            <ItemDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/activate-qr"
         element={
           <ProtectedRoute>
@@ -76,8 +85,13 @@ const AppRoutes = () => {
 }
 
 function App() {
+  const frappeUrl = typeof import.meta.env.VITE_FRAPPE_URL === 'string' 
+    ? import.meta.env.VITE_FRAPPE_URL 
+    : '/'
+  
   return (
     <FrappeProvider
+      url={frappeUrl}
       socketPort={import.meta.env.DEV ? '9000' : undefined}
     >
       <AuthProvider>

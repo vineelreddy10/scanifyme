@@ -1,0 +1,149 @@
+{
+  "name": "Registered Item",
+  "module": "Items",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "field_order": [
+    "item_name",
+    "owner_profile",
+    "qr_code_tag",
+    "item_category",
+    "public_label",
+    "recovery_note",
+    "reward_note",
+    "status",
+    "section_break_8",
+    "activation_date",
+    "last_scan_at",
+    "column_break_11",
+    "photos"
+  ],
+  "fields": [
+    {
+      "fieldname": "item_name",
+      "fieldtype": "Data",
+      "label": "Item Name",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "owner_profile",
+      "fieldtype": "Link",
+      "label": "Owner Profile",
+      "options": "Owner Profile",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "qr_code_tag",
+      "fieldtype": "Link",
+      "label": "QR Code Tag",
+      "options": "QR Code Tag",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "item_category",
+      "fieldtype": "Link",
+      "label": "Item Category",
+      "options": "Item Category",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "public_label",
+      "fieldtype": "Data",
+      "label": "Public Label",
+      "in_list_view": 0,
+      "description": "Optional public-facing label for the item"
+    },
+    {
+      "fieldname": "recovery_note",
+      "fieldtype": "Text",
+      "label": "Recovery Note",
+      "in_list_view": 0,
+      "description": "Instructions for finders on how to return the item"
+    },
+    {
+      "fieldname": "reward_note",
+      "fieldtype": "Text",
+      "label": "Reward Note",
+      "in_list_view": 0,
+      "description": "Reward information for finders"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nActive\nLost\nRecovered\nArchived",
+      "default": "Draft",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "section_break_8",
+      "fieldtype": "Section Break",
+      "label": "Timestamps"
+    },
+    {
+      "fieldname": "activation_date",
+      "fieldtype": "Datetime",
+      "label": "Activation Date",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "last_scan_at",
+      "fieldtype": "Datetime",
+      "label": "Last Scan At",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "column_break_11",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "photos",
+      "fieldtype": "Table",
+      "label": "Photos",
+      "options": "Item Photo",
+      "in_list_view": 0
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Admin",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Operations",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "ScanifyMe User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ],
+  "autoname": "hash",
+  "naming_rule": "Random",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "item_name"
+}

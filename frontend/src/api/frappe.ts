@@ -1,4 +1,4 @@
-import { FrappeContext, getRequestURL } from 'frappe-react-sdk'
+import { FrappeContext } from 'frappe-react-sdk'
 import { useContext } from 'react'
 
 export const useFrappe = () => {
@@ -56,8 +56,82 @@ export interface CreateQRBatchParams {
   batch_prefix?: string
 }
 
+export interface RegisteredItem {
+  name: string
+  item_name: string
+  status: 'Draft' | 'Active' | 'Lost' | 'Recovered' | 'Archived'
+  public_label: string | null
+  activation_date: string | null
+  last_scan_at: string | null
+  item_category: string | null
+  item_category_name?: string | null
+  qr_code_tag: string | null
+  qr_uid?: string | null
+}
+
+export interface ItemDetails {
+  id: string
+  item_name: string
+  status: string
+  public_label: string | null
+  recovery_note: string | null
+  reward_note: string | null
+  activation_date: string | null
+  last_scan_at: string | null
+  item_category: string | null
+  item_category_name: string | null
+  qr_code: {
+    uid: string
+    status: string
+  } | null
+  photos: {
+    image: string
+    visibility: string
+    caption: string | null
+  }[]
+}
+
+export interface ItemCategory {
+  name: string
+  category_name: string
+  category_code: string
+  description: string | null
+  icon: string | null
+}
+
+export interface ActivateQRResult {
+  success: boolean
+  message: string
+  qr_tag: {
+    name: string
+    qr_uid: string
+    qr_token?: string
+    status: string
+  }
+  needs_item_creation: boolean
+  linked_item?: string
+  linked_item_name?: string
+}
+
+export interface CreateItemParams {
+  item_name: string
+  qr_code_tag: string
+  item_category?: string
+  public_label?: string
+  recovery_note?: string
+  reward_note?: string
+  photos?: Array<{
+    image: string
+    visibility: string
+    caption?: string
+  }>
+}
+
 async function frappeCall<T>(method: string, args: Record<string, unknown> = {}): Promise<T> {
-  const url = getRequestURL('api/method/' + method)
+  const baseURL = typeof import.meta.env.VITE_FRAPPE_URL === 'string' 
+    ? import.meta.env.VITE_FRAPPE_URL 
+    : ''
+  const url = baseURL ? `${baseURL}/api/method/${method}` : `/api/method/${method}`
   
   const response = await fetch(url, {
     method: 'POST',
@@ -104,4 +178,46 @@ export const getQRTags = async (batch?: string, status?: string, limit = 20): Pr
     status: status || null,
     limit,
   })
+}
+
+export const activateQR = async (token: string): Promise<ActivateQRResult> => {
+  return await frappeCall<ActivateQRResult>('scanifyme.items.api.items_api.activate_qr', {
+    token,
+  })
+}
+
+export const createItem = async (params: CreateItemParams): Promise<string> => {
+  return await frappeCall<string>('scanifyme.items.api.items_api.create_item', {
+    item_name: params.item_name,
+    qr_code_tag: params.qr_code_tag,
+    item_category: params.item_category || null,
+    public_label: params.public_label || null,
+    recovery_note: params.recovery_note || null,
+    reward_note: params.reward_note || null,
+    photos: params.photos ? JSON.stringify(params.photos) : null,
+  })
+}
+
+export const getUserItems = async (status?: string, limit = 20): Promise<RegisteredItem[]> => {
+  return await frappeCall<RegisteredItem[]>('scanifyme.items.api.items_api.get_user_items', {
+    status: status || null,
+    limit,
+  })
+}
+
+export const getItemDetails = async (item: string): Promise<ItemDetails | null> => {
+  return await frappeCall<ItemDetails | null>('scanifyme.items.api.items_api.get_item_details', {
+    item,
+  })
+}
+
+export const updateItemStatus = async (item: string, status: string): Promise<{ success: boolean; message: string }> => {
+  return await frappeCall<{ success: boolean; message: string }>('scanifyme.items.api.items_api.update_item_status', {
+    item,
+    status,
+  })
+}
+
+export const getItemCategories = async (): Promise<ItemCategory[]> => {
+  return await frappeCall<ItemCategory[]>('scanifyme.items.api.items_api.get_item_categories')
 }

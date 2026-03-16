@@ -1,0 +1,118 @@
+{
+  "name": "Ownership Transfer",
+  "module": "Items",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "field_order": [
+    "item",
+    "from_owner",
+    "to_owner",
+    "status",
+    "transfer_token",
+    "column_break_5",
+    "created_on",
+    "completed_on",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "item",
+      "fieldtype": "Link",
+      "label": "Item",
+      "options": "Registered Item",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "from_owner",
+      "fieldtype": "Link",
+      "label": "From Owner",
+      "options": "Owner Profile",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "to_owner",
+      "fieldtype": "Link",
+      "label": "To Owner",
+      "options": "Owner Profile",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Pending\nApproved\nRejected\nCompleted",
+      "default": "Pending",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "transfer_token",
+      "fieldtype": "Data",
+      "label": "Transfer Token",
+      "read_only": 1,
+      "in_list_view": 0,
+      "unique": 1
+    },
+    {
+      "fieldname": "column_break_5",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "created_on",
+      "fieldtype": "Datetime",
+      "label": "Created On",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "completed_on",
+      "fieldtype": "Datetime",
+      "label": "Completed On",
+      "read_only": 1,
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Text",
+      "label": "Notes",
+      "in_list_view": 0
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Admin",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Operations",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "ScanifyMe User",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ],
+  "autoname": "hash",
+  "naming_rule": "Random",
+  "sort_field": "modified",
+  "sort_order": "DESC"
+}
