@@ -85,9 +85,13 @@ const AppRoutes = () => {
 }
 
 function App() {
-  const frappeUrl = typeof import.meta.env.VITE_FRAPPE_URL === 'string' 
+  // Use empty string for same-origin requests (FrappeProvider defaults to current origin)
+  // Only use VITE_FRAPPE_URL if it's a valid non-empty absolute URL
+  const frappeUrl = (typeof import.meta.env.VITE_FRAPPE_URL === 'string' && 
+                     import.meta.env.VITE_FRAPPE_URL && 
+                     import.meta.env.VITE_FRAPPE_URL !== '/')
     ? import.meta.env.VITE_FRAPPE_URL 
-    : '/'
+    : ''
   
   return (
     <FrappeProvider

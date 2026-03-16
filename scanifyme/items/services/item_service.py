@@ -66,11 +66,11 @@ def activate_qr(token: str, user: str = None) -> Dict[str, Any]:
 			}
 
 	# Check if QR is in valid state for activation
-	valid_states = ["In Stock", "Assigned", "Printed"]
+	valid_states = ["Generated", "In Stock", "Assigned", "Printed"]
 	if qr_tag.status not in valid_states:
 		frappe.throw(
 			f"QR code cannot be activated. Current status: {qr_tag.status}. "
-			f"Please ensure the QR code is in 'In Stock' or 'Assigned' state."
+			f"Please ensure the QR code is in 'Generated', 'In Stock', or 'Assigned' state."
 		)
 
 	# Return success - user needs to create item

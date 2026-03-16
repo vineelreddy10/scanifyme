@@ -128,16 +128,30 @@ export interface CreateItemParams {
 }
 
 async function frappeCall<T>(method: string, args: Record<string, unknown> = {}): Promise<T> {
-  const baseURL = typeof import.meta.env.VITE_FRAPPE_URL === 'string' 
+  // Use same-origin API calls - empty string means relative to current host
+  // Only use VITE_FRAPPE_URL if it's a valid non-empty absolute URL
+  const baseURL = (typeof import.meta.env.VITE_FRAPPE_URL === 'string' && 
+                   import.meta.env.VITE_FRAPPE_URL && 
+                   import.meta.env.VITE_FRAPPE_URL !== '/')
     ? import.meta.env.VITE_FRAPPE_URL 
     : ''
   const url = baseURL ? `${baseURL}/api/method/${method}` : `/api/method/${method}`
   
+  // Get CSRF token from window (set by Frappe during page load)
+  const csrfToken = typeof window !== 'undefined' ? (window as any).csrf_token : ''
+  
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
+  
+  // Add CSRF token if available
+  if (csrfToken) {
+    headers['X-Frappe-CSRF-Token'] = csrfToken
+  }
+  
   const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify(args),
     credentials: 'include',
   })

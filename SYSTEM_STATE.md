@@ -397,3 +397,101 @@ Test API:
 ```bash
 curl -s http://127.0.0.1:8002/api/method/ping  # Should return 200
 ```
+
+---
+
+## Frontend Routing Rules
+
+1. React SPA routes must always live under /frontend/*
+2. BrowserRouter must use: `basename="/frontend"`
+3. API routes must always use /api/*
+4. Never prefix API calls with /frontend
+5. Never use /dashboard - use "/" for frontend root
+6. Admin UI belongs in /app/* using Frappe Desk
+
+---
+
+## Frontend API Rules
+
+1. FrappeProvider url must be:
+   - Empty string "" for same-origin requests (RECOMMENDED)
+   - Full URL like "http://localhost:8000" for cross-origin
+   - NEVER "/" (causes Invalid URL error in URL constructor)
+2. API routes always under /api/*
+3. Never prefix API calls with /frontend
+4. Never depend on pathname for API base URL
+
+---
+
+## Debugging Lessons
+
+### Invalid URL Error Resolution
+
+**Root Cause**: The frappe-react-sdk internally uses `new URL(endpoint, baseUrl)`. When `VITE_FRAPPE_URL` was set to "/" in `.env.local`, it was passed to FrappeProvider as the base URL. The URL constructor fails with "/" because it's not a valid absolute URL.
+
+**Fix Applied**:
+- Changed FrappeProvider url from "/" to "" (empty string for same-origin)
+- Changed API wrapper to use "" instead of "/" for same-origin
+- Added explicit check to exclude "/" from being used as base URL
+
+**Prevention Rules**:
+1. Never pass "/" as the base URL to FrappeProvider - use "" instead
+2. Use empty string for same-origin API calls (relative URLs)
+3. Only use VITE_FRAPPE_URL if it's a valid absolute URL (e.g., "http://localhost:8000")
+4. Test frontend routes after any configuration changes
+
+### Static Validation Checklist
+
+Run these checks after any frontend changes:
+```bash
+# Check for /dashboard references (should be 0)
+grep -r "/dashboard" frontend/src
+
+# Check for /frontend/api references (should be 0)
+grep -r "/frontend/api" frontend/src
+
+# Check all frontend routes return 200
+curl -s -o /dev/null -w "%{http_code}" http://test.localhost:8002/frontend
+curl -s -o /dev/null -w "%{http_code}" http://test.localhost:8002/frontend/items
+curl -s -o /dev/null -w "%{http_code}" http://test.localhost:8002/frontend/activate-qr
+```
+
+---
+
+## Testing Rules
+
+Every new frontend page must be tested for:
+1. Load success - returns 200
+2. Console errors - no "Invalid URL" errors
+3. Valid network requests - API calls go to /api/method/* or /api/resource/*
+
+---
+
+## Files Changed (2025-03-16)
+
+### Frontend Fixes
+
+1. **frontend/src/App.tsx**
+   - Changed FrappeProvider url handling to use empty string instead of "/"
+   - Added explicit check to exclude "/" from base URL
+
+2. **frontend/src/api/frappe.ts**
+   - Changed API base URL handling to use empty string instead of "/"
+   - Added explicit check to exclude "/" from base URL
+   - Added CSRF token header (X-Frappe-CSRF-Token) to API calls
+
+3. **frontend/src/pages/Settings.tsx**
+   - Fixed /dashboard link to use "/" (frontend root)
+
+### Backend Fixes
+
+1. **scanifyme/items/services/item_service.py**
+   - Added "Generated" to valid QR code states for activation
+   - Updated error message to include all valid states
+
+---
+
+## Known Issues
+
+1. ~~API endpoint `scanifyme.api.get_user_role` not found~~ - RESOLVED (was authentication issue)
+2. QR code activation requires specific status - Added "Generated" as valid state
