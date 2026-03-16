@@ -159,7 +159,7 @@ def link_item_to_qr(item: str, qr_tag: str) -> dict:
 	return item_service.link_item_to_qr(item, qr_tag)
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_item_categories() -> list:
 	"""
 	Get all active item categories.
@@ -172,5 +172,6 @@ def get_item_categories() -> list:
 		filters={"is_active": 1},
 		fields=["name", "category_name", "category_code", "description", "icon"],
 		order_by="category_name",
+		ignore_permissions=True,
 	)
 	return categories

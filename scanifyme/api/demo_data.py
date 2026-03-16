@@ -117,36 +117,43 @@ def create_demo_data():
 
 	site_url = frappe.utils.get_url()
 
-	# Check if we already have an activated QR tag with a linked item
-	existing_activated = frappe.db.get_value(
-		"QR Code Tag",
-		{"status": "Activated"},
-		["name", "qr_uid", "qr_token", "registered_item"],
-		as_dict=True,
-	)
+	activated_qr = None
+	item1_name = None
 
-	if existing_activated and existing_activated.registered_item:
-		# Use existing data
-		activated_qr = {
-			"name": existing_activated.name,
-			"uid": existing_activated.qr_uid,
-			"token": existing_activated.qr_token,
-			"status": "Activated",
-		}
-		item1 = frappe.get_doc("Registered Item", existing_activated.registered_item)
-		created_qr_tags = [activated_qr]
-		created_items = [
-			{
-				"name": item1.name,
-				"item_name": item1.item_name,
-				"status": item1.status,
-				"qr_token": activated_qr["token"],
+	# Check if we already have an activated QR tag with a linked item
+	try:
+		existing_activated = frappe.db.get_value(
+			"QR Code Tag",
+			{"status": "Activated", "registered_item": ["is", "set"]},
+			["name", "qr_uid", "qr_token", "registered_item"],
+			as_dict=True,
+		)
+
+		if existing_activated and existing_activated.registered_item:
+			# Use existing data
+			activated_qr = {
+				"name": existing_activated.name,
+				"uid": existing_activated.qr_uid,
+				"token": existing_activated.qr_token,
+				"status": "Activated",
 			}
-		]
-		created_data["qr_tags"] = created_qr_tags
-		created_data["registered_items"] = created_items
-		created_data["qr_batch"] = existing_activated.name
-	else:
+			item1_name = existing_activated.registered_item
+			created_qr_tags = [activated_qr]
+			created_items = [
+				{
+					"name": existing_activated.registered_item,
+					"item_name": "Existing Item",
+					"status": "Active",
+					"qr_token": activated_qr["token"],
+				}
+			]
+			created_data["qr_tags"] = created_qr_tags
+			created_data["registered_items"] = created_items
+			created_data["qr_batch"] = existing_activated.name
+	except Exception:
+		pass
+
+	if not activated_qr:
 		# Create new QR Batch with unique name
 		import uuid
 
@@ -202,7 +209,7 @@ def create_demo_data():
 				"qr_code_tag": activated_qr["name"],
 				"item_category": "Laptop",
 				"public_label": "MacBook",
-				"recovery_note": "Please contact me at demo@scanifyme.app or call +1234567890",
+				"recovery_note": "Please message me through this platform. I'll reply as soon as possible!",
 				"reward_note": "Reward: $50 for safe return",
 				"status": "Active",
 				"activation_date": now_datetime(),
@@ -260,9 +267,6 @@ def create_demo_data():
 			item1_name = existing_activated.registered_item
 		else:
 			item1_name = None
-	else:
-		item1_name = item1.name if "item1" in dir() else None
-
 	# Create demo recovery data if item exists
 	if item1_name:
 		# 1. Create a Finder Session if not exists
