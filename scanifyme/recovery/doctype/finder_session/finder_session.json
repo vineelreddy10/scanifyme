@@ -1,0 +1,104 @@
+{
+ "name": "Finder Session",
+ "doctype": "DocType",
+ "module": "Recovery",
+ "autoname": "field:session_id",
+ "is_submittable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "session_id",
+   "fieldtype": "Data",
+   "label": "Session ID",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "qr_code_tag",
+   "fieldtype": "Link",
+   "label": "QR Code Tag",
+   "options": "QR Code Tag"
+  },
+  {
+   "fieldname": "started_on",
+   "fieldtype": "Datetime",
+   "label": "Started On",
+   "default": "Now",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "last_seen_on",
+   "fieldtype": "Datetime",
+   "label": "Last Seen On"
+  },
+  {
+   "fieldname": "ip_hash",
+   "fieldtype": "Data",
+   "label": "IP Hash"
+  },
+  {
+   "fieldname": "user_agent",
+   "fieldtype": "Small Text",
+   "label": "User Agent"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nClosed\nExpired\nBlocked",
+   "default": "Active",
+   "reqd": 1,
+   "in_list_view": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Operations",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "ScanifyMe Support",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "session_id",
+ "layout": [
+  {
+   "section": "Session Info",
+   "fields": [
+    "session_id",
+    "qr_code_tag",
+    "started_on",
+    "last_seen_on",
+    "status"
+   ]
+  },
+  {
+   "section": "Request Info",
+   "fields": [
+    "ip_hash",
+    "user_agent"
+   ]
+  }
+ ]
+}

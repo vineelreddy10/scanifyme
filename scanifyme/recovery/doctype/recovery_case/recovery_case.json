@@ -1,0 +1,157 @@
+{
+ "name": "Recovery Case",
+ "doctype": "DocType",
+ "module": "Recovery",
+ "autoname": "field:case_title",
+ "is_submittable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "case_title",
+   "fieldtype": "Data",
+   "label": "Case Title",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "qr_code_tag",
+   "fieldtype": "Link",
+   "label": "QR Code Tag",
+   "options": "QR Code Tag",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "registered_item",
+   "fieldtype": "Link",
+   "label": "Registered Item",
+   "options": "Registered Item",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "owner_profile",
+   "fieldtype": "Link",
+   "label": "Owner Profile",
+   "options": "Owner Profile",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nOwner Responded\nReturn Planned\nRecovered\nClosed\nInvalid\nSpam",
+   "default": "Open",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "opened_on",
+   "fieldtype": "Datetime",
+   "label": "Opened On",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "last_activity_on",
+   "fieldtype": "Datetime",
+   "label": "Last Activity On"
+  },
+  {
+   "fieldname": "closed_on",
+   "fieldtype": "Datetime",
+   "label": "Closed On"
+  },
+  {
+   "fieldname": "finder_session_id",
+   "fieldtype": "Data",
+   "label": "Finder Session ID"
+  },
+  {
+   "fieldname": "latest_message_preview",
+   "fieldtype": "Data",
+   "label": "Latest Message Preview"
+  },
+  {
+   "fieldname": "finder_name",
+   "fieldtype": "Data",
+   "label": "Finder Name"
+  },
+  {
+   "fieldname": "finder_contact_hint",
+   "fieldtype": "Data",
+   "label": "Finder Contact Hint"
+  },
+  {
+   "fieldname": "notes_internal",
+   "fieldtype": "Small Text",
+   "label": "Internal Notes"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Operations",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "ScanifyMe Support",
+   "read": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "case_title",
+ "layout": [
+  {
+   "section": "Basic Info",
+   "fields": [
+    "case_title",
+    "qr_code_tag",
+    "registered_item",
+    "owner_profile"
+   ]
+  },
+  {
+   "section": "Status",
+   "fields": [
+    "status",
+    "opened_on",
+    "last_activity_on",
+    "closed_on"
+   ]
+  },
+  {
+   "section": "Finder Info",
+   "fields": [
+    "finder_session_id",
+    "finder_name",
+    "finder_contact_hint",
+    "latest_message_preview"
+   ]
+  },
+  {
+   "section": "Internal",
+   "fields": [
+    "notes_internal"
+   ]
+  }
+ ]
+}

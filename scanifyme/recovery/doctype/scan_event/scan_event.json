@@ -1,0 +1,113 @@
+{
+ "name": "Scan Event",
+ "doctype": "DocType",
+ "module": "Recovery",
+ "autoname": "hash",
+ "is_submittable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "qr_code_tag",
+   "fieldtype": "Link",
+   "label": "QR Code Tag",
+   "options": "QR Code Tag"
+  },
+  {
+   "fieldname": "registered_item",
+   "fieldtype": "Link",
+   "label": "Registered Item",
+   "options": "Registered Item"
+  },
+  {
+   "fieldname": "token",
+   "fieldtype": "Data",
+   "label": "Token"
+  },
+  {
+   "fieldname": "scanned_on",
+   "fieldtype": "Datetime",
+   "label": "Scanned On",
+   "default": "Now",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "ip_hash",
+   "fieldtype": "Data",
+   "label": "IP Hash"
+  },
+  {
+   "fieldname": "user_agent",
+   "fieldtype": "Small Text",
+   "label": "User Agent"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Valid\nInvalid\nUnavailable\nRecovery Initiated",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "recovery_case",
+   "fieldtype": "Link",
+   "label": "Recovery Case",
+   "options": "Recovery Case"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Operations",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "ScanifyMe Support",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "layout": [
+  {
+   "section": "Scan Info",
+   "fields": [
+    "qr_code_tag",
+    "registered_item",
+    "token",
+    "scanned_on"
+   ]
+  },
+  {
+   "section": "Request Info",
+   "fields": [
+    "ip_hash",
+    "user_agent",
+    "route",
+    "status",
+    "recovery_case"
+   ]
+  }
+ ]
+}
