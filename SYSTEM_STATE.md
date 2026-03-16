@@ -495,3 +495,248 @@ Every new frontend page must be tested for:
 
 1. ~~API endpoint `scanifyme.api.get_user_role` not found~~ - RESOLVED (was authentication issue)
 2. QR code activation requires specific status - Added "Generated" as valid state
+
+---
+
+## Completed Modules (Phase 2 - 2026-03-16)
+
+### Backend
+- ✅ QR Batch management
+- ✅ QR Code Tag management
+- ✅ QR generation service (token, uid, url, image)
+- ✅ Item activation flow
+- ✅ Registered Item flow
+- ✅ Owner Profile linkage
+- ✅ Item Categories
+
+### Frontend
+- ✅ React SPA at /frontend
+- ✅ Dashboard page
+- ✅ Items list page
+- ✅ Item detail page
+- ✅ Activate QR page
+- ✅ Settings page
+- ✅ Auth context with Frappe integration
+- ✅ API wrapper with CSRF support
+
+---
+
+## Demo Data
+
+### Demo Data Generator
+Created a whitelisted admin-only method to generate demo data:
+
+**Command:**
+```bash
+bench --site test.localhost execute scanifyme.api.demo_data.create_demo_data
+```
+
+**Demo Data Created:**
+- **Demo User:** demo@scanifyme.app (password: demo123)
+- **Demo Owner Profile:** Linked to demo user
+- **Item Categories:** Keys, Bag, Wallet, Laptop, Pet
+- **QR Batch:** QRB-2026-00003
+- **QR Tags:** 6 tags in various states (In Stock, Activated, Suspended, Printed)
+- **Registered Items:** 
+  - MacBook Pro 14 (Active, linked to activated QR)
+  - My House Keys (Draft, no QR linked)
+
+**Demo QR Tokens:**
+- In Stock: XYP6TTGG2T, C9M4TSVW2G, KRREMBPWQZ
+- Activated: 7B6L98CCFF (linked to MacBook Pro 14)
+- Suspended: 252NGFHSHW
+- Printed: 56TZDETASD
+
+---
+
+## API Inventory
+
+### Owner/Item APIs
+| Method | Purpose |
+|--------|---------|
+| `scanifyme.items.api.items_api.activate_qr` | Validate and activate QR token |
+| `scanifyme.items.api.items_api.create_item` | Create new registered item |
+| `scanifyme.items.api.items_api.get_user_items` | Get current user's items |
+| `scanifyme.items.api.items_api.get_item_details` | Get item details |
+| `scanifyme.items.api.items_api.update_item_status` | Update item status |
+| `scanifyme.items.api.items_api.link_item_to_qr` | Link item to QR |
+| `scanifyme.items.api.items_api.get_item_categories` | Get all categories |
+
+### Admin/QR APIs
+| Method | Purpose |
+|--------|---------|
+| `scanifyme.qr_management.api.qr_api.create_qr_batch` | Create QR batch |
+| `scanifyme.qr_management.api.qr_api.get_qr_batches` | List QR batches |
+| `scanifyme.qr_management.api.qr_api.get_qr_tags` | List QR tags |
+| `scanifyme.qr_management.api.qr_api.get_qr_preview` | Get QR preview |
+
+### Demo Data APIs
+| Method | Purpose |
+|--------|---------|
+| `scanifyme.api.demo_data.create_demo_data` | Generate demo data |
+| `scanifyme.api.demo_data.get_demo_tokens` | Get demo QR tokens |
+
+---
+
+## Frontend Routes
+
+| Route | Auth | Purpose |
+|-------|------|---------|
+| `/frontend` | Required | Main dashboard |
+| `/frontend/settings` | Required | Settings management |
+| `/frontend/items` | Required | User's registered items |
+| `/frontend/items/:id` | Required | Item detail page |
+| `/frontend/activate-qr` | Required | QR activation and item creation |
+
+---
+
+## Testing Strategy
+
+### Backend Tests
+- Location: `scanifyme/items/tests/test_item_service.py`
+- Tests: activate_qr, create_item, link_item_to_qr, get_user_items
+
+### Frontend Tests (Playwright)
+- Location: `frontend/tests/scanifyme.spec.ts`
+- Config: `frontend/playwright.config.ts`
+- Tests:
+  - Frontend routes load without crash
+  - API endpoints accessible
+  - No Invalid URL errors in console
+  - No /frontend/api references
+
+### Running Tests
+```bash
+# Backend tests
+cd /home/vineelreddykamireddy/frappe/scanifyme
+python -m pytest scanifyme/items/tests/
+
+# Frontend tests
+cd /home/vineelreddykamireddy/frappe/scanifyme/apps/scanifyme/frontend
+npx playwright test
+```
+
+---
+
+## Environment Requirements
+
+### Services
+| Service | Port | Status |
+|---------|------|--------|
+| Redis Cache | 13002 | Running |
+| Redis Queue | 11002 | Running |
+| Frappe Web | 8002 | Running |
+
+### URLs
+- Desk: http://test.localhost:8002/app
+- Frontend: http://test.localhost:8002/frontend
+- API: http://test.localhost:8002/api
+
+---
+
+## Bench Validation Procedure
+
+### Starting Bench
+```bash
+cd /home/vineelreddykamireddy/frappe/scanifyme
+bench start
+```
+
+### Verify Services
+```bash
+# Check Redis
+redis-cli -p 13002 ping  # Should return PONG
+redis-cli -p 11002 ping  # Should return PONG
+
+# Check API
+curl -s http://test.localhost:8002/api/method/ping
+
+# Check frontend
+curl -s -o /dev/null -w "%{http_code}" http://test.localhost:8002/frontend
+```
+
+### Generate Demo Data
+```bash
+bench --site test.localhost execute scanifyme.api.demo_data.create_demo_data
+```
+
+### API Smoke Tests
+```bash
+# QR Batches
+bench --site test.localhost execute scanifyme.qr_management.api.qr_api.get_qr_batches
+
+# QR Tags
+bench --site test.localhost execute scanifyme.qr_management.api.qr_api.get_qr_tags
+
+# Demo tokens
+bench --site test.localhost execute scanifyme.api.demo_data.get_demo_tokens
+```
+
+### Run Frontend Tests
+```bash
+cd /home/vineelreddykamireddy/frappe/scanifyme/apps/scanifyme/frontend
+npx playwright test
+```
+
+---
+
+## How to Validate Locally
+
+1. **Start Redis** (if needed):
+   ```bash
+   redis-server --port 13002 --daemonize yes --dir /tmp --dbfilename dump13002.rdb
+   redis-server --port 11002 --daemonize yes --dir /tmp --dbfilename dump11002.rdb
+   ```
+
+2. **Start Bench**:
+   ```bash
+   cd /home/vineelreddykamireddy/frappe/scanifyme
+   bench start
+   ```
+
+3. **Migrate** (if needed):
+   ```bash
+   bench --site test.localhost migrate
+   ```
+
+4. **Generate Demo Data**:
+   ```bash
+   bench --site test.localhost execute scanifyme.api.demo_data.create_demo_data
+   ```
+
+5. **Run Tests**:
+   ```bash
+   # Frontend tests
+   cd frontend && npx playwright test
+   ```
+
+---
+
+## Known Constraints
+
+1. **Authentication**: Frontend requires authentication via Frappe Desk. Unauthenticated users are redirected to `/login`.
+
+2. **Public Finder Page**: The `/s/<token>` public scan page exists in route config but the actual web page handler is not fully implemented yet.
+
+3. **Item Count Sync**: Owner Profile `update_item_counts()` method exists but is not automatically called on item changes.
+
+4. **QR Scan Tracking**: Scan history is not fully implemented - `last_scan_at` is set but no scan logging exists.
+
+5. **Ownership Transfer**: Ownership Transfer DocType exists but API endpoints are not exposed.
+
+---
+
+## Files Created/Updated This Phase
+
+1. **New File: `scanifyme/api/demo_data.py`**
+   - Demo data generator for testing
+   - create_demo_data() - Creates demo user, categories, QR batch, tags, items
+   - get_demo_tokens() - Retrieves demo QR tokens
+
+2. **Updated: `frontend/tests/scanifyme.spec.ts`**
+   - Updated Playwright tests for frontend validation
+   - Tests for route loading, API access, console errors
+
+3. **Updated: `frontend/playwright.config.ts`**
+   - Updated baseURL to test.localhost:8002
+   - Simplified to single chromium project
