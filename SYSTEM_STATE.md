@@ -115,6 +115,51 @@ ScanifyMe is a QR-based item recovery platform built on Frappe (Python) backend 
   - `completed_on`: Datetime
   - `notes`: Text
 
+- **Recovery Case** (NEW)
+  - `case_title`: Data
+  - `qr_code_tag`: Link QR Code Tag
+  - `registered_item`: Link Registered Item
+  - `owner_profile`: Link Owner Profile
+  - `status`: Select (Open, Owner Responded, Return Planned, Recovered, Closed, Invalid, Spam)
+  - `opened_on`: Datetime
+  - `last_activity_on`: Datetime
+  - `closed_on`: Datetime
+  - `finder_session_id`: Data
+  - `latest_message_preview`: Data
+  - `finder_name`: Data
+  - `finder_contact_hint`: Data
+  - `notes_internal`: Small Text
+
+- **Recovery Message** (NEW)
+  - `recovery_case`: Link Recovery Case
+  - `sender_type`: Select (Finder, Owner, System)
+  - `sender_name`: Data
+  - `message`: Text
+  - `attachment`: Attach
+  - `created_on`: Datetime
+  - `is_public_submission`: Check
+  - `is_read_by_owner`: Check
+
+- **Scan Event** (NEW)
+  - `qr_code_tag`: Link QR Code Tag
+  - `registered_item`: Link Registered Item
+  - `token`: Data
+  - `scanned_on`: Datetime
+  - `ip_hash`: Data
+  - `user_agent`: Small Text
+  - `route`: Data
+  - `status`: Select (Valid, Invalid, Unavailable, Recovery Initiated)
+  - `recovery_case`: Link Recovery Case
+
+- **Finder Session** (NEW)
+  - `session_id`: Data (unique)
+  - `qr_code_tag`: Link QR Code Tag
+  - `started_on`: Datetime
+  - `last_seen_on`: Datetime
+  - `ip_hash`: Data
+  - `user_agent`: Small Text
+  - `status`: Select (Active, Closed, Expired, Blocked)
+
 ---
 
 ## APIs
@@ -576,6 +621,21 @@ bench --site test.localhost execute scanifyme.api.demo_data.create_demo_data
 | `scanifyme.api.demo_data.create_demo_data` | Generate demo data |
 | `scanifyme.api.demo_data.get_demo_tokens` | Get demo QR tokens |
 
+### Public Portal APIs
+| Method | Purpose | Access |
+|--------|---------|--------|
+| `scanifyme.public_portal.api.public_api.get_public_item_context` | Get public-safe item context | Guest |
+| `scanifyme.messaging.api.message_api.submit_finder_message` | Submit message from finder | Guest |
+
+### Recovery APIs
+| Method | Purpose | Access |
+|--------|---------|--------|
+| `scanifyme.recovery.api.recovery_api.get_owner_recovery_cases` | Get owner's recovery cases | Owner |
+| `scanifyme.recovery.api.recovery_api.get_recovery_case_details` | Get case details | Owner |
+| `scanifyme.recovery.api.recovery_api.get_recovery_case_messages` | Get case messages | Owner |
+| `scanifyme.recovery.api.recovery_api.mark_recovery_case_status` | Update case status | Owner |
+| `scanifyme.messaging.api.message_api.send_owner_message` | Send message to finder | Owner |
+
 ---
 
 ## Frontend Routes
@@ -587,6 +647,11 @@ bench --site test.localhost execute scanifyme.api.demo_data.create_demo_data
 | `/frontend/items` | Required | User's registered items |
 | `/frontend/items/:id` | Required | Item detail page |
 | `/frontend/activate-qr` | Required | QR activation and item creation |
+| `/s/<token>` | Public | Public scan portal |
+
+---
+
+## Public Routes
 
 ---
 
@@ -604,6 +669,8 @@ bench --site test.localhost execute scanifyme.api.demo_data.create_demo_data
   - API endpoints accessible
   - No Invalid URL errors in console
   - No /frontend/api references
+  - Public scan page loads
+  - Public API returns valid response
 
 ### Running Tests
 ```bash
@@ -615,6 +682,40 @@ python -m pytest scanifyme/items/tests/
 cd /home/vineelreddykamireddy/frappe/scanifyme/apps/scanifyme/frontend
 npx playwright test
 ```
+
+---
+
+## Security Constraints
+
+### Public Access
+- Public route `/s/<token>` is accessible without authentication
+- Public API `get_public_item_context` uses `allow_guest=True`
+- Public API `submit_finder_message` uses `allow_guest=True`
+
+### Protected Access
+- Recovery case APIs require authentication
+- Owner can only see their own recovery cases
+- Permission checks in place for:
+  - `get_owner_recovery_cases`
+  - `get_recovery_case_details`
+  - `get_recovery_case_messages`
+  - `mark_recovery_case_status`
+
+### Data Privacy
+- Public APIs never expose:
+  - Owner email/phone
+  - Owner profile internal name
+  - Database IDs
+  - System metadata
+- Only safe public fields returned:
+  - public_label
+  - recovery_note
+  - reward_note
+  - item status
+
+### IP Hashing
+- Scan events and finder sessions use hashed IP addresses
+- Original IP never stored
 
 ---
 
@@ -704,7 +805,16 @@ npx playwright test
    bench --site test.localhost execute scanifyme.api.demo_data.create_demo_data
    ```
 
-5. **Run Tests**:
+5. **Validate Public Scan Portal**:
+   ```bash
+   # Test public token API
+   curl "http://test.localhost:8002/api/method/scanifyme.public_portal.api.public_api.get_public_item_context?token=<valid_token>"
+   
+   # Test public scan page
+   curl "http://test.localhost:8002/s/<valid_token>"
+   ```
+
+6. **Run Tests**:
    ```bash
    # Frontend tests
    cd frontend && npx playwright test
@@ -712,15 +822,84 @@ npx playwright test
 
 ---
 
+## Files Created/Updated This Phase
+
+### New DocTypes
+1. **Recovery Case** (`scanifyme/recovery/doctype/recovery_case/`)
+   - Fields: case_title, qr_code_tag, registered_item, owner_profile, status, timestamps, finder info, notes
+
+2. **Recovery Message** (`scanifyme/recovery/doctype/recovery_message/`)
+   - Fields: recovery_case, sender_type, sender_name, message, attachment, timestamps, flags
+
+3. **Scan Event** (`scanifyme/recovery/doctype/scan_event/`)
+   - Fields: qr_code_tag, registered_item, token, scanned_on, ip_hash, user_agent, route, status, recovery_case
+
+4. **Finder Session** (`scanifyme/recovery/doctype/finder_session/`)
+   - Fields: session_id, qr_code_tag, timestamps, ip_hash, user_agent, status
+
+### New Backend Modules
+1. **Public Portal** (`scanifyme/public_portal/`)
+   - `services/public_scan_service.py` - Token resolution, public context, scan events
+   - `api/public_api.py` - Public API endpoints
+
+2. **Recovery** (`scanifyme/recovery/`)
+   - `services/recovery_service.py` - Case management, status updates
+   - `api/recovery_api.py` - Owner recovery case APIs
+
+3. **Messaging** (`scanifyme/messaging/`)
+   - `services/message_service.py` - Message handling, session management
+   - `api/message_api.py` - Finder and owner messaging APIs
+
+### New Public Page
+1. **Public Scan Portal** (`scanifyme/www/public_portal/scan.py`)
+   - Handles `/s/<token>` route
+   - Renders safe public item information
+   - Includes finder message form
+
+2. **Public Template** (`scanifyme/templates/pages/public_portal/scan.html`)
+   - Displays item info, recovery note, reward note
+   - Finder message submission form
+   - Error state handling
+
+### Updated Files
+1. **demo_data.py** - Added recovery case, scan event, finder session, recovery messages
+2. **scan.py** (moved to www/public_portal/) - Fixed route handling
+3. **hooks.py** - Route mapping for public scan portal
+4. **scanifyme.spec.ts** - Added public portal tests
+
+---
+
+## Testing This Phase
+
+### Backend Tests
+- Token resolution: Valid/invalid tokens
+- Public API: Safe field filtering
+- Scan event creation
+- Recovery case creation and status updates
+- Messaging flow
+
+### Frontend Tests (Playwright)
+- `/s/<token>` loads for valid token
+- `/s/<token>` shows error for invalid token
+- Public API returns valid response
+
+### API Tests
+- `get_public_item_context` - Guest access, safe fields
+- `submit_finder_message` - Creates case/message
+- `get_owner_recovery_cases` - Protected access
+- `get_recovery_case_messages` - Protected access
+
+---
+
 ## Known Constraints
 
 1. **Authentication**: Frontend requires authentication via Frappe Desk. Unauthenticated users are redirected to `/login`.
 
-2. **Public Finder Page**: The `/s/<token>` public scan page exists in route config but the actual web page handler is not fully implemented yet.
+2. ~~**Public Finder Page**: The `/s/<token>` public scan page exists in route config but the actual web page handler is not fully implemented yet.~~ - RESOLVED
 
 3. **Item Count Sync**: Owner Profile `update_item_counts()` method exists but is not automatically called on item changes.
 
-4. **QR Scan Tracking**: Scan history is not fully implemented - `last_scan_at` is set but no scan logging exists.
+4. ~~**QR Scan Tracking**: Scan history is not fully implemented - `last_scan_at` is set but no scan logging exists.~~ - RESOLVED (Scan Event DocType created)
 
 5. **Ownership Transfer**: Ownership Transfer DocType exists but API endpoints are not exposed.
 
