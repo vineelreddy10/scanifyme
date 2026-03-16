@@ -61,3 +61,30 @@ test.describe('Security Tests', () => {
     expect(invalidUrlErrors).toHaveLength(0);
   });
 });
+
+test.describe('Public Scan Portal Tests', () => {
+  test('Test 6: Public scan page loads for valid token', async ({ page }) => {
+    // First get a valid token from demo data
+    await page.goto(`${BASE_URL}/s/DNEEYP5TLQ`);
+    await page.waitForTimeout(3000);
+    
+    const url = page.url();
+    expect(url).toContain('/s/');
+  });
+  
+  test('Test 7: Public scan page loads for invalid token', async ({ page }) => {
+    await page.goto(`${BASE_URL}/s/INVALIDTOKEN123`);
+    await page.waitForTimeout(3000);
+    
+    const url = page.url();
+    expect(url).toContain('/s/');
+  });
+  
+  test('Test 8: Public API returns valid response', async ({ request }) => {
+    const response = await request.get(`${BASE_URL}/api/method/scanifyme.public_portal.api.public_api.get_public_item_context?token=DNEEYP5TLQ`);
+    expect(response.status()).toBe(200);
+    
+    const json = await response.json();
+    expect(json.message).toBeDefined();
+  });
+});

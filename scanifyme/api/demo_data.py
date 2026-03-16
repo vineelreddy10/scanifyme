@@ -112,125 +112,289 @@ def create_demo_data():
 			created_categories.append(cat["category_name"])
 	created_data["categories"] = created_categories
 
-	# Create QR Batch
-	batch_name = f"Demo-Batch-{now_datetime().strftime('%Y%m%d')}"
-	batch = frappe.get_doc(
-		{
-			"doctype": "QR Batch",
-			"batch_name": batch_name,
-			"batch_prefix": "DEMO",
-			"batch_size": 10,
-			"status": "Generated",
-			"naming_series": "QRB-.YYYY.-",
-		}
-	)
-	batch.insert(ignore_permissions=True)
-	created_data["qr_batch"] = batch.name
-
-	# Create QR Code Tags
-	qr_tokens = []
+	# Import QR service
 	from scanifyme.qr_management.services.qr_service import generate_qr_token, generate_qr_uid
 
 	site_url = frappe.utils.get_url()
 
-	# Create tags in different states
-	statuses = ["In Stock", "In Stock", "In Stock", "Activated", "Suspended", "Printed"]
+	# Check if we already have an activated QR tag with a linked item
+	existing_activated = frappe.db.get_value(
+		"QR Code Tag",
+		{"status": "Activated"},
+		["name", "qr_uid", "qr_token", "registered_item"],
+		as_dict=True,
+	)
 
-	created_qr_tags = []
-	for i in range(1, 7):
-		token = generate_qr_token()
-		uid = generate_qr_uid("DEMO", i)
-
-		qr_tag = frappe.get_doc(
+	if existing_activated and existing_activated.registered_item:
+		# Use existing data
+		activated_qr = {
+			"name": existing_activated.name,
+			"uid": existing_activated.qr_uid,
+			"token": existing_activated.qr_token,
+			"status": "Activated",
+		}
+		item1 = frappe.get_doc("Registered Item", existing_activated.registered_item)
+		created_qr_tags = [activated_qr]
+		created_items = [
 			{
-				"doctype": "QR Code Tag",
-				"qr_uid": uid,
-				"qr_token": token,
-				"qr_url": f"{site_url}/s/{token}",
-				"batch": batch.name,
-				"status": statuses[i - 1],
+				"name": item1.name,
+				"item_name": item1.item_name,
+				"status": item1.status,
+				"qr_token": activated_qr["token"],
+			}
+		]
+		created_data["qr_tags"] = created_qr_tags
+		created_data["registered_items"] = created_items
+		created_data["qr_batch"] = existing_activated.name
+	else:
+		# Create new QR Batch with unique name
+		import uuid
+
+		batch_suffix = str(uuid.uuid4())[:8]
+		batch_name = f"Demo-Batch-{now_datetime().strftime('%Y%m%d')}-{batch_suffix}"
+		batch = frappe.get_doc(
+			{
+				"doctype": "QR Batch",
+				"batch_name": batch_name,
+				"batch_prefix": "DEMO",
+				"batch_size": 10,
+				"status": "Generated",
+				"naming_series": "QRB-.YYYY.-",
 			}
 		)
-		qr_tag.insert(ignore_permissions=True)
-		created_qr_tags.append({"name": qr_tag.name, "uid": uid, "token": token, "status": statuses[i - 1]})
-		qr_tokens.append(token)
+		batch.insert(ignore_permissions=True)
+		created_data["qr_batch"] = batch.name
 
-	created_data["qr_tags"] = created_qr_tags
+		# Create tags in different states
+		statuses = ["In Stock", "In Stock", "In Stock", "Activated", "Suspended", "Printed"]
 
-	# Create demo registered items for the demo user
-	# Find available QR tags (not already linked)
-	available_qr_tags = [tag["name"] for tag in created_qr_tags if tag["status"] == "In Stock"]
+		created_qr_tags = []
+		qr_tokens = []
+		for i in range(1, 7):
+			token = generate_qr_token()
+			uid = generate_qr_uid(f"DEMO{batch_suffix[:4].upper()}", i)
 
-	created_items = []
+			qr_tag = frappe.get_doc(
+				{
+					"doctype": "QR Code Tag",
+					"qr_uid": uid,
+					"qr_token": token,
+					"qr_url": f"{site_url}/s/{token}",
+					"batch": batch.name,
+					"status": statuses[i - 1],
+				}
+			)
+			qr_tag.insert(ignore_permissions=True)
+			created_qr_tags.append(
+				{"name": qr_tag.name, "uid": uid, "token": token, "status": statuses[i - 1]}
+			)
+			qr_tokens.append(token)
 
-	# Item 1: With activated QR
-	activated_qr = created_qr_tags[3]  # The "Activated" one
-	item1 = frappe.get_doc(
-		{
-			"doctype": "Registered Item",
-			"item_name": "MacBook Pro 14",
-			"owner_profile": owner_profile_name,
-			"qr_code_tag": activated_qr["name"],
-			"item_category": "Laptop",
-			"public_label": "MacBook",
-			"recovery_note": "Please contact me at demo@scanifyme.app or call +1234567890",
-			"reward_note": "Reward: $50 for safe return",
-			"status": "Active",
-			"activation_date": now_datetime(),
-		}
-	)
-	item1.insert(ignore_permissions=True)
-	created_items.append(
-		{
-			"name": item1.name,
-			"item_name": item1.item_name,
-			"status": item1.status,
-			"qr_token": activated_qr["token"],
-		}
-	)
+		created_data["qr_tags"] = created_qr_tags
 
-	# Item 2: Without QR (draft)
-	item2 = frappe.get_doc(
-		{
-			"doctype": "Registered Item",
-			"item_name": "My House Keys",
-			"owner_profile": owner_profile_name,
-			"item_category": "Keys",
-			"public_label": "House Keys",
-			"recovery_note": "These are my house keys. Please return!",
-			"status": "Draft",
-		}
-	)
-	item2.insert(ignore_permissions=True)
-	created_items.append(
-		{"name": item2.name, "item_name": item2.item_name, "status": item2.status, "qr_token": None}
-	)
+		# Create demo registered items for the demo user
+		activated_qr = created_qr_tags[3]  # The "Activated" one
+		item1 = frappe.get_doc(
+			{
+				"doctype": "Registered Item",
+				"item_name": "MacBook Pro 14",
+				"owner_profile": owner_profile_name,
+				"qr_code_tag": activated_qr["name"],
+				"item_category": "Laptop",
+				"public_label": "MacBook",
+				"recovery_note": "Please contact me at demo@scanifyme.app or call +1234567890",
+				"reward_note": "Reward: $50 for safe return",
+				"status": "Active",
+				"activation_date": now_datetime(),
+			}
+		)
+		item1.insert(ignore_permissions=True)
 
-	created_data["registered_items"] = created_items
+		# Update QR tag to link to the registered item
+		frappe.db.set_value("QR Code Tag", activated_qr["name"], "registered_item", item1.name)
+		frappe.db.commit()
+
+		created_items = [
+			{
+				"name": item1.name,
+				"item_name": item1.item_name,
+				"status": item1.status,
+				"qr_token": activated_qr["token"],
+			}
+		]
+
+		# Item 2: Without QR (draft)
+		item2 = frappe.get_doc(
+			{
+				"doctype": "Registered Item",
+				"item_name": "My House Keys",
+				"owner_profile": owner_profile_name,
+				"item_category": "Keys",
+				"public_label": "House Keys",
+				"recovery_note": "These are my house keys. Please return!",
+				"status": "Draft",
+			}
+		)
+		item2.insert(ignore_permissions=True)
+		created_items.append(
+			{"name": item2.name, "item_name": item2.item_name, "status": item2.status, "qr_token": None}
+		)
+
+		created_data["registered_items"] = created_items
+
+	# Now handle recovery data (if it doesn't exist)
+	# Get the activated QR tag and item for recovery data
+	if not activated_qr:
+		# Need to get it from the existing data
+		existing_activated = frappe.db.get_value(
+			"QR Code Tag",
+			{"status": "Activated", "registered_item": ["is", "set"]},
+			["name", "registered_item"],
+			as_dict=True,
+		)
+		if existing_activated:
+			activated_qr = {
+				"name": existing_activated.name,
+				"token": existing_activated.qr_token,
+			}
+			item1_name = existing_activated.registered_item
+		else:
+			item1_name = None
+	else:
+		item1_name = item1.name if "item1" in dir() else None
+
+	# Create demo recovery data if item exists
+	if item1_name:
+		# 1. Create a Finder Session if not exists
+		finder_session_id = "demo_finder_001"
+		if not frappe.db.exists("Finder Session", finder_session_id):
+			finder_session = frappe.get_doc(
+				{
+					"doctype": "Finder Session",
+					"session_id": finder_session_id,
+					"qr_code_tag": activated_qr.get("name") if activated_qr else None,
+					"started_on": now_datetime(),
+					"last_seen_on": now_datetime(),
+					"ip_hash": "demo_hash_001",
+					"user_agent": "Demo Browser/1.0",
+					"status": "Active",
+				}
+			)
+			finder_session.insert(ignore_permissions=True)
+		created_data["finder_session"] = finder_session_id
+
+		# 2. Create a Scan Event if not exists
+		if activated_qr and activated_qr.get("token"):
+			if not frappe.db.exists("Scan Event", {"token": activated_qr.get("token")}):
+				scan_event = frappe.get_doc(
+					{
+						"doctype": "Scan Event",
+						"qr_code_tag": activated_qr.get("name"),
+						"registered_item": item1_name,
+						"token": activated_qr.get("token"),
+						"scanned_on": now_datetime(),
+						"ip_hash": "demo_hash_001",
+						"user_agent": "Demo Browser/1.0",
+						"route": f"/s/{activated_qr.get('token')}",
+						"status": "Valid",
+					}
+				)
+				scan_event.insert(ignore_permissions=True)
+			created_data["scan_event"] = "created"
+
+		# 3. Create a Recovery Case if not exists (use unique case title)
+		case_title = f"Recovery - MacBook Pro 14 - {now_datetime().strftime('%Y%m%d%H%M%S')}"
+		existing_case = None
+		if activated_qr and activated_qr.get("name"):
+			existing_case = frappe.db.get_value(
+				"Recovery Case",
+				{"qr_code_tag": activated_qr.get("name")},
+				"name",
+			)
+		recovery_case_name = existing_case
+		if not existing_case:
+			recovery_case = frappe.get_doc(
+				{
+					"doctype": "Recovery Case",
+					"case_title": case_title,
+					"qr_code_tag": activated_qr.get("name") if activated_qr else None,
+					"registered_item": item1_name,
+					"owner_profile": owner_profile_name,
+					"status": "Open",
+					"opened_on": now_datetime(),
+					"last_activity_on": now_datetime(),
+					"finder_session_id": finder_session_id,
+					"finder_name": "John Finder",
+					"finder_contact_hint": "+9876543210",
+					"latest_message_preview": "Hi, I found your MacBook...",
+				}
+			)
+			recovery_case.insert(ignore_permissions=True)
+			recovery_case_name = recovery_case.name
+
+		# 4. Create Recovery Messages if not exists
+		if recovery_case_name and not frappe.db.exists(
+			"Recovery Message", {"recovery_case": recovery_case_name}
+		):
+			message1 = frappe.get_doc(
+				{
+					"doctype": "Recovery Message",
+					"recovery_case": recovery_case_name,
+					"sender_type": "Finder",
+					"sender_name": "John Finder",
+					"message": "Hi, I found your MacBook at the coffee shop on Main Street. It's in great condition!",
+					"created_on": now_datetime(),
+					"is_public_submission": 1,
+				}
+			)
+			message1.insert(ignore_permissions=True)
+
+			message2 = frappe.get_doc(
+				{
+					"doctype": "Recovery Message",
+					"recovery_case": recovery_case_name,
+					"sender_type": "Owner",
+					"sender_name": "Demo User",
+					"message": "Thank you so much for finding it! Can we meet at the coffee shop tomorrow?",
+					"created_on": now_datetime(),
+					"is_public_submission": 0,
+				}
+			)
+			message2.insert(ignore_permissions=True)
+
+		created_data["recovery_messages"] = "created"
 
 	frappe.db.commit()
+
+	# Get the public test token
+	public_token = None
+	if activated_qr and activated_qr.get("token"):
+		public_token = activated_qr.get("token")
+	else:
+		# Try to get from database
+		tag = frappe.db.get_value(
+			"QR Code Tag",
+			{"registered_item": ["is", "set"]},
+			"qr_token",
+			order_by="creation desc",
+		)
+		public_token = tag
 
 	return {
 		"success": True,
 		"message": "Demo data created successfully",
 		"data": {
 			"demo_user": demo_user_email,
-			"demo_password": "demo123",  # Note: In real setup, this would be set properly
+			"demo_password": "demo123",
 			"owner_profile": owner_profile_name,
 			"categories": created_categories,
-			"qr_batch": batch.name,
-			"qr_tags": [
-				{"uid": tag["uid"], "token": tag["token"], "status": tag["status"]} for tag in created_qr_tags
-			],
-			"items": [
-				{
-					"name": item["name"],
-					"item_name": item["item_name"],
-					"status": item["status"],
-					"qr_token": item.get("qr_token"),
-				}
-				for item in created_items
-			],
+			"qr_batch": created_data.get("qr_batch"),
+			"public_test_token": public_token,
+			"recovery": {
+				"finder_session": created_data.get("finder_session"),
+				"scan_event": created_data.get("scan_event"),
+				"recovery_messages": created_data.get("recovery_messages"),
+			},
 		},
 	}
 
