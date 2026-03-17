@@ -1,0 +1,133 @@
+{
+ "name": "Recovery Timeline Event",
+ "doctype": "DocType",
+ "module": "Recovery",
+ "autoname": "hash",
+ "is_submittable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "recovery_case",
+   "fieldtype": "Link",
+   "label": "Recovery Case",
+   "options": "Recovery Case",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "event_type",
+   "fieldtype": "Select",
+   "label": "Event Type",
+   "options": "Scan Detected\nFinder Message\nLocation Shared\nOwner Reply\nStatus Updated\nNotification Created\nEmail Queued\nCase Closed",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "event_label",
+   "fieldtype": "Data",
+   "label": "Event Label"
+  },
+  {
+   "fieldname": "actor_type",
+   "fieldtype": "Select",
+   "label": "Actor Type",
+   "options": "Finder\nOwner\nSystem\nAdmin",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "actor_reference",
+   "fieldtype": "Data",
+   "label": "Actor Reference"
+  },
+  {
+   "fieldname": "event_time",
+   "fieldtype": "Datetime",
+   "label": "Event Time",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Small Text",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Data",
+   "label": "Reference DocType"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Data",
+   "label": "Reference Name"
+  },
+  {
+   "fieldname": "metadata_json",
+   "fieldtype": "Long Text",
+   "label": "Metadata (JSON)"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Operations",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "ScanifyMe Support",
+   "read": 1
+  }
+ ],
+ "sort_field": "event_time",
+ "sort_order": "DESC",
+ "title_field": "recovery_case",
+ "layout": [
+  {
+   "section": "Event Details",
+   "fields": [
+    "recovery_case",
+    "event_type",
+    "event_label"
+   ]
+  },
+  {
+   "section": "Actor",
+   "fields": [
+    "actor_type",
+    "actor_reference"
+   ]
+  },
+  {
+   "section": "Timing",
+   "fields": [
+    "event_time",
+    "summary"
+   ]
+  },
+  {
+   "section": "Reference",
+   "fields": [
+    "reference_doctype",
+    "reference_name",
+    "metadata_json"
+   ]
+  }
+ ]
+}

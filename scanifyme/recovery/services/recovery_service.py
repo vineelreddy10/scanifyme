@@ -132,8 +132,8 @@ def get_recovery_case_details(case_id: str, owner_profile: str = None) -> dict:
 	# Get the case
 	case = frappe.get_doc("Recovery Case", case_id)
 
-	# Permission check - owner can only see their own cases
-	if owner_profile and case.owner_profile != owner_profile:
+	# Permission check - Administrator can access all cases
+	if owner_profile and owner_profile != "Administrator" and case.owner_profile != owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
 	# Get item info
@@ -181,8 +181,8 @@ def update_recovery_case_status(case_id: str, status: str, owner_profile: str = 
 	"""
 	case = frappe.get_doc("Recovery Case", case_id)
 
-	# Permission check
-	if owner_profile and case.owner_profile != owner_profile:
+	# Permission check - Administrator can access all cases
+	if owner_profile and owner_profile != "Administrator" and case.owner_profile != owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
 	# Validate status

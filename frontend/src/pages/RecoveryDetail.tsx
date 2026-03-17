@@ -35,6 +35,38 @@ export interface RecoveryMessage {
   is_read_by_owner: boolean
 }
 
+export interface LocationShare {
+  name: string
+  latitude: number
+  longitude: number
+  accuracy_meters: number | null
+  source: string
+  shared_on: string
+  note: string | null
+  is_latest: boolean
+  maps_url: string
+}
+
+export interface TimelineEvent {
+  name: string
+  event_type: string
+  event_label: string | null
+  actor_type: string
+  actor_reference: string | null
+  event_time: string
+  summary: string | null
+  reference_doctype: string | null
+  reference_name: string | null
+}
+
+export interface HandoverDetails {
+  case_id: string
+  handover_status: string
+  handover_note: string | null
+  latest_location_summary: string | null
+  valid_statuses: string[]
+}
+
 // API functions
 async function frappeCall<T>(method: string, args: Record<string, unknown> = {}): Promise<T> {
   const baseURL = ''
@@ -91,12 +123,41 @@ export const updateRecoveryCaseStatus = async (caseId: string, status: string): 
   })
 }
 
+export const getLatestCaseLocation = async (caseId: string): Promise<LocationShare> => {
+  return await frappeCall<LocationShare>('scanifyme.recovery.api.recovery_api.get_latest_case_location', {
+    case_id: caseId,
+  })
+}
+
+export const getRecoveryCaseTimeline = async (caseId: string): Promise<TimelineEvent[]> => {
+  return await frappeCall<TimelineEvent[]>('scanifyme.recovery.api.recovery_api.get_recovery_case_timeline', {
+    case_id: caseId,
+  })
+}
+
+export const getCaseHandoverDetails = async (caseId: string): Promise<HandoverDetails> => {
+  return await frappeCall<HandoverDetails>('scanifyme.recovery.api.recovery_api.get_case_handover_details', {
+    case_id: caseId,
+  })
+}
+
+export const updateHandoverStatus = async (caseId: string, handoverStatus: string, handoverNote?: string): Promise<{ success: boolean; message: string }> => {
+  return await frappeCall<{ success: boolean; message: string }>('scanifyme.recovery.api.recovery_api.update_handover_status', {
+    case_id: caseId,
+    handover_status: handoverStatus,
+    handover_note: handoverNote,
+  })
+}
+
 const RecoveryDetail = () => {
   const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [caseDetails, setCaseDetails] = useState<RecoveryCaseDetails | null>(null)
   const [messages, setMessages] = useState<RecoveryMessage[]>([])
+  const [latestLocation, setLatestLocation] = useState<LocationShare | null>(null)
+  const [timeline, setTimeline] = useState<TimelineEvent[]>([])
+  const [handoverDetails, setHandoverDetails] = useState<HandoverDetails | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [replyMessage, setReplyMessage] = useState('')
@@ -104,7 +165,11 @@ const RecoveryDetail = () => {
   const [sendError, setSendError] = useState('')
   const [sendSuccess, setSendSuccess] = useState('')
   const [showStatusModal, setShowStatusModal] = useState(false)
+  const [showHandoverModal, setShowHandoverModal] = useState(false)
   const [newStatus, setNewStatus] = useState('')
+  const [newHandoverStatus, setNewHandoverStatus] = useState('')
+  const [handoverNote, setHandoverNote] = useState('')
+  const [showTimeline, setShowTimeline] = useState(false)
 
   const handleLogout = async () => {
     await logout()
@@ -120,12 +185,22 @@ const RecoveryDetail = () => {
   const loadCaseData = async () => {
     setIsLoading(true)
     try {
-      const [details, msgs] = await Promise.all([
+      const [details, msgs, location, timelineData, handover] = await Promise.all([
         getRecoveryCaseDetails(id!),
         getRecoveryCaseMessages(id!),
+        getLatestCaseLocation(id!),
+        getRecoveryCaseTimeline(id!),
+        getCaseHandoverDetails(id!),
       ])
       setCaseDetails(details)
       setMessages(msgs)
+      setLatestLocation(location)
+      setTimeline(timelineData)
+      setHandoverDetails(handover)
+      if (handover) {
+        setNewHandoverStatus(handover.handover_status)
+        setHandoverNote(handover.handover_note || '')
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to load case details')
     } finally {
@@ -172,6 +247,22 @@ const RecoveryDetail = () => {
     }
   }
 
+  const handleHandoverStatusUpdate = async () => {
+    if (!newHandoverStatus) return
+    
+    try {
+      const result = await updateHandoverStatus(id!, newHandoverStatus, handoverNote)
+      if (result.success) {
+        loadCaseData()
+        setShowHandoverModal(false)
+      } else {
+        setSendError(result.message || 'Failed to update handover status')
+      }
+    } catch (err: any) {
+      setSendError(err.message || 'Failed to update handover status')
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       'Open': 'bg-yellow-100 text-yellow-800',
@@ -181,6 +272,20 @@ const RecoveryDetail = () => {
       'Closed': 'bg-gray-100 text-gray-800',
       'Invalid': 'bg-red-100 text-red-800',
       'Spam': 'bg-red-100 text-red-800',
+    }
+    return styles[status] || 'bg-gray-100 text-gray-800'
+  }
+
+  const getHandoverStatusBadge = (status: string) => {
+    const styles: Record<string, string> = {
+      'Not Started': 'bg-gray-100 text-gray-800',
+      'Finder Contacted': 'bg-yellow-100 text-yellow-800',
+      'Location Shared': 'bg-blue-100 text-blue-800',
+      'Return Planned': 'bg-purple-100 text-purple-800',
+      'Handover Scheduled': 'bg-indigo-100 text-indigo-800',
+      'Recovered': 'bg-green-100 text-green-800',
+      'Closed': 'bg-gray-100 text-gray-800',
+      'Failed': 'bg-red-100 text-red-800',
     }
     return styles[status] || 'bg-gray-100 text-gray-800'
   }
@@ -294,6 +399,123 @@ const RecoveryDetail = () => {
             </div>
           </div>
 
+          {/* Handover Status Card */}
+          {handoverDetails && (
+            <div className="bg-white shadow rounded-lg mb-6">
+              <div className="px-4 py-5 sm:px-6">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Recovery Progress</h3>
+                  <button
+                    onClick={() => { setNewHandoverStatus(handoverDetails.handover_status); setHandoverNote(handoverDetails.handover_note || ''); setShowHandoverModal(true); }}
+                    className="text-sm text-indigo-600 hover:text-indigo-800"
+                  >
+                    Update Progress
+                  </button>
+                </div>
+                <div className="mt-4">
+                  <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getHandoverStatusBadge(handoverDetails.handover_status)}`}>
+                    {handoverDetails.handover_status}
+                  </span>
+                  {handoverDetails.handover_note && (
+                    <p className="mt-2 text-sm text-gray-600">{handoverDetails.handover_note}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Location Card */}
+          {latestLocation && (
+            <div className="bg-white shadow rounded-lg mb-6">
+              <div className="px-4 py-5 sm:px-6">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Finder's Location</h3>
+                  {latestLocation.maps_url && (
+                    <a
+                      href={latestLocation.maps_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-indigo-600 hover:text-indigo-800"
+                    >
+                      Open in Maps →
+                    </a>
+                  )}
+                </div>
+                <div className="mt-4">
+                  <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                    <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">Coordinates</dt>
+                      <dd className="mt-1 text-sm text-gray-900 font-mono">
+                        {latestLocation.latitude.toFixed(6)}, {latestLocation.longitude.toFixed(6)}
+                      </dd>
+                    </div>
+                    {latestLocation.accuracy_meters && (
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Accuracy</dt>
+                        <dd className="mt-1 text-sm text-gray-900">±{Math.round(latestLocation.accuracy_meters)}m</dd>
+                      </div>
+                    )}
+                    <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">Shared</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formatDate(latestLocation.shared_on)}</dd>
+                    </div>
+                    <div className="sm:col-span-1">
+                      <dt className="text-sm font-medium text-gray-500">Source</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{latestLocation.source}</dd>
+                    </div>
+                  </dl>
+                  {latestLocation.note && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <dt className="text-sm font-medium text-gray-500">Note</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{latestLocation.note}</dd>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Timeline Card */}
+          <div className="bg-white shadow rounded-lg mb-6">
+            <div className="px-4 py-5 sm:px-6">
+              <button
+                onClick={() => setShowTimeline(!showTimeline)}
+                className="flex justify-between items-center w-full"
+              >
+                <h3 className="text-lg leading-6 font-medium text-gray-900">Activity Timeline</h3>
+                <span className="text-sm text-gray-500">
+                  {showTimeline ? '▲ Hide' : `▼ Show ${timeline.length} events`}
+                </span>
+              </button>
+              
+              {showTimeline && timeline.length > 0 && (
+                <div className="mt-4 border-t border-gray-200 pt-4">
+                  <div className="space-y-4">
+                    {timeline.map((event) => (
+                      <div key={event.name} className="flex gap-4">
+                        <div className="flex-shrink-0">
+                          <div className="h-2 w-2 rounded-full bg-indigo-500 mt-2"></div>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start">
+                            <p className="text-sm font-medium text-gray-900">{event.event_label || event.event_type}</p>
+                            <p className="text-xs text-gray-500">{formatDate(event.event_time)}</p>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1">{event.summary}</p>
+                          <p className="text-xs text-gray-400 mt-1">by {event.actor_type}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {showTimeline && timeline.length === 0 && (
+                <p className="mt-4 text-gray-500 text-center py-4">No timeline events yet.</p>
+              )}
+            </div>
+          </div>
+
           {/* Messages */}
           <div className="bg-white shadow rounded-lg mb-6">
             <div className="px-4 py-5 sm:px-6">
@@ -398,6 +620,48 @@ const RecoveryDetail = () => {
               </button>
               <button
                 onClick={handleStatusUpdate}
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Handover Status Update Modal */}
+      {showHandoverModal && handoverDetails && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Update Recovery Progress</h3>
+            <select
+              value={newHandoverStatus}
+              onChange={(e) => setNewHandoverStatus(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              {handoverDetails.valid_statuses.map((status) => (
+                <option key={status} value={status}>{status}</option>
+              ))}
+            </select>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">Note (optional)</label>
+              <textarea
+                rows={3}
+                value={handoverNote}
+                onChange={(e) => setHandoverNote(e.target.value)}
+                className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+                placeholder="Add a note about the handover progress..."
+              />
+            </div>
+            <div className="mt-4 flex justify-end space-x-2">
+              <button
+                onClick={() => setShowHandoverModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleHandoverStatusUpdate}
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
                 Update

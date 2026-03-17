@@ -87,6 +87,28 @@
    "fieldname": "notes_internal",
    "fieldtype": "Small Text",
    "label": "Internal Notes"
+  },
+  {
+   "fieldname": "handover_status",
+   "fieldtype": "Select",
+   "label": "Handover Status",
+   "options": "Not Started\nFinder Contacted\nLocation Shared\nReturn Planned\nHandover Scheduled\nRecovered\nClosed\nFailed",
+   "default": "Not Started"
+  },
+  {
+   "fieldname": "handover_note",
+   "fieldtype": "Small Text",
+   "label": "Handover Note"
+  },
+  {
+   "fieldname": "owner_last_viewed_on",
+   "fieldtype": "Datetime",
+   "label": "Owner Last Viewed On"
+  },
+  {
+   "fieldname": "latest_location_summary",
+   "fieldtype": "Data",
+   "label": "Latest Location Summary"
   }
  ],
  "permissions": [
@@ -150,7 +172,11 @@
   {
    "section": "Internal",
    "fields": [
-    "notes_internal"
+    "notes_internal",
+    "handover_status",
+    "handover_note",
+    "owner_last_viewed_on",
+    "latest_location_summary"
    ]
   }
  ]

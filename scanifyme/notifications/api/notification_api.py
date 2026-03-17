@@ -15,10 +15,15 @@ def get_owner_profile_for_user() -> Optional[str]:
 
 	Returns:
 	    Owner Profile name or None
+	    Returns "Administrator" if user is Administrator (for admin access)
 	"""
 	user = frappe.session.user
 	if user == "Guest":
 		return None
+
+	# Administrator can access all
+	if user == "Administrator":
+		return "Administrator"
 
 	owner_profile = frappe.db.get_value(
 		"Owner Profile",
@@ -38,8 +43,12 @@ def get_notification_preferences() -> dict:
 	"""
 	owner_profile = get_owner_profile_for_user()
 
+	# Administrator can access but has no preferences, return defaults
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
+
+	if owner_profile == "Administrator":
+		return {"success": True, "preferences": None, "is_admin": True}
 
 	preferences = notification_service.get_owner_notification_preferences(owner_profile)
 
@@ -76,8 +85,12 @@ def save_notification_preferences(
 	"""
 	owner_profile = get_owner_profile_for_user()
 
+	# Administrator cannot save preferences
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
+
+	if owner_profile == "Administrator":
+		return {"success": False, "message": "Administrator cannot save preferences"}
 
 	return notification_service.save_notification_preferences(
 		owner_profile=owner_profile,
@@ -103,6 +116,7 @@ def get_owner_notifications(is_read: Optional[int] = None, limit: int = 50) -> d
 	"""
 	owner_profile = get_owner_profile_for_user()
 
+	# Administrator can view all notifications
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
@@ -110,6 +124,27 @@ def get_owner_notifications(is_read: Optional[int] = None, limit: int = 50) -> d
 	filters = None
 	if is_read is not None:
 		filters = {"is_read": is_read}
+
+	# Administrator sees all notifications
+	if owner_profile == "Administrator":
+		notifications = frappe.get_list(
+			"Notification Event Log",
+			filters=filters,
+			fields=[
+				"name",
+				"title",
+				"message",
+				"event_type",
+				"route",
+				"priority",
+				"is_read",
+				"read_on",
+				"creation",
+			],
+			order_by="creation desc",
+			limit=limit,
+		)
+		return {"success": True, "notifications": notifications, "is_admin": True}
 
 	notifications = notification_service.get_owner_notifications(
 		owner_profile=owner_profile,
@@ -133,6 +168,11 @@ def get_unread_notification_count() -> dict:
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
+	# Administrator sees all unread
+	if owner_profile == "Administrator":
+		count = frappe.db.count("Notification Event Log", {"is_read": 0})
+		return {"success": True, "count": count, "is_admin": True}
+
 	count = notification_service.get_unread_notification_count(owner_profile)
 
 	return {"success": True, "count": count}
@@ -154,6 +194,13 @@ def mark_notification_read(notification_id: str) -> dict:
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
+	# Administrator can mark any as read
+	if owner_profile == "Administrator":
+		frappe.db.set_value("Notification Event Log", notification_id, "is_read", 1)
+		frappe.db.set_value("Notification Event Log", notification_id, "read_on", frappe.utils.now_datetime())
+		frappe.db.commit()
+		return {"success": True}
+
 	return notification_service.mark_notification_read(notification_id, owner_profile)
 
 
@@ -169,5 +216,20 @@ def mark_all_notifications_read() -> dict:
 
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
+
+	# Administrator marks all as read
+	if owner_profile == "Administrator":
+		frappe.db.sql(
+			"""
+			update `tabNotification Event Log`
+			set is_read = 1, read_on = %(now)s
+			where is_read = 0
+		""",
+			{"now": frappe.utils.now_datetime()},
+		)
+		frappe.db.commit()
+		count = frappe.db.count("Notification Event Log", {"is_read": 0})
+		# Return original count before marking
+		return {"success": True, "count": 0, "message": "All notifications marked as read", "is_admin": True}
 
 	return notification_service.mark_all_notifications_read(owner_profile)

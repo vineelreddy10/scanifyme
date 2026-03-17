@@ -608,7 +608,8 @@ def mark_notification_read(notification_id: str, owner_profile: str) -> dict:
 	if not notification_owner:
 		return {"success": False, "error": "Notification not found"}
 
-	if notification_owner != owner_profile:
+	# Administrator can mark any as read
+	if owner_profile != "Administrator" and notification_owner != owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
 	# Mark as read

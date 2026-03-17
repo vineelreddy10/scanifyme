@@ -16,10 +16,15 @@ def get_owner_profile_for_user() -> str:
 
 	Returns:
 	    Owner Profile name or None
+	    Returns "Administrator" if user is Administrator (for admin access)
 	"""
 	user = frappe.session.user
 	if user == "Guest":
 		return None
+
+	# Administrator can access all cases
+	if user == "Administrator":
+		return "Administrator"
 
 	owner_profile = frappe.db.get_value(
 		"Owner Profile",
@@ -74,7 +79,11 @@ def get_recovery_case_messages(case_id: str) -> list:
 	"""
 	owner_profile = get_owner_profile_for_user()
 
-	if not owner_profile:
+	# Administrator can access all cases
+	if not owner_profile or owner_profile == "Administrator":
+		# Allow admin to proceed
+		pass
+	elif not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
 	return message_service.get_recovery_case_messages(case_id, current_user=frappe.session.user)
@@ -104,9 +113,13 @@ def send_owner_message(
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
-	# Get owner profile for sender name
-	owner = frappe.get_doc("Owner Profile", owner_profile)
-	sender_name = owner.display_name
+	# Handle Administrator case - use special sender name
+	if owner_profile == "Administrator":
+		sender_name = "Administrator"
+	else:
+		# Get owner profile for sender name
+		owner = frappe.get_doc("Owner Profile", owner_profile)
+		sender_name = owner.display_name
 
 	return message_service.send_owner_message(
 		case_id=case_id,

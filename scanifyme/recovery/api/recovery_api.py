@@ -15,10 +15,15 @@ def get_owner_profile_for_user() -> str:
 
 	Returns:
 	    Owner Profile name or None
+	    Returns "Administrator" if user is Administrator (for admin access)
 	"""
 	user = frappe.session.user
 	if user == "Guest":
 		return None
+
+	# Administrator can access all cases
+	if user == "Administrator":
+		return "Administrator"
 
 	owner_profile = frappe.db.get_value(
 		"Owner Profile",
@@ -166,3 +171,124 @@ def send_owner_reply(case_id: str, message: str, attachment: str = None) -> dict
 		sender_name=sender_name,
 		attachment=attachment,
 	)
+
+
+# Import the new services
+from scanifyme.recovery.services import location_service, timeline_service, handover_service
+
+
+@frappe.whitelist()
+def get_recovery_case_timeline(case_id: str, limit: int = 50) -> list:
+	"""
+	Get timeline events for a recovery case.
+
+	Args:
+	    case_id: Recovery Case name
+	    limit: Maximum number of events to return
+
+	Returns:
+	    List of timeline event dicts
+	"""
+	owner_profile = get_owner_profile_for_user()
+
+	if not owner_profile:
+		frappe.throw("Permission denied", frappe.PermissionError)
+
+	return timeline_service.get_case_timeline(case_id, owner_profile, limit=limit)
+
+
+@frappe.whitelist()
+def get_latest_case_location(case_id: str) -> dict:
+	"""
+	Get the latest location share for a recovery case.
+
+	Args:
+	    case_id: Recovery Case name
+
+	Returns:
+	    Dict with location data or empty dict
+	"""
+	owner_profile = get_owner_profile_for_user()
+
+	# Administrator can access all cases
+	if owner_profile != "Administrator":
+		if not owner_profile:
+			frappe.throw("Permission denied", frappe.PermissionError)
+
+		# Verify the case belongs to the owner
+		case = frappe.get_doc("Recovery Case", case_id)
+		if case.owner_profile != owner_profile:
+			frappe.throw("Permission denied", frappe.PermissionError)
+
+	return location_service.get_latest_case_location(case_id)
+
+
+@frappe.whitelist()
+def get_case_location_history(case_id: str) -> list:
+	"""
+	Get location history for a recovery case.
+
+	Args:
+	    case_id: Recovery Case name
+
+	Returns:
+	    List of location share dicts
+	"""
+	owner_profile = get_owner_profile_for_user()
+
+	# Administrator can access all cases
+	if owner_profile != "Administrator":
+		if not owner_profile:
+			frappe.throw("Permission denied", frappe.PermissionError)
+
+		# Verify the case belongs to the owner
+		case = frappe.get_doc("Recovery Case", case_id)
+		if case.owner_profile != owner_profile:
+			frappe.throw("Permission denied", frappe.PermissionError)
+
+	return location_service.get_case_location_history(case_id)
+
+
+@frappe.whitelist()
+def update_handover_status(case_id: str, handover_status: str, handover_note: str = None) -> dict:
+	"""
+	Update the handover status of a recovery case.
+
+	Args:
+	    case_id: Recovery Case name
+	    handover_status: New handover status
+	    handover_note: Optional note for the handover
+
+	Returns:
+	    Dict with success status
+	"""
+	owner_profile = get_owner_profile_for_user()
+
+	if not owner_profile:
+		frappe.throw("Permission denied", frappe.PermissionError)
+
+	return handover_service.update_handover_status(
+		case_id=case_id,
+		handover_status=handover_status,
+		handover_note=handover_note,
+		owner_profile=owner_profile,
+	)
+
+
+@frappe.whitelist()
+def get_case_handover_details(case_id: str) -> dict:
+	"""
+	Get detailed handover information for a recovery case.
+
+	Args:
+	    case_id: Recovery Case name
+
+	Returns:
+	    Dict with handover details
+	"""
+	owner_profile = get_owner_profile_for_user()
+
+	if not owner_profile:
+		frappe.throw("Permission denied", frappe.PermissionError)
+
+	return handover_service.get_case_handover_details(case_id, owner_profile)

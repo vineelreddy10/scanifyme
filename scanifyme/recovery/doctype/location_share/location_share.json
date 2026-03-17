@@ -1,0 +1,141 @@
+{
+ "name": "Location Share",
+ "doctype": "DocType",
+ "module": "Recovery",
+ "autoname": "hash",
+ "is_submittable": 0,
+ "editable_grid": 1,
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "recovery_case",
+   "fieldtype": "Link",
+   "label": "Recovery Case",
+   "options": "Recovery Case",
+   "reqd": 0,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "qr_code_tag",
+   "fieldtype": "Link",
+   "label": "QR Code Tag",
+   "options": "QR Code Tag",
+   "reqd": 0
+  },
+  {
+   "fieldname": "registered_item",
+   "fieldtype": "Link",
+   "label": "Registered Item",
+   "options": "Registered Item",
+   "reqd": 0
+  },
+  {
+   "fieldname": "finder_session",
+   "fieldtype": "Link",
+   "label": "Finder Session",
+   "options": "Finder Session",
+   "reqd": 0
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "accuracy_meters",
+   "fieldtype": "Float",
+   "label": "Accuracy (Meters)"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "label": "Source",
+   "options": "Browser Geolocation\nManual\nSystem",
+   "default": "Browser Geolocation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "shared_on",
+   "fieldtype": "Datetime",
+   "label": "Shared On",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  },
+  {
+   "fieldname": "is_latest",
+   "fieldtype": "Check",
+   "label": "Is Latest"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "ScanifyMe Operations",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "ScanifyMe Support",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "recovery_case",
+ "layout": [
+  {
+   "section": "Location Details",
+   "fields": [
+    "recovery_case",
+    "qr_code_tag",
+    "registered_item",
+    "finder_session"
+   ]
+  },
+  {
+   "section": "Coordinates",
+   "fields": [
+    "latitude",
+    "longitude",
+    "accuracy_meters",
+    "source"
+   ]
+  },
+  {
+   "section": "Metadata",
+   "fields": [
+    "shared_on",
+    "note",
+    "is_latest"
+   ]
+  }
+ ]
+}
