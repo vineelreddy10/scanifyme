@@ -7,6 +7,8 @@ This module provides business logic for managing recovery cases.
 import frappe
 from frappe.utils import now_datetime
 
+from scanifyme.notifications.services import notification_service
+
 
 def create_or_get_recovery_case(
 	qr_tag: str,
@@ -196,6 +198,15 @@ def update_recovery_case_status(case_id: str, status: str, owner_profile: str = 
 		case.closed_on = now_datetime()
 
 	case.save(ignore_permissions=True)
+
+	# Log notification event for status change
+	notification_service.notify_case_status_updated(
+		owner_profile=case.owner_profile,
+		recovery_case=case_id,
+		old_status=old_status,
+		new_status=status,
+	)
+
 	frappe.db.commit()
 
 	return {

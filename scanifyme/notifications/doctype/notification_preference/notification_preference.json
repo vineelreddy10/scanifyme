@@ -1,0 +1,80 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-03-17 10:55:09.976399",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "owner_profile",
+  "enable_in_app_notifications",
+  "enable_email_notifications",
+  "notify_on_new_finder_message",
+  "notify_on_case_opened",
+  "notify_on_case_status_change",
+  "is_default"
+ ],
+ "fields": [
+  {
+   "fieldname": "owner_profile",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Owner Profile",
+   "options": "Owner Profile",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_in_app_notifications",
+   "fieldtype": "Check",
+   "label": "Enable In-App Notifications"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_email_notifications",
+   "fieldtype": "Check",
+   "label": "Enable Email Notifications"
+  },
+  {
+   "default": "1",
+   "fieldname": "notify_on_new_finder_message",
+   "fieldtype": "Check",
+   "label": "Notify on New Finder Message"
+  },
+  {
+   "default": "1",
+   "fieldname": "notify_on_case_opened",
+   "fieldtype": "Check",
+   "label": "Notify on Case Opened"
+  },
+  {
+   "default": "1",
+   "fieldname": "notify_on_case_status_change",
+   "fieldtype": "Check",
+   "label": "Notify on Case Status Change"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_default",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Default Preference"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-17 10:55:09.976399",
+ "modified_by": "Administrator",
+ "module": "Notifications",
+ "name": "Notification Preference",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

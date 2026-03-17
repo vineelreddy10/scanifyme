@@ -11,6 +11,7 @@ import uuid
 
 from scanifyme.recovery.services import recovery_service
 from scanifyme.public_portal.services import public_scan_service
+from scanifyme.notifications.services import notification_service
 
 
 def generate_finder_session_id() -> str:
@@ -153,6 +154,15 @@ def submit_finder_message(
 	owner_profile = registered_item.get("owner_profile")
 
 	# Create or get recovery case
+	case_was_new = False
+	existing_case = frappe.db.get_value(
+		"Recovery Case",
+		{"finder_session_id": session_id, "status": ["in", ["Open", "Owner Responded", "Return Planned"]]},
+		"name",
+	)
+	if not existing_case:
+		case_was_new = True
+
 	case_id = recovery_service.create_or_get_recovery_case(
 		qr_tag=qr_tag.get("name"),
 		registered_item=registered_item.get("name"),
@@ -189,6 +199,24 @@ def submit_finder_message(
 		qr_tag=qr_tag.get("name"),
 		item=registered_item.get("name"),
 	)
+
+	# Create notification event for the owner
+	message_summary = f"New message from {finder_name or 'a finder'}: {message_preview}"
+	if case_was_new:
+		# This is a new case - notify that a case was opened
+		notification_service.notify_recovery_case_opened(
+			owner_profile=owner_profile,
+			recovery_case=case_id,
+			registered_item=registered_item.get("name"),
+			qr_code_tag=qr_tag.get("name"),
+		)
+	else:
+		# Existing case - notify about new message
+		notification_service.notify_finder_message_received(
+			owner_profile=owner_profile,
+			recovery_case=case_id,
+			message_summary=message_summary,
+		)
 
 	frappe.db.commit()
 
@@ -287,6 +315,14 @@ def send_owner_message(
 	if case.status == "Open":
 		case.status = "Owner Responded"
 	case.save(ignore_permissions=True)
+
+	# Log notification event for owner reply sent
+	message_preview = message[:100] + "..." if len(message) > 100 else message
+	notification_service.notify_owner_reply_sent(
+		owner_profile=case.owner_profile,
+		recovery_case=case_id,
+		message_summary=f"You replied: {message_preview}",
+	)
 
 	frappe.db.commit()
 

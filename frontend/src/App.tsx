@@ -6,6 +6,9 @@ import Settings from './pages/Settings'
 import Items from './pages/Items'
 import ItemDetail from './pages/ItemDetail'
 import ActivateQR from './pages/ActivateQR'
+import Recovery from './pages/Recovery'
+import RecoveryDetail from './pages/RecoveryDetail'
+import NotificationSettings from './pages/NotificationSettings'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth()
@@ -76,6 +79,30 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <ActivateQR />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recovery"
+        element={
+          <ProtectedRoute>
+            <Recovery />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recovery/:id"
+        element={
+          <ProtectedRoute>
+            <RecoveryDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings/notifications"
+        element={
+          <ProtectedRoute>
+            <NotificationSettings />
           </ProtectedRoute>
         }
       />

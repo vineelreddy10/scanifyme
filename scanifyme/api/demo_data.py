@@ -368,6 +368,85 @@ def create_demo_data():
 
 		created_data["recovery_messages"] = "created"
 
+	# 5. Create Notification Preference for the owner (if not exists)
+	if owner_profile_name and not frappe.db.exists(
+		"Notification Preference", {"owner_profile": owner_profile_name}
+	):
+		notification_pref = frappe.get_doc(
+			{
+				"doctype": "Notification Preference",
+				"owner_profile": owner_profile_name,
+				"enable_in_app_notifications": 1,
+				"enable_email_notifications": 1,
+				"notify_on_new_finder_message": 1,
+				"notify_on_case_opened": 1,
+				"notify_on_case_status_change": 1,
+				"is_default": 1,
+			}
+		)
+		notification_pref.insert(ignore_permissions=True)
+		created_data["notification_preference"] = notification_pref.name
+
+	# 6. Create Notification Event Logs (if recovery case exists)
+	if recovery_case_name and owner_profile_name:
+		# Check if notification logs already exist for this case
+		if not frappe.db.exists("Notification Event Log", {"recovery_case": recovery_case_name}):
+			# Log: Case Opened
+			log1 = frappe.get_doc(
+				{
+					"doctype": "Notification Event Log",
+					"event_type": "Recovery Case Opened",
+					"owner_profile": owner_profile_name,
+					"recovery_case": recovery_case_name,
+					"registered_item": item1_name,
+					"qr_code_tag": activated_qr.get("name") if activated_qr else None,
+					"message_summary": "New recovery case opened for MacBook Pro 14",
+					"channel": "In App",
+					"status": "Sent",
+					"triggered_on": now_datetime(),
+					"delivered_on": now_datetime(),
+				}
+			)
+			log1.insert(ignore_permissions=True)
+
+			# Log: Finder Message Received
+			log2 = frappe.get_doc(
+				{
+					"doctype": "Notification Event Log",
+					"event_type": "Finder Message Received",
+					"owner_profile": owner_profile_name,
+					"recovery_case": recovery_case_name,
+					"registered_item": item1_name,
+					"qr_code_tag": activated_qr.get("name") if activated_qr else None,
+					"message_summary": "New message from John Finder: Hi, I found your MacBook...",
+					"channel": "In App",
+					"status": "Sent",
+					"triggered_on": now_datetime(),
+					"delivered_on": now_datetime(),
+				}
+			)
+			log2.insert(ignore_permissions=True)
+
+			# Log: Owner Reply Sent
+			log3 = frappe.get_doc(
+				{
+					"doctype": "Notification Event Log",
+					"event_type": "Owner Reply Sent",
+					"owner_profile": owner_profile_name,
+					"recovery_case": recovery_case_name,
+					"registered_item": item1_name,
+					"qr_code_tag": activated_qr.get("name") if activated_qr else None,
+					"message_summary": "You replied: Thank you so much for finding it!...",
+					"channel": "System",
+					"status": "Sent",
+					"triggered_on": now_datetime(),
+					"delivered_on": now_datetime(),
+				}
+			)
+			log3.insert(ignore_permissions=True)
+
+			created_data["notification_event_logs"] = "created"
+
 	frappe.db.commit()
 
 	# Get the public test token
@@ -398,6 +477,10 @@ def create_demo_data():
 				"finder_session": created_data.get("finder_session"),
 				"scan_event": created_data.get("scan_event"),
 				"recovery_messages": created_data.get("recovery_messages"),
+			},
+			"notifications": {
+				"preference": created_data.get("notification_preference"),
+				"event_logs": created_data.get("notification_event_logs"),
 			},
 		},
 	}
