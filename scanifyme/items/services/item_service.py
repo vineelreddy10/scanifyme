@@ -13,7 +13,7 @@ from frappe.utils import now_datetime
 from typing import Optional, Dict, Any, List
 
 
-def activate_qr(token: str, user: str = None) -> Dict[str, Any]:
+def activate_qr(token: str, user: Optional[str] = None) -> Dict[str, Any]:
 	"""
 	Activate a QR code for an item.
 
@@ -87,7 +87,7 @@ def activate_qr(token: str, user: str = None) -> Dict[str, Any]:
 	}
 
 
-def create_item(item_data: Dict[str, Any], user: str = None) -> str:
+def create_item(item_data: Dict[str, Any], user: Optional[str] = None) -> str:
 	"""
 	Create a new registered item.
 
@@ -216,7 +216,7 @@ def link_item_to_qr(item: str, qr_tag: str) -> Dict[str, Any]:
 	return {"success": True, "message": f"Item '{item}' linked to QR code '{qr_tag}'"}
 
 
-def get_user_items(user: str = None, status: str = None, limit: int = 20) -> List[Dict[str, Any]]:
+def get_user_items(user: Optional[str] = None, status: Optional[str] = None, limit: int = 20) -> List[Dict[str, Any]]:
 	"""
 	Get items for a user.
 
@@ -273,7 +273,7 @@ def get_user_items(user: str = None, status: str = None, limit: int = 20) -> Lis
 	return items
 
 
-def get_item_details(item: str, user: str = None) -> Optional[Dict[str, Any]]:
+def get_item_details(item: str, user: Optional[str] = None) -> Optional[Dict[str, Any]]:
 	"""
 	Get detailed information about an item.
 
@@ -345,7 +345,7 @@ def get_item_details(item: str, user: str = None) -> Optional[Dict[str, Any]]:
 	return result
 
 
-def get_or_create_owner_profile(user: str = None) -> str:
+def get_or_create_owner_profile(user: Optional[str] = None) -> str:
 	"""
 	Get or create an owner profile for a user.
 
@@ -377,7 +377,7 @@ def get_or_create_owner_profile(user: str = None) -> str:
 	return profile.name
 
 
-def update_item_status(item: str, status: str, user: str = None) -> Dict[str, Any]:
+def update_item_status(item: str, status: str, user: Optional[str] = None) -> Dict[str, Any]:
 	"""
 	Update the status of a registered item.
 

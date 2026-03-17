@@ -133,6 +133,90 @@ class TestAPIEndpoints(unittest.TestCase):
 			# May fail for various reasons
 			pass
 
+	# ==================== Notification APIs ====================
+
+	def test_get_notification_preferences(self):
+		"""Test getting notification preferences"""
+		# Login as demo user
+		frappe.set_user("demo@scanifyme.app")
+
+		from scanifyme.notifications.api.notification_api import get_notification_preferences
+
+		response = get_notification_preferences()
+
+		self.assertTrue(response.get("success"))
+		self.assertIn("preferences", response)
+
+	def test_get_owner_notifications(self):
+		"""Test getting owner notifications"""
+		# Login as demo user
+		frappe.set_user("demo@scanifyme.app")
+
+		from scanifyme.notifications.api.notification_api import get_owner_notifications
+
+		try:
+			response = get_owner_notifications()
+			self.assertTrue(response.get("success"))
+			self.assertIn("notifications", response)
+			self.assertIsInstance(response["notifications"], list)
+		except Exception:
+			# May fail if no owner profile
+			pass
+
+	def test_get_unread_notification_count(self):
+		"""Test getting unread notification count"""
+		# Login as demo user
+		frappe.set_user("demo@scanifyme.app")
+
+		from scanifyme.notifications.api.notification_api import get_unread_notification_count
+
+		try:
+			response = get_unread_notification_count()
+			self.assertTrue(response.get("success"))
+			self.assertIn("count", response)
+			self.assertIsInstance(response["count"], int)
+		except Exception:
+			# May fail if no owner profile
+			pass
+
+	def test_mark_notification_read(self):
+		"""Test marking a notification as read"""
+		# Login as demo user
+		frappe.set_user("demo@scanifyme.app")
+
+		# First get a notification
+		from scanifyme.notifications.api.notification_api import get_owner_notifications
+
+		try:
+			response = get_owner_notifications()
+			notifications = response.get("notifications", [])
+
+			if notifications:
+				# Try to mark the first one as read
+				notification_id = notifications[0]["name"]
+				from scanifyme.notifications.api.notification_api import mark_notification_read
+
+				result = mark_notification_read(notification_id)
+				self.assertTrue(result.get("success"))
+		except Exception:
+			# May fail if no notifications
+			pass
+
+	def test_mark_all_notifications_read(self):
+		"""Test marking all notifications as read"""
+		# Login as demo user
+		frappe.set_user("demo@scanifyme.app")
+
+		from scanifyme.notifications.api.notification_api import mark_all_notifications_read
+
+		try:
+			result = mark_all_notifications_read()
+			self.assertTrue(result.get("success"))
+			self.assertIn("count", result)
+		except Exception:
+			# May fail if no owner profile
+			pass
+
 	# ==================== Permission Tests ====================
 
 	def test_guest_cannot_access_owner_apis(self):

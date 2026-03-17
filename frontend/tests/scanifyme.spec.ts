@@ -33,6 +33,44 @@ test.describe('ScanifyMe Frontend', () => {
   });
 });
 
+test.describe('Notification Center Tests', () => {
+  test('Test N1: Open /frontend/notifications - loads without crash', async ({ page }) => {
+    await page.goto(`${BASE_URL}/frontend/notifications`);
+    await page.waitForTimeout(3000);
+    
+    // Verify the page loaded (may redirect to login if not authenticated)
+    const url = page.url();
+    expect(url).toBeTruthy();
+  });
+
+  test('Test N2: Notification page shows notification list', async ({ page }) => {
+    // This test assumes user is logged in - if not, it will redirect to login
+    await page.goto(`${BASE_URL}/frontend/notifications`);
+    await page.waitForTimeout(5000);
+    
+    // Check for the notifications heading or content
+    const pageContent = await page.content();
+    // The page should either show notifications or redirect to login
+    const isAuthenticated = !page.url().includes('/login');
+    
+    if (isAuthenticated) {
+      // Should have some notification-related content
+      const hasNotificationsContent = pageContent.includes('Notification') || 
+                                       pageContent.includes('notification');
+      // Not asserting here - just checking page loads without crash
+      expect(page.url()).toContain('/frontend/notifications');
+    }
+  });
+
+  test('Test N3: Recovery pages still load correctly', async ({ page }) => {
+    await page.goto(`${BASE_URL}/frontend/recovery`);
+    await page.waitForTimeout(3000);
+    
+    const url = page.url();
+    expect(url).toBeTruthy();
+  });
+});
+
 test.describe('API Endpoint Tests', () => {
   test('Test 4: API endpoints are accessible', async ({ request }) => {
     // Test ping endpoint

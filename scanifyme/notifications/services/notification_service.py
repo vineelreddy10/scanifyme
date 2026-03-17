@@ -25,6 +25,9 @@ def log_notification_event(
 	reference_doctype: Optional[str] = None,
 	reference_name: Optional[str] = None,
 	deliver: bool = True,
+	title: Optional[str] = None,
+	route: Optional[str] = None,
+	priority: str = "Normal",
 ) -> str:
 	"""
 	Log a notification event.
@@ -42,6 +45,9 @@ def log_notification_event(
 	    reference_doctype: Reference DocType (optional)
 	    reference_name: Reference DocName (optional)
 	    deliver: Whether to attempt delivery (default True)
+	    title: Notification title (optional)
+	    route: Route to navigate to (optional)
+	    priority: Priority level (Low, Normal, High) (default Normal)
 
 	Returns:
 	    Notification Event Log name
@@ -65,6 +71,10 @@ def log_notification_event(
 			"error_message": error_message,
 			"reference_doctype": reference_doctype,
 			"reference_name": reference_name,
+			"title": title,
+			"route": route,
+			"priority": priority,
+			"is_read": 0,
 		}
 	)
 
@@ -257,6 +267,7 @@ def notify_finder_message_received(
 	owner_profile: str,
 	recovery_case: str,
 	message_summary: str,
+	priority: str = "Normal",
 ) -> Optional[str]:
 	"""
 	Notify owner that a finder message was received.
@@ -265,6 +276,7 @@ def notify_finder_message_received(
 	    owner_profile: Owner Profile name
 	    recovery_case: Recovery Case name
 	    message_summary: Summary of the message
+	    priority: Priority level (Low, Normal, High)
 
 	Returns:
 	    Notification Event Log name or None
@@ -274,6 +286,14 @@ def notify_finder_message_received(
 	if not should_notify_owner("Finder Message Received", preferences):
 		return None
 
+	# Get item name from recovery case
+	item_name = frappe.db.get_value("Recovery Case", recovery_case, "registered_item")
+	if item_name:
+		item_name = frappe.db.get_value("Registered Item", item_name, "item_name")
+
+	title = f"New message for {item_name or 'your item'}"
+	route = f"/frontend/recovery/{recovery_case}"
+
 	return log_notification_event(
 		event_type="Finder Message Received",
 		owner_profile=owner_profile,
@@ -281,6 +301,9 @@ def notify_finder_message_received(
 		message_summary=message_summary,
 		channel="In App",
 		status="Queued",
+		title=title,
+		route=route,
+		priority=priority,
 	)
 
 
@@ -289,6 +312,7 @@ def notify_recovery_case_opened(
 	recovery_case: str,
 	registered_item: str,
 	qr_code_tag: str,
+	priority: str = "High",
 ) -> Optional[str]:
 	"""
 	Notify owner that a recovery case was opened.
@@ -298,6 +322,7 @@ def notify_recovery_case_opened(
 	    recovery_case: Recovery Case name
 	    registered_item: Registered Item name
 	    qr_code_tag: QR Code Tag name
+	    priority: Priority level (Low, Normal, High)
 
 	Returns:
 	    Notification Event Log name or None
@@ -310,6 +335,9 @@ def notify_recovery_case_opened(
 	# Get item name for summary
 	item_name = frappe.db.get_value("Registered Item", registered_item, "item_name")
 
+	title = f"New recovery case: {item_name}"
+	route = f"/frontend/recovery/{recovery_case}"
+
 	return log_notification_event(
 		event_type="Recovery Case Opened",
 		owner_profile=owner_profile,
@@ -319,6 +347,9 @@ def notify_recovery_case_opened(
 		message_summary=f"New recovery case opened for {item_name}",
 		channel="In App",
 		status="Queued",
+		title=title,
+		route=route,
+		priority=priority,
 	)
 
 
@@ -353,6 +384,7 @@ def notify_case_status_updated(
 	recovery_case: str,
 	old_status: str,
 	new_status: str,
+	priority: str = "Normal",
 ) -> Optional[str]:
 	"""
 	Notify that a case status was updated.
@@ -362,6 +394,7 @@ def notify_case_status_updated(
 	    recovery_case: Recovery Case name
 	    old_status: Previous status
 	    new_status: New status
+	    priority: Priority level (Low, Normal, High)
 
 	Returns:
 	    Notification Event Log name or None
@@ -371,6 +404,14 @@ def notify_case_status_updated(
 	if not should_notify_owner("Case Status Updated", preferences):
 		return None
 
+	# Get item name from recovery case
+	item_name = frappe.db.get_value("Recovery Case", recovery_case, "registered_item")
+	if item_name:
+		item_name = frappe.db.get_value("Registered Item", item_name, "item_name")
+
+	title = f"Case status updated: {item_name or 'Recovery'}"
+	route = f"/frontend/recovery/{recovery_case}"
+
 	return log_notification_event(
 		event_type="Case Status Updated",
 		owner_profile=owner_profile,
@@ -378,4 +419,174 @@ def notify_case_status_updated(
 		message_summary=f"Case status changed from {old_status} to {new_status}",
 		channel="In App",
 		status="Sent",
+		title=title,
+		route=route,
+		priority=priority,
 	)
+
+
+# =============================================================================
+# Notification Query Service Functions
+# =============================================================================
+
+
+def get_owner_notifications(
+	owner_profile: str,
+	filters: Optional[dict] = None,
+	limit: int = 50,
+) -> list:
+	"""
+	Get notifications for an owner.
+
+	Args:
+	    owner_profile: Owner Profile name
+	    filters: Optional filters dict (e.g., {"is_read": 0})
+	    limit: Maximum number of notifications to return
+
+	Returns:
+	    List of notification dicts
+	"""
+	# Build filters
+	query_filters = {"owner_profile": owner_profile}
+	if filters:
+		query_filters.update(filters)
+
+	notifications = frappe.get_list(
+		"Notification Event Log",
+		filters=query_filters,
+		fields=[
+			"name",
+			"title",
+			"event_type",
+			"message_summary",
+			"priority",
+			"is_read",
+			"read_on",
+			"triggered_on",
+			"route",
+			"recovery_case",
+			"registered_item",
+			"status",
+		],
+		order_by="triggered_on desc",
+		limit=limit,
+	)
+
+	return notifications
+
+
+def get_unread_notification_count(owner_profile: str) -> int:
+	"""
+	Get the count of unread notifications for an owner.
+
+	Args:
+	    owner_profile: Owner Profile name
+
+	Returns:
+	    Number of unread notifications
+	"""
+	count = frappe.db.count(
+		"Notification Event Log",
+		{"owner_profile": owner_profile, "is_read": 0},
+	)
+
+	return count or 0
+
+
+def mark_notification_read(notification_id: str, owner_profile: str) -> dict:
+	"""
+	Mark a single notification as read.
+
+	Args:
+	    notification_id: Notification Event Log name
+	    owner_profile: Owner Profile name (for ownership validation)
+
+	Returns:
+	    Dict with success status
+	"""
+	# Verify ownership
+	notification_owner = frappe.db.get_value(
+		"Notification Event Log",
+		notification_id,
+		"owner_profile",
+	)
+
+	if not notification_owner:
+		return {"success": False, "error": "Notification not found"}
+
+	if notification_owner != owner_profile:
+		frappe.throw("Permission denied", frappe.PermissionError)
+
+	# Mark as read
+	frappe.db.set_value(
+		"Notification Event Log",
+		notification_id,
+		{
+			"is_read": 1,
+			"read_on": now_datetime(),
+		},
+	)
+
+	frappe.db.commit()
+
+	return {"success": True, "message": "Notification marked as read"}
+
+
+def mark_all_notifications_read(owner_profile: str) -> dict:
+	"""
+	Mark all notifications as read for an owner.
+
+	Args:
+	    owner_profile: Owner Profile name
+
+	Returns:
+	    Dict with success status and count of updated notifications
+	"""
+	# Get count of unread notifications
+	unread_count = get_unread_notification_count(owner_profile)
+
+	if unread_count == 0:
+		return {"success": True, "message": "No unread notifications", "count": 0}
+
+	# Update all unread notifications
+	frappe.db.sql(
+		"""
+		UPDATE `tabNotification Event Log`
+		SET is_read = 1, read_on = %(now)s
+		WHERE owner_profile = %(owner_profile)s AND is_read = 0
+		""",
+		{"owner_profile": owner_profile, "now": now_datetime()},
+	)
+
+	frappe.db.commit()
+
+	return {
+		"success": True,
+		"message": f"Marked {unread_count} notifications as read",
+		"count": unread_count,
+	}
+
+
+def build_notification_route(notification: dict) -> str:
+	"""
+	Build the frontend route for a notification.
+
+	Args:
+	    notification: Notification dict
+
+	Returns:
+	    Frontend route string
+	"""
+	# If route is already set, use it
+	if notification.get("route"):
+		return notification["route"]
+
+	# Build route based on event type and linked document
+	if notification.get("recovery_case"):
+		return f"/frontend/recovery/{notification['recovery_case']}"
+
+	if notification.get("registered_item"):
+		return f"/frontend/items/{notification['registered_item']}"
+
+	# Default to recovery list
+	return "/frontend/recovery"

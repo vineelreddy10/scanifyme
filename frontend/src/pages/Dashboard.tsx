@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { getQRBatches, getQRTags, type QRBatch, type QRCodeTag } from '../api/frappe'
+import NotificationBell from '../components/NotificationBell'
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth()
@@ -98,12 +99,7 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <a
-                href="/frontend/settings/notifications"
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Notifications
-              </a>
+              <NotificationBell />
               <span className="text-sm text-gray-600">
                 {currentUser as string}
               </span>

@@ -6,30 +6,40 @@
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
- "field_order": [
-  "event_type",
-  "owner_profile",
-  "recovery_case",
-  "registered_item",
-  "qr_code_tag",
-  "message_summary",
-  "channel",
-  "status",
-  "triggered_on",
-  "delivered_on",
-  "error_message",
-  "reference_doctype",
-  "reference_name"
- ],
- "fields": [
-  {
-   "fieldname": "event_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Event Type",
-   "options": "Finder Message Received\nRecovery Case Opened\nOwner Reply Sent\nItem Marked Recovered\nCase Status Updated",
-   "reqd": 1
-  },
+  "field_order": [
+   "title",
+   "event_type",
+   "owner_profile",
+   "recovery_case",
+   "registered_item",
+   "qr_code_tag",
+   "message_summary",
+   "channel",
+   "status",
+   "priority",
+   "is_read",
+   "read_on",
+   "triggered_on",
+   "delivered_on",
+   "error_message",
+   "reference_doctype",
+   "reference_name",
+   "route"
+  ],
+  "fields": [
+   {
+    "fieldname": "title",
+    "fieldtype": "Data",
+    "label": "Title"
+   },
+   {
+    "fieldname": "event_type",
+    "fieldtype": "Select",
+    "in_list_view": 1,
+    "label": "Event Type",
+    "options": "Finder Message Received\nRecovery Case Opened\nOwner Reply Sent\nItem Marked Recovered\nCase Status Updated",
+    "reqd": 1
+   },
   {
    "fieldname": "owner_profile",
    "fieldtype": "Link",
@@ -70,22 +80,40 @@
    "options": "In App\nEmail\nSystem",
    "reqd": 1
   },
-  {
-   "default": "Queued",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Status",
-   "options": "Queued\nSent\nFailed\nSkipped",
-   "reqd": 1
-  },
-  {
-   "default": "Now",
-   "fieldname": "triggered_on",
-   "fieldtype": "Datetime",
-   "label": "Triggered On",
-   "reqd": 1
-  },
+   {
+    "default": "Queued",
+    "fieldname": "status",
+    "fieldtype": "Select",
+    "in_list_view": 1,
+    "label": "Status",
+    "options": "Queued\nSent\nFailed\nSkipped",
+    "reqd": 1
+   },
+   {
+    "default": "Normal",
+    "fieldname": "priority",
+    "fieldtype": "Select",
+    "label": "Priority",
+    "options": "Low\nNormal\nHigh"
+   },
+   {
+    "default": "0",
+    "fieldname": "is_read",
+    "fieldtype": "Check",
+    "label": "Is Read"
+   },
+   {
+    "fieldname": "read_on",
+    "fieldtype": "Datetime",
+    "label": "Read On"
+   },
+   {
+    "default": "Now",
+    "fieldname": "triggered_on",
+    "fieldtype": "Datetime",
+    "label": "Triggered On",
+    "reqd": 1
+   },
   {
    "fieldname": "delivered_on",
    "fieldtype": "Datetime",
@@ -101,12 +129,17 @@
    "fieldtype": "Data",
    "label": "Reference DocType"
   },
-  {
-   "fieldname": "reference_name",
-   "fieldtype": "Data",
-   "label": "Reference Name"
-  }
- ],
+   {
+    "fieldname": "reference_name",
+    "fieldtype": "Data",
+    "label": "Reference Name"
+   },
+   {
+    "fieldname": "route",
+    "fieldtype": "Data",
+    "label": "Route"
+   }
+  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
