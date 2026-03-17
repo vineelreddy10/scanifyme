@@ -243,7 +243,8 @@ def get_recovery_case_messages(case_id: str, current_user: str = None) -> list:
 	case = frappe.get_doc("Recovery Case", case_id)
 
 	# Check if user has access (owner or system)
-	if current_user and current_user != "Guest":
+	# Administrator can access all cases
+	if current_user and current_user != "Guest" and current_user != "Administrator":
 		owner_profile = frappe.db.get_value(
 			"Owner Profile",
 			{"user": current_user},

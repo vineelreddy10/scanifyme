@@ -528,6 +528,207 @@ def create_demo_data():
 		created_data["notification_event_logs"] = "created"
 		created_data["recovery_case_id"] = recovery_case_name
 
+		# 7. Create Location Share for the recovery case
+		location_share_name = None
+		if recovery_case_name and activated_qr and activated_qr.get("name"):
+			# Check if location share already exists
+			if not frappe.db.exists("Location Share", {"recovery_case": recovery_case_name}):
+				location_share = frappe.get_doc(
+					{
+						"doctype": "Location Share",
+						"recovery_case": recovery_case_name,
+						"qr_code_tag": activated_qr.get("name"),
+						"registered_item": item1_name,
+						"finder_session": finder_session_id,
+						"latitude": 37.7749,
+						"longitude": -122.4194,
+						"accuracy_meters": 10.0,
+						"source": "Browser Geolocation",
+						"shared_on": now_datetime(),
+						"note": "Found at the coffee shop on Main Street",
+						"is_latest": 1,
+					}
+				)
+				location_share.insert(ignore_permissions=True)
+				location_share_name = location_share.name
+				created_data["location_share"] = location_share_name
+
+				# Update recovery case with location summary
+				frappe.db.set_value(
+					"Recovery Case",
+					recovery_case_name,
+					{
+						"latest_location_summary": "37.774900, -122.419400 (±10m)",
+						"handover_status": "Location Shared",
+					},
+				)
+
+		# 8. Create Recovery Timeline Events
+		if recovery_case_name:
+			# Delete existing timeline events to allow refresh
+			frappe.db.delete("Recovery Timeline Event", {"recovery_case": recovery_case_name})
+
+			# Timeline: Scan Detected
+			timeline1 = frappe.get_doc(
+				{
+					"doctype": "Recovery Timeline Event",
+					"recovery_case": recovery_case_name,
+					"event_type": "Scan Detected",
+					"event_label": "QR Code Scanned",
+					"actor_type": "Finder",
+					"actor_reference": finder_session_id,
+					"event_time": now_datetime(),
+					"summary": "QR code scanned by John Finder",
+					"reference_doctype": "Scan Event",
+				}
+			)
+			timeline1.insert(ignore_permissions=True)
+
+			# Timeline: Finder Message
+			timeline2 = frappe.get_doc(
+				{
+					"doctype": "Recovery Timeline Event",
+					"recovery_case": recovery_case_name,
+					"event_type": "Finder Message",
+					"event_label": "Message from Finder",
+					"actor_type": "Finder",
+					"actor_reference": "John Finder",
+					"event_time": now_datetime(),
+					"summary": "Hi, I found your MacBook at the coffee shop on Main Street. It's in great condition!",
+					"reference_doctype": "Recovery Message",
+				}
+			)
+			timeline2.insert(ignore_permissions=True)
+
+			# Timeline: Status Updated
+			timeline3 = frappe.get_doc(
+				{
+					"doctype": "Recovery Timeline Event",
+					"recovery_case": recovery_case_name,
+					"event_type": "Status Updated",
+					"event_label": "Case Status Changed",
+					"actor_type": "System",
+					"event_time": now_datetime(),
+					"summary": "Case status changed from Open to Owner Responded",
+				}
+			)
+			timeline3.insert(ignore_permissions=True)
+
+			# Timeline: Location Shared
+			if location_share_name:
+				timeline4 = frappe.get_doc(
+					{
+						"doctype": "Recovery Timeline Event",
+						"recovery_case": recovery_case_name,
+						"event_type": "Location Shared",
+						"event_label": "Location Shared by Finder",
+						"actor_type": "Finder",
+						"actor_reference": finder_session_id,
+						"event_time": now_datetime(),
+						"summary": "Finder shared location: 37.774900, -122.419400 (±10m)",
+						"reference_doctype": "Location Share",
+						"reference_name": location_share_name,
+					}
+				)
+				timeline4.insert(ignore_permissions=True)
+
+			# Timeline: Owner Reply
+			timeline5 = frappe.get_doc(
+				{
+					"doctype": "Recovery Timeline Event",
+					"recovery_case": recovery_case_name,
+					"event_type": "Owner Reply",
+					"event_label": "Reply from Owner",
+					"actor_type": "Owner",
+					"actor_reference": "Demo User",
+					"event_time": now_datetime(),
+					"summary": "Thank you so much for finding it! Can we meet at the coffee shop tomorrow?",
+					"reference_doctype": "Recovery Message",
+				}
+			)
+			timeline5.insert(ignore_permissions=True)
+
+			created_data["timeline_events"] = "created"
+
+	# 9. Create additional recovery cases with different handover statuses
+	if owner_profile_name and item1_name and activated_qr:
+		# Create a case in "Return Planned" status
+		case2_title = f"Recovery - Keys - {now_datetime().strftime('%Y%m%d%H%M%S')}"
+		if not frappe.db.exists("Recovery Case", {"case_title": case2_title}):
+			recovery_case2 = frappe.get_doc(
+				{
+					"doctype": "Recovery Case",
+					"case_title": case2_title,
+					"qr_code_tag": activated_qr.get("name") if activated_qr else None,
+					"registered_item": item1_name,
+					"owner_profile": owner_profile_name,
+					"status": "Return Planned",
+					"opened_on": now_datetime(),
+					"last_activity_on": now_datetime(),
+					"finder_session_id": "demo_finder_002",
+					"finder_name": "Jane Finder",
+					"finder_contact_hint": "+9876543211",
+					"handover_status": "Return Planned",
+					"handover_note": "Planning to meet tomorrow at 3 PM",
+				}
+			)
+			recovery_case2.insert(ignore_permissions=True)
+			created_data["recovery_case_2"] = recovery_case2.name
+
+			# Add timeline for case 2
+			timeline_case2 = frappe.get_doc(
+				{
+					"doctype": "Recovery Timeline Event",
+					"recovery_case": recovery_case2.name,
+					"event_type": "Status Updated",
+					"event_label": "Return Planned",
+					"actor_type": "Owner",
+					"actor_reference": "Demo User",
+					"event_time": now_datetime(),
+					"summary": "Handover status changed to Return Planned",
+				}
+			)
+			timeline_case2.insert(ignore_permissions=True)
+
+		# Create a case in "Recovered" status
+		case3_title = f"Recovery - Wallet - {now_datetime().strftime('%Y%m%d%H%M%S')}"
+		if not frappe.db.exists("Recovery Case", {"case_title": case3_title}):
+			recovery_case3 = frappe.get_doc(
+				{
+					"doctype": "Recovery Case",
+					"case_title": case3_title,
+					"qr_code_tag": activated_qr.get("name") if activated_qr else None,
+					"registered_item": item1_name,
+					"owner_profile": owner_profile_name,
+					"status": "Recovered",
+					"opened_on": now_datetime(),
+					"last_activity_on": now_datetime(),
+					"closed_on": now_datetime(),
+					"finder_session_id": "demo_finder_003",
+					"finder_name": "Bob Finder",
+					"finder_contact_hint": "+9876543212",
+					"handover_status": "Recovered",
+					"handover_note": "Item successfully returned",
+				}
+			)
+			recovery_case3.insert(ignore_permissions=True)
+			created_data["recovery_case_3"] = recovery_case3.name
+
+			# Add timeline for case 3
+			timeline_case3 = frappe.get_doc(
+				{
+					"doctype": "Recovery Timeline Event",
+					"recovery_case": recovery_case3.name,
+					"event_type": "Case Closed",
+					"event_label": "Item Recovered",
+					"actor_type": "Owner",
+					"actor_reference": "Demo User",
+					"event_time": now_datetime(),
+					"summary": "Case marked as recovered - item successfully returned",
+				}
+			)
+			timeline_case3.insert(ignore_permissions=True)
+
 	frappe.db.commit()
 
 	# Get the public test token
@@ -559,17 +760,40 @@ def create_demo_data():
 				"finder_session": created_data.get("finder_session"),
 				"scan_event": created_data.get("scan_event"),
 				"recovery_messages": created_data.get("recovery_messages"),
+				"location_share": created_data.get("location_share"),
+				"timeline_events": created_data.get("timeline_events"),
+			},
+			"handover_cases": {
+				"case_with_location": created_data.get("recovery_case_id"),
+				"case_return_planned": created_data.get("recovery_case_2"),
+				"case_recovered": created_data.get("recovery_case_3"),
 			},
 			"notifications": {
 				"preference": created_data.get("notification_preference"),
 				"event_logs": created_data.get("notification_event_logs"),
 				"email_enabled": True,
 			},
+			"sample_coordinates": {
+				"latitude": 37.7749,
+				"longitude": -122.4194,
+				"description": "San Francisco, CA (coffee shop location)",
+			},
+			"handover_statuses": {
+				"location_shared": "Location Shared",
+				"return_planned": "Return Planned",
+				"recovered": "Recovered",
+			},
 			"email_trigger_scenario": {
 				"description": "Submit a finder message using the public token",
 				"api_method": "scanifyme.messaging.api.message_api.submit_finder_message",
 				"token": public_token,
 				"expected_result": "Email notification sent to demo@scanifyme.app",
+			},
+			"location_sharing_scenario": {
+				"description": "Submit a location share using the public token",
+				"api_method": "scanifyme.public_portal.api.location_api.submit_finder_location",
+				"token": public_token,
+				"expected_result": "Location shared successfully, timeline updated",
 			},
 		},
 	}
@@ -632,12 +856,59 @@ def get_demo_tokens():
 		)
 		sample_notification_ids = sample_notifications
 
+	# Get location share info
+	location_share_info = None
+	if recovery_case_id:
+		location = frappe.db.get_value(
+			"Location Share",
+			{"recovery_case": recovery_case_id, "is_latest": 1},
+			["name", "latitude", "longitude", "shared_on"],
+			as_dict=True,
+		)
+		if location:
+			location_share_info = {
+				"name": location.name,
+				"latitude": location.latitude,
+				"longitude": location.longitude,
+				"shared_on": str(location.shared_on) if location.shared_on else None,
+			}
+
+	# Get handover info
+	handover_info = None
+	if recovery_case_id:
+		handover_info = frappe.db.get_value(
+			"Recovery Case",
+			recovery_case_id,
+			["handover_status", "handover_note", "latest_location_summary"],
+			as_dict=True,
+		)
+
+	# Get all recovery cases with different handover statuses
+	recovery_cases = []
+	if owner_profile:
+		cases = frappe.get_list(
+			"Recovery Case",
+			filters={"owner_profile": owner_profile},
+			fields=["name", "case_title", "status", "handover_status"],
+			order_by="creation desc",
+			limit=10,
+		)
+		recovery_cases = cases
+
 	return {
 		"batch": demo_batch,
 		"tags": qr_tags,
 		"recovery_case_id": recovery_case_id,
+		"recovery_cases": recovery_cases,
+		"location_share": location_share_info,
+		"handover": handover_info,
 		"unread_notification_count": unread_count,
 		"sample_notifications": sample_notification_ids,
 		"demo_email": demo_user_email,
 		"email_enabled": True,
+		"sample_coordinates": {
+			"latitude": 37.7749,
+			"longitude": -122.4194,
+			"description": "San Francisco, CA (coffee shop location)",
+		},
 	}

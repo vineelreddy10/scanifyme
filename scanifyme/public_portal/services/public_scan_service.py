@@ -213,6 +213,10 @@ def get_public_item_context_api(token: str) -> dict:
 	# Return safe public context
 	public_context = get_public_item_context(registered_item)
 
+	# Add QR tag name to context (needed for location sharing)
+	public_context["qr_tag_name"] = qr_tag.get("name") if qr_tag else None
+	public_context["owner_profile_name"] = registered_item.get("owner_profile")
+
 	return {
 		"success": True,
 		"item": public_context,

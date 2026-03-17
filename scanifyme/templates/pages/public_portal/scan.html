@@ -114,6 +114,73 @@
                 <p id="error-text" style="margin: 0; color: #991b1b;">Please try again later.</p>
             </div>
         </div>
+        
+        <!-- Location Sharing Section -->
+        <div style="padding: 20px; border-top: 1px solid #e5e7eb;">
+            <h3 style="margin: 0 0 16px; font-size: 18px; color: #1f2937;">Share Your Location</h3>
+            <p style="margin: 0 0 16px; color: #6b7280; font-size: 14px;">Help the owner find you by sharing your current location.</p>
+            
+            <button type="button" id="share-location-btn" 
+                style="background: #10b981; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;"
+                onmouseover="this.style.background='#059669'"
+                onmouseout="this.style.background='#10b981'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                Share Current Location
+            </button>
+            
+            <!-- Location Success Message -->
+            <div id="location-success" style="display: none; text-align: center; padding: 20px; background: #f0fdf4; border-radius: 8px; margin-top: 16px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <h3 style="margin: 0 0 8px; color: #16a34a;">Location Shared!</h3>
+                <p style="margin: 0; color: #166534;">Your location has been shared with the owner.</p>
+            </div>
+            
+            <!-- Location Error Message -->
+            <div id="location-error" style="display: none; text-align: center; padding: 20px; background: #fef2f2; border-radius: 8px; margin-top: 16px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <h3 style="margin: 0 0 8px; color: #dc2626;">Location Not Available</h3>
+                <p id="location-error-text" style="margin: 0; color: #991b1b;">Please enable location access or enter your location manually.</p>
+            </div>
+            
+            <!-- Manual Location Input (shown if geolocation fails) -->
+            <div id="manual-location" style="display: none; margin-top: 16px;">
+                <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px;">Or enter your location manually:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label for="latitude" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Latitude *</label>
+                        <input type="number" id="latitude" step="any" required
+                            style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label for="longitude" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Longitude *</label>
+                        <input type="number" id="longitude" step="any" required
+                            style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                    </div>
+                </div>
+                <div style="margin-top: 12px;">
+                    <label for="location_note" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Note (optional)</label>
+                    <input type="text" id="location_note" 
+                        style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box;"
+                        placeholder="e.g., Found at the coffee shop on Main Street">
+                </div>
+                <button type="button" id="submit-manual-location" 
+                    style="background: #10b981; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 12px; width: 100%;"
+                    onmouseover="this.style.background='#059669'"
+                    onmouseout="this.style.background='#10b981'">
+                    Share Location
+                </button>
+            </div>
+        </div>
     </div>
     
     <p style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 12px;">
@@ -173,6 +240,133 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorText.textContent = err.message || 'Please try again later.';
                 errorDiv.style.display = 'block';
             }
+        });
+    }
+    
+    // Location sharing functionality
+    const shareLocationBtn = document.getElementById('share-location-btn');
+    const locationSuccess = document.getElementById('location-success');
+    const locationError = document.getElementById('location-error');
+    const locationErrorText = document.getElementById('location-error-text');
+    const manualLocation = document.getElementById('manual-location');
+    const submitManualLocation = document.getElementById('submit-manual-location');
+    const token = {{ token | tojson }};
+    const csrfToken = {{ csrf_token | tojson }};
+    
+    if (shareLocationBtn) {
+        shareLocationBtn.addEventListener('click', function() {
+            if (!navigator.geolocation) {
+                locationErrorText.textContent = 'Geolocation is not supported by your browser. Please enter your location manually.';
+                locationError.style.display = 'block';
+                manualLocation.style.display = 'block';
+                return;
+            }
+            
+            shareLocationBtn.disabled = true;
+            shareLocationBtn.textContent = 'Getting location...';
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Success - submit location
+                    submitLocation(position.coords.latitude, position.coords.longitude, position.coords.accuracy, null);
+                    shareLocationBtn.disabled = false;
+                    shareLocationBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Share Current Location';
+                },
+                function(error) {
+                    // Error - show manual input
+                    let errorMessage = 'Unable to get your location. ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage += 'Please enable location access or enter manually.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage += 'Location information unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage += 'Location request timed out.';
+                            break;
+                        default:
+                            errorMessage += 'Please enter your location manually.';
+                    }
+                    locationErrorText.textContent = errorMessage;
+                    locationError.style.display = 'block';
+                    manualLocation.style.display = 'block';
+                    shareLocationBtn.disabled = false;
+                    shareLocationBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Share Current Location';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        });
+    }
+    
+    async function submitLocation(lat, lng, accuracy, note) {
+        try {
+            const response = await fetch('/api/method/scanifyme.public_portal.api.location_api.submit_finder_location', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Frappe-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    token: token,
+                    latitude: lat,
+                    longitude: lng,
+                    accuracy_meters: accuracy,
+                    note: note || document.getElementById('location_note')?.value,
+                    source: 'Browser Geolocation'
+                }),
+                credentials: 'include'
+            });
+            
+            const result = await response.json();
+            
+            if (result.exc) {
+                throw new Error('Server error');
+            }
+            
+            if (result.message && result.message.success) {
+                locationSuccess.style.display = 'block';
+                locationError.style.display = 'none';
+                manualLocation.style.display = 'none';
+                shareLocationBtn.style.display = 'none';
+            } else {
+                throw new Error(result.message && result.message.error || 'Failed to share location');
+            }
+        } catch (err) {
+            locationErrorText.textContent = err.message || 'Failed to share location. Please try again.';
+            locationError.style.display = 'block';
+        }
+    }
+    
+    if (submitManualLocation) {
+        submitManualLocation.addEventListener('click', function() {
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lng = parseFloat(document.getElementById('longitude').value);
+            const note = document.getElementById('location_note').value;
+            
+            if (isNaN(lat) || isNaN(lng)) {
+                locationErrorText.textContent = 'Please enter valid latitude and longitude values.';
+                locationError.style.display = 'block';
+                return;
+            }
+            
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                locationErrorText.textContent = 'Please enter valid coordinates (lat: -90 to 90, lng: -180 to 180).';
+                locationError.style.display = 'block';
+                return;
+            }
+            
+            submitManualLocation.disabled = true;
+            submitManualLocation.textContent = 'Sharing...';
+            
+            submitLocation(lat, lng, null, note).finally(function() {
+                submitManualLocation.disabled = false;
+                submitManualLocation.textContent = 'Share Location';
+            });
         });
     }
 });
