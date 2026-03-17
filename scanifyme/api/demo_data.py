@@ -55,6 +55,10 @@ def create_demo_data():
 	else:
 		created_data["user"] = demo_user_email
 
+	# Update demo user's email to ensure it's properly set
+	frappe.db.set_value("User", demo_user_email, "enabled", 1)
+	frappe.db.commit()
+
 	# Create owner profile for demo user
 	owner_profile_name = None
 	if frappe.db.exists("Owner Profile", {"user": demo_user_email}):
@@ -368,24 +372,40 @@ def create_demo_data():
 
 		created_data["recovery_messages"] = "created"
 
-	# 5. Create Notification Preference for the owner (if not exists)
-	if owner_profile_name and not frappe.db.exists(
-		"Notification Preference", {"owner_profile": owner_profile_name}
-	):
-		notification_pref = frappe.get_doc(
-			{
-				"doctype": "Notification Preference",
-				"owner_profile": owner_profile_name,
-				"enable_in_app_notifications": 1,
-				"enable_email_notifications": 1,
-				"notify_on_new_finder_message": 1,
-				"notify_on_case_opened": 1,
-				"notify_on_case_status_change": 1,
-				"is_default": 1,
-			}
+	# 5. Create Notification Preference for the owner (if not exists) or update existing
+	if owner_profile_name:
+		existing_pref = frappe.db.get_value(
+			"Notification Preference", {"owner_profile": owner_profile_name}, "name"
 		)
-		notification_pref.insert(ignore_permissions=True)
-		created_data["notification_preference"] = notification_pref.name
+		if existing_pref:
+			# Update existing preference to ensure email is enabled
+			frappe.db.set_value(
+				"Notification Preference",
+				existing_pref,
+				{
+					"enable_in_app_notifications": 1,
+					"enable_email_notifications": 1,
+					"notify_on_new_finder_message": 1,
+					"notify_on_case_opened": 1,
+					"notify_on_case_status_change": 1,
+				},
+			)
+			created_data["notification_preference"] = existing_pref
+		else:
+			notification_pref = frappe.get_doc(
+				{
+					"doctype": "Notification Preference",
+					"owner_profile": owner_profile_name,
+					"enable_in_app_notifications": 1,
+					"enable_email_notifications": 1,
+					"notify_on_new_finder_message": 1,
+					"notify_on_case_opened": 1,
+					"notify_on_case_status_change": 1,
+					"is_default": 1,
+				}
+			)
+			notification_pref.insert(ignore_permissions=True)
+			created_data["notification_preference"] = notification_pref.name
 
 	# 6. Create Notification Event Logs (if recovery case exists)
 	if recovery_case_name and owner_profile_name:
@@ -530,6 +550,7 @@ def create_demo_data():
 		"data": {
 			"demo_user": demo_user_email,
 			"demo_password": "demo123",
+			"demo_email": demo_user_email,
 			"owner_profile": owner_profile_name,
 			"categories": created_categories,
 			"qr_batch": created_data.get("qr_batch"),
@@ -542,6 +563,13 @@ def create_demo_data():
 			"notifications": {
 				"preference": created_data.get("notification_preference"),
 				"event_logs": created_data.get("notification_event_logs"),
+				"email_enabled": True,
+			},
+			"email_trigger_scenario": {
+				"description": "Submit a finder message using the public token",
+				"api_method": "scanifyme.messaging.api.message_api.submit_finder_message",
+				"token": public_token,
+				"expected_result": "Email notification sent to demo@scanifyme.app",
 			},
 		},
 	}
@@ -610,4 +638,6 @@ def get_demo_tokens():
 		"recovery_case_id": recovery_case_id,
 		"unread_notification_count": unread_count,
 		"sample_notifications": sample_notification_ids,
+		"demo_email": demo_user_email,
+		"email_enabled": True,
 	}

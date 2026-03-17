@@ -5,6 +5,7 @@ This module provides business logic for:
 - Logging notification events
 - Managing owner notification preferences
 - Determining when to send notifications
+- Email notification delivery
 """
 
 import frappe
@@ -268,6 +269,7 @@ def notify_finder_message_received(
 	recovery_case: str,
 	message_summary: str,
 	priority: str = "Normal",
+	send_email: bool = True,
 ) -> Optional[str]:
 	"""
 	Notify owner that a finder message was received.
@@ -277,6 +279,7 @@ def notify_finder_message_received(
 	    recovery_case: Recovery Case name
 	    message_summary: Summary of the message
 	    priority: Priority level (Low, Normal, High)
+	    send_email: Whether to send email notification (default True)
 
 	Returns:
 	    Notification Event Log name or None
@@ -294,7 +297,7 @@ def notify_finder_message_received(
 	title = f"New message for {item_name or 'your item'}"
 	route = f"/frontend/recovery/{recovery_case}"
 
-	return log_notification_event(
+	notification_id = log_notification_event(
 		event_type="Finder Message Received",
 		owner_profile=owner_profile,
 		recovery_case=recovery_case,
@@ -306,6 +309,37 @@ def notify_finder_message_received(
 		priority=priority,
 	)
 
+	# Send email notification if enabled
+	if send_email and preferences and preferences.get("enable_email_notifications"):
+		from scanifyme.notifications.services.notification_delivery_service import (
+			send_email_notification,
+		)
+
+		email_result = send_email_notification(
+			event_type="Finder Message Received",
+			owner_profile=owner_profile,
+			recovery_case=recovery_case,
+			message_summary=message_summary,
+		)
+
+		# Update notification log with email status
+		if notification_id:
+			if email_result.get("success"):
+				frappe.db.set_value(
+					"Notification Event Log",
+					notification_id,
+					{"status": "Sent", "delivered_on": now_datetime()},
+				)
+			else:
+				frappe.db.set_value(
+					"Notification Event Log",
+					notification_id,
+					{"status": "Failed", "error_message": email_result.get("reason", "Email failed")},
+				)
+			frappe.db.commit()
+
+	return notification_id
+
 
 def notify_recovery_case_opened(
 	owner_profile: str,
@@ -313,6 +347,7 @@ def notify_recovery_case_opened(
 	registered_item: str,
 	qr_code_tag: str,
 	priority: str = "High",
+	send_email: bool = True,
 ) -> Optional[str]:
 	"""
 	Notify owner that a recovery case was opened.
@@ -323,6 +358,7 @@ def notify_recovery_case_opened(
 	    registered_item: Registered Item name
 	    qr_code_tag: QR Code Tag name
 	    priority: Priority level (Low, Normal, High)
+	    send_email: Whether to send email notification (default True)
 
 	Returns:
 	    Notification Event Log name or None
@@ -338,7 +374,7 @@ def notify_recovery_case_opened(
 	title = f"New recovery case: {item_name}"
 	route = f"/frontend/recovery/{recovery_case}"
 
-	return log_notification_event(
+	notification_id = log_notification_event(
 		event_type="Recovery Case Opened",
 		owner_profile=owner_profile,
 		recovery_case=recovery_case,
@@ -351,6 +387,37 @@ def notify_recovery_case_opened(
 		route=route,
 		priority=priority,
 	)
+
+	# Send email notification if enabled
+	if send_email and preferences and preferences.get("enable_email_notifications"):
+		from scanifyme.notifications.services.notification_delivery_service import (
+			send_email_notification,
+		)
+
+		email_result = send_email_notification(
+			event_type="Recovery Case Opened",
+			owner_profile=owner_profile,
+			recovery_case=recovery_case,
+			registered_item=registered_item,
+		)
+
+		# Update notification log with email status
+		if notification_id:
+			if email_result.get("success"):
+				frappe.db.set_value(
+					"Notification Event Log",
+					notification_id,
+					{"status": "Sent", "delivered_on": now_datetime()},
+				)
+			else:
+				frappe.db.set_value(
+					"Notification Event Log",
+					notification_id,
+					{"status": "Failed", "error_message": email_result.get("reason", "Email failed")},
+				)
+			frappe.db.commit()
+
+	return notification_id
 
 
 def notify_owner_reply_sent(
@@ -385,6 +452,7 @@ def notify_case_status_updated(
 	old_status: str,
 	new_status: str,
 	priority: str = "Normal",
+	send_email: bool = True,
 ) -> Optional[str]:
 	"""
 	Notify that a case status was updated.
@@ -395,6 +463,7 @@ def notify_case_status_updated(
 	    old_status: Previous status
 	    new_status: New status
 	    priority: Priority level (Low, Normal, High)
+	    send_email: Whether to send email notification (default True)
 
 	Returns:
 	    Notification Event Log name or None
@@ -412,7 +481,7 @@ def notify_case_status_updated(
 	title = f"Case status updated: {item_name or 'Recovery'}"
 	route = f"/frontend/recovery/{recovery_case}"
 
-	return log_notification_event(
+	notification_id = log_notification_event(
 		event_type="Case Status Updated",
 		owner_profile=owner_profile,
 		recovery_case=recovery_case,
@@ -423,6 +492,31 @@ def notify_case_status_updated(
 		route=route,
 		priority=priority,
 	)
+
+	# Send email notification if enabled
+	if send_email and preferences and preferences.get("enable_email_notifications"):
+		from scanifyme.notifications.services.notification_delivery_service import (
+			send_email_notification,
+		)
+
+		email_result = send_email_notification(
+			event_type="Case Status Updated",
+			owner_profile=owner_profile,
+			recovery_case=recovery_case,
+			old_status=old_status,
+			new_status=new_status,
+		)
+
+		# Update notification log with email status if email was sent
+		if notification_id and email_result.get("success"):
+			frappe.db.set_value(
+				"Notification Event Log",
+				notification_id,
+				{"status": "Sent", "delivered_on": now_datetime()},
+			)
+			frappe.db.commit()
+
+	return notification_id
 
 
 # =============================================================================
