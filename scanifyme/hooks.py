@@ -153,23 +153,18 @@ add_to_apps_screen = [
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"scanifyme.tasks.all"
-# 	],
-# 	"daily": [
-# 		"scanifyme.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"scanifyme.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"scanifyme.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"scanifyme.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"hourly": [
+		"scanifyme.recovery.services.cleanup_service.expire_stale_finder_sessions",
+	],
+	"daily": [
+		"scanifyme.recovery.services.cleanup_service.recompute_case_latest_metadata",
+		"scanifyme.recovery.services.cleanup_service.health_check_notification_backlog",
+	],
+	"weekly": [
+		"scanifyme.recovery.services.cleanup_service.cleanup_old_scan_events",
+	],
+}
 
 # Testing
 # -------

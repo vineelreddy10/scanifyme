@@ -138,6 +138,27 @@
     "fieldname": "route",
     "fieldtype": "Data",
     "label": "Route"
+   },
+   {
+    "fieldname": "dedupe_key",
+    "fieldtype": "Data",
+    "label": "Dedupe Key"
+   },
+   {
+    "fieldname": "retry_count",
+    "fieldtype": "Int",
+    "label": "Retry Count",
+    "default": "0"
+   },
+   {
+    "fieldname": "last_retry_on",
+    "fieldtype": "Datetime",
+    "label": "Last Retry On"
+   },
+   {
+    "fieldname": "processing_note",
+    "fieldtype": "Small Text",
+    "label": "Processing Note"
    }
   ],
  "grid_page_length": 50,

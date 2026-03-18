@@ -63,12 +63,17 @@
    "fieldtype": "Data",
    "label": "Reference Name"
   },
-  {
-   "fieldname": "metadata_json",
-   "fieldtype": "Long Text",
-   "label": "Metadata (JSON)"
-  }
- ],
+   {
+    "fieldname": "metadata_json",
+    "fieldtype": "Long Text",
+    "label": "Metadata (JSON)"
+   },
+   {
+    "fieldname": "dedupe_key",
+    "fieldtype": "Data",
+    "label": "Dedupe Key"
+   }
+  ],
  "permissions": [
   {
    "role": "System Manager",

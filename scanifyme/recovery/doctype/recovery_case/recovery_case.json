@@ -105,12 +105,27 @@
    "fieldtype": "Datetime",
    "label": "Owner Last Viewed On"
   },
-  {
-   "fieldname": "latest_location_summary",
-   "fieldtype": "Data",
-   "label": "Latest Location Summary"
-  }
- ],
+   {
+    "fieldname": "latest_location_summary",
+    "fieldtype": "Data",
+    "label": "Latest Location Summary"
+   },
+   {
+    "fieldname": "latest_event_on",
+    "fieldtype": "Datetime",
+    "label": "Latest Event On"
+   },
+   {
+    "fieldname": "latest_location_on",
+    "fieldtype": "Datetime",
+    "label": "Latest Location On"
+   },
+   {
+    "fieldname": "latest_notification_on",
+    "fieldtype": "Datetime",
+    "label": "Latest Notification On"
+   }
+  ],
  "permissions": [
   {
    "role": "System Manager",

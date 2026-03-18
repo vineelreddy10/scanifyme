@@ -912,3 +912,290 @@ def get_demo_tokens():
 			"description": "San Francisco, CA (coffee shop location)",
 		},
 	}
+
+
+@frappe.whitelist()
+def create_reliability_demo_data():
+	"""
+	Create demo data for reliability and maintenance testing.
+
+	This creates:
+	- Failed notification events for retry testing
+	- Stale/expired finder sessions for cleanup testing
+	- Cases with metadata for recompute testing
+	- Various notification statuses for queue testing
+
+	Returns:
+	    dict with created demo data info
+	"""
+	# Security: Only allow in development
+	if frappe.flags.in_import or frappe.flags.in_patch:
+		pass  # Allow in bench context
+	elif not has_admin_role():
+		frappe.throw("Permission denied. Admin role required.", frappe.PermissionError)
+
+	from frappe.utils import add_to_date
+	import random
+
+	created_data = {}
+
+	# Get demo user and owner profile
+	demo_user_email = "demo@scanifyme.app"
+	owner_profile = frappe.db.get_value("Owner Profile", {"user": demo_user_email}, "name")
+
+	if not owner_profile:
+		return {"success": False, "error": "Run create_demo_data() first"}
+
+	# Get an existing recovery case
+	recovery_case = frappe.db.get_value(
+		"Recovery Case",
+		{"owner_profile": owner_profile, "status": ["!=", "Closed"]},
+		"name",
+	)
+
+	if not recovery_case:
+		return {"success": False, "error": "No recovery case found. Run create_demo_data() first"}
+
+	created_data["recovery_case"] = recovery_case
+
+	# 1. Create failed notification events for retry testing
+	failed_notifications = []
+	for i in range(3):
+		try:
+			notification = frappe.get_doc(
+				{
+					"doctype": "Notification Event Log",
+					"event_type": random.choice(
+						[
+							"Finder Message Received",
+							"Recovery Case Opened",
+							"Case Status Updated",
+						]
+					),
+					"owner_profile": owner_profile,
+					"recovery_case": recovery_case,
+					"channel": "Email",
+					"status": "Failed",
+					"error_message": f"Demo failed notification #{i + 1} - SMTP connection timeout",
+					"title": f"Test Notification {i + 1}",
+					"triggered_on": add_to_date(now_datetime(), hours=-random.randint(1, 24)),
+					"priority": random.choice(["Low", "Normal", "High"]),
+					"retry_count": random.randint(0, 2),
+				}
+			)
+			notification.insert(ignore_permissions=True)
+			failed_notifications.append(notification.name)
+		except Exception:
+			pass
+
+	created_data["failed_notifications"] = failed_notifications
+
+	# 2. Create queued notifications for queue testing
+	queued_notifications = []
+	for i in range(2):
+		try:
+			notification = frappe.get_doc(
+				{
+					"doctype": "Notification Event Log",
+					"event_type": random.choice(
+						[
+							"Finder Message Received",
+							"Case Status Updated",
+						]
+					),
+					"owner_profile": owner_profile,
+					"recovery_case": recovery_case,
+					"channel": random.choice(["In App", "Email"]),
+					"status": "Queued",
+					"title": f"Queued Notification {i + 1}",
+					"triggered_on": now_datetime(),
+					"priority": "Normal",
+				}
+			)
+			notification.insert(ignore_permissions=True)
+			queued_notifications.append(notification.name)
+		except Exception:
+			pass
+
+	created_data["queued_notifications"] = queued_notifications
+
+	# 3. Create stale/expired finder sessions for cleanup testing
+	stale_sessions = []
+	for i in range(3):
+		try:
+			session_id = f"stale_{random.randint(100000, 999999)}"
+
+			# Create session with old timestamps
+			session = frappe.get_doc(
+				{
+					"doctype": "Finder Session",
+					"session_id": session_id,
+					"status": "Active",
+					"started_on": add_to_date(now_datetime(), hours=-random.randint(25, 72)),
+					"last_seen_on": add_to_date(now_datetime(), hours=-random.randint(3, 24)),
+					"ip_hash": f"demo_hash_{i}",
+				}
+			)
+			session.insert(ignore_permissions=True)
+			stale_sessions.append(session.name)
+		except Exception:
+			pass
+
+	# Also create some explicitly expired sessions
+	for i in range(2):
+		try:
+			session_id = f"expired_{random.randint(100000, 999999)}"
+			session = frappe.get_doc(
+				{
+					"doctype": "Finder Session",
+					"session_id": session_id,
+					"status": "Expired",
+					"started_on": add_to_date(now_datetime(), hours=-random.randint(48, 96)),
+					"last_seen_on": add_to_date(now_datetime(), hours=-random.randint(25, 48)),
+					"ip_hash": f"expired_hash_{i}",
+				}
+			)
+			session.insert(ignore_permissions=True)
+			stale_sessions.append(session.name)
+		except Exception:
+			pass
+
+	created_data["stale_finder_sessions"] = stale_sessions
+
+	# 4. Create sent notifications for history
+	sent_notifications = []
+	for i in range(5):
+		try:
+			notification = frappe.get_doc(
+				{
+					"doctype": "Notification Event Log",
+					"event_type": random.choice(
+						[
+							"Finder Message Received",
+							"Recovery Case Opened",
+							"Case Status Updated",
+							"Owner Reply Sent",
+						]
+					),
+					"owner_profile": owner_profile,
+					"recovery_case": recovery_case,
+					"channel": random.choice(["In App", "Email"]),
+					"status": "Sent",
+					"title": f"Sent Notification {i + 1}",
+					"triggered_on": add_to_date(now_datetime(), days=-random.randint(1, 7)),
+					"delivered_on": add_to_date(
+						now_datetime(), days=-random.randint(1, 7), hours=random.randint(0, 23)
+					),
+					"priority": "Normal",
+					"is_read": random.choice([0, 1]),
+				}
+			)
+			notification.insert(ignore_permissions=True)
+			sent_notifications.append(notification.name)
+		except Exception:
+			pass
+
+	created_data["sent_notifications"] = sent_notifications
+
+	# 5. Get stale session IDs for testing
+	stale_session_ids = frappe.get_list(
+		"Finder Session",
+		filters={
+			"status": ["in", ["Active", "Expired"]],
+			"started_on": ["<", add_to_date(now_datetime(), hours=-24)],
+		},
+		fields=["name", "session_id", "status", "started_on"],
+		limit=5,
+	)
+
+	created_data["stale_session_ids"] = [s.session_id for s in stale_session_ids]
+
+	frappe.db.commit()
+
+	return {
+		"success": True,
+		"created": created_data,
+		"message": "Reliability demo data created",
+	}
+
+
+@frappe.whitelist()
+def get_reliability_demo_summary():
+	"""
+	Get summary of reliability test data for validation.
+
+	Returns:
+	    dict with reliability test data counts
+	"""
+	if not has_admin_role():
+		frappe.throw("Permission denied. Admin role required.", frappe.PermissionError)
+
+	from frappe.utils import add_to_date
+
+	demo_user_email = "demo@scanifyme.app"
+	owner_profile = frappe.db.get_value("Owner Profile", {"user": demo_user_email}, "name")
+
+	if not owner_profile:
+		return {"success": False, "error": "Run create_demo_data() first"}
+
+	# Count by notification status
+	notification_stats = {
+		"failed": frappe.db.count(
+			"Notification Event Log",
+			{"status": "Failed", "owner_profile": owner_profile},
+		),
+		"queued": frappe.db.count(
+			"Notification Event Log",
+			{"status": "Queued", "owner_profile": owner_profile},
+		),
+		"sent": frappe.db.count(
+			"Notification Event Log",
+			{"status": "Sent", "owner_profile": owner_profile},
+		),
+	}
+
+	# Count finder sessions by status
+	session_stats = {
+		"active": frappe.db.count(
+			"Finder Session",
+			{"status": "Active"},
+		),
+		"expired": frappe.db.count(
+			"Finder Session",
+			{"status": "Expired"},
+		),
+		"stale_24h": frappe.db.count(
+			"Finder Session",
+			{
+				"status": "Active",
+				"started_on": ["<", add_to_date(now_datetime(), hours=-24)],
+			},
+		),
+	}
+
+	# Get failed notification details
+	failed_notifications = frappe.get_list(
+		"Notification Event Log",
+		filters={"status": "Failed", "owner_profile": owner_profile},
+		fields=["name", "event_type", "error_message", "retry_count"],
+		limit=5,
+	)
+
+	# Get stale sessions
+	stale_sessions = frappe.get_list(
+		"Finder Session",
+		filters={
+			"status": ["in", ["Active", "Expired"]],
+			"started_on": ["<", add_to_date(now_datetime(), hours=-24)],
+		},
+		fields=["name", "session_id", "status", "started_on"],
+		limit=5,
+	)
+
+	return {
+		"success": True,
+		"notifications": notification_stats,
+		"sessions": session_stats,
+		"failed_notifications": failed_notifications,
+		"stale_sessions": stale_sessions,
+	}
