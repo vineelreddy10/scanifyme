@@ -8,6 +8,7 @@ to interact with the items module.
 import frappe
 from frappe.utils import cint
 from scanifyme.items.services import item_service
+from scanifyme.items.services import reward_service as reward_svc
 
 
 @frappe.whitelist()
@@ -175,3 +176,59 @@ def get_item_categories() -> list:
 		ignore_permissions=True,
 	)
 	return categories
+
+
+# ============== REWARD APIS ==============
+
+
+@frappe.whitelist()
+def get_item_reward_settings(item: str) -> dict:
+	"""
+	Get reward settings for an item.
+
+	Args:
+	    item: Registered Item name
+
+	Returns:
+	    Dict with reward settings
+	"""
+	if not item:
+		frappe.throw("Item ID is required")
+
+	return reward_svc.get_item_reward_settings(item)
+
+
+@frappe.whitelist()
+def update_item_reward_settings(
+	item: str,
+	reward_enabled: bool,
+	reward_amount_text: str = None,
+	reward_note: str = None,
+	reward_terms: str = None,
+	reward_visibility: str = "Public",
+) -> dict:
+	"""
+	Update reward settings for an item.
+
+	Args:
+	    item: Registered Item name
+	    reward_enabled: Whether reward is enabled
+	    reward_amount_text: Display text for reward amount
+	    reward_note: Note about the reward
+	    reward_terms: Terms and conditions
+	    reward_visibility: Visibility setting (Public, Private Mention On Contact, Disabled)
+
+	Returns:
+	    Dict with success status
+	"""
+	if not item:
+		frappe.throw("Item ID is required")
+
+	return reward_svc.apply_reward_to_item(
+		item=item,
+		reward_enabled=reward_enabled,
+		reward_amount_text=reward_amount_text,
+		reward_note=reward_note,
+		reward_terms=reward_terms,
+		reward_visibility=reward_visibility,
+	)

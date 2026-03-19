@@ -11,6 +11,7 @@ This module provides high-level functions for:
 import frappe
 from frappe.utils import now_datetime
 from typing import Optional, Dict, Any, List
+from scanifyme.utils.permissions import is_scanifyme_admin
 
 
 def activate_qr(token: str, user: Optional[str] = None) -> Dict[str, Any]:
@@ -169,13 +170,14 @@ def create_item(item_data: Dict[str, Any], user: Optional[str] = None) -> str:
 	return item_doc.name
 
 
-def link_item_to_qr(item: str, qr_tag: str) -> Dict[str, Any]:
+def link_item_to_qr(item: str, qr_tag: str, user: Optional[str] = None) -> Dict[str, Any]:
 	"""
 	Link an existing item to a QR code tag.
 
 	Args:
 	    item: Registered Item name
 	    qr_tag: QR Code Tag name
+	    user: User linking the item. If None, uses current session user.
 
 	Returns:
 	    Dict with success status
@@ -183,8 +185,24 @@ def link_item_to_qr(item: str, qr_tag: str) -> Dict[str, Any]:
 	Raises:
 	    frappe.ValidationError: If linking is not possible
 	"""
+	if not user:
+		user = frappe.session.user
+
+	# Check if user is admin - admin can link any item
+	is_admin = is_scanifyme_admin(user)
+
+	# Get owner profile (only for non-admin users)
+	owner_profile = None
+	if not is_admin:
+		owner_profile = frappe.db.get_value("Owner Profile", {"user": user}, "name")
+
 	# Get the item
 	item_doc = frappe.get_doc("Registered Item", item)
+
+	# Check ownership - admin can link any item
+	if not is_admin:
+		if item_doc.owner_profile != owner_profile:
+			frappe.throw("You don't have permission to link this item")
 
 	# Check if QR is already linked
 	if item_doc.qr_code_tag:
@@ -216,7 +234,9 @@ def link_item_to_qr(item: str, qr_tag: str) -> Dict[str, Any]:
 	return {"success": True, "message": f"Item '{item}' linked to QR code '{qr_tag}'"}
 
 
-def get_user_items(user: Optional[str] = None, status: Optional[str] = None, limit: int = 20) -> List[Dict[str, Any]]:
+def get_user_items(
+	user: Optional[str] = None, status: Optional[str] = None, limit: int = 20
+) -> List[Dict[str, Any]]:
 	"""
 	Get items for a user.
 
@@ -231,14 +251,23 @@ def get_user_items(user: Optional[str] = None, status: Optional[str] = None, lim
 	if not user:
 		user = frappe.session.user
 
-	# Get owner profile
-	owner_profile = frappe.db.get_value("Owner Profile", {"user": user}, "name")
+	# Check if user is admin - admin can see all items
+	is_admin = is_scanifyme_admin(user)
 
-	if not owner_profile:
+	# Get owner profile (only for non-admin users)
+	owner_profile = None
+	if not is_admin:
+		owner_profile = frappe.db.get_value("Owner Profile", {"user": user}, "name")
+
+	if not owner_profile and not is_admin:
 		return []
 
 	# Build filters
-	filters = {"owner_profile": owner_profile}
+	if is_admin:
+		filters = {}
+	else:
+		filters = {"owner_profile": owner_profile}
+
 	if status:
 		filters["status"] = status
 
@@ -258,6 +287,7 @@ def get_user_items(user: Optional[str] = None, status: Optional[str] = None, lim
 		],
 		order_by="activation_date desc",
 		limit=limit,
+		ignore_permissions=True,
 	)
 
 	# Get category names
@@ -293,8 +323,13 @@ def get_item_details(item: str, user: Optional[str] = None) -> Optional[Dict[str
 	if not user:
 		user = frappe.session.user
 
-	# Get owner profile
-	owner_profile = frappe.db.get_value("Owner Profile", {"user": user}, "name")
+	# Check if user is admin
+	is_admin = is_scanifyme_admin(user)
+
+	# Get owner profile (only for non-admin users)
+	owner_profile = None
+	if not is_admin:
+		owner_profile = frappe.db.get_value("Owner Profile", {"user": user}, "name")
 
 	# Get item
 	try:
@@ -302,11 +337,12 @@ def get_item_details(item: str, user: Optional[str] = None) -> Optional[Dict[str
 	except frappe.DoesNotExistError:
 		return None
 
-	# Check ownership
-	if item_doc.owner_profile != owner_profile:
-		# Check if user is admin/operations
-		if not frappe.has_permission("Registered Item", "read"):
-			return None
+	# Check ownership - admin can access all items
+	if not is_admin:
+		if item_doc.owner_profile != owner_profile:
+			# Check if user has doc permission
+			if not frappe.has_permission("Registered Item", "read"):
+				return None
 
 	# Build sanitized response
 	result = {
@@ -317,6 +353,9 @@ def get_item_details(item: str, user: Optional[str] = None) -> Optional[Dict[str
 		"public_label": item_doc.public_label,
 		"recovery_note": item_doc.recovery_note,
 		"reward_note": item_doc.reward_note,
+		"reward_enabled": bool(item_doc.reward_enabled) if item_doc.reward_enabled else False,
+		"reward_amount_text": item_doc.reward_amount_text,
+		"reward_visibility": item_doc.reward_visibility,
 		"activation_date": item_doc.activation_date,
 		"last_scan_at": item_doc.last_scan_at,
 	}
@@ -395,16 +434,22 @@ def update_item_status(item: str, status: str, user: Optional[str] = None) -> Di
 	if not user:
 		user = frappe.session.user
 
-	# Get owner profile
-	owner_profile = frappe.db.get_value("Owner Profile", {"user": user}, "name")
+	# Check if user is admin - admin can update any item
+	is_admin = is_scanifyme_admin(user)
+
+	# Get owner profile (only for non-admin users)
+	owner_profile = None
+	if not is_admin:
+		owner_profile = frappe.db.get_value("Owner Profile", {"user": user}, "name")
 
 	# Get item
 	item_doc = frappe.get_doc("Registered Item", item)
 
-	# Check ownership
-	if item_doc.owner_profile != owner_profile:
-		if not frappe.has_permission("Registered Item", "write"):
-			frappe.throw("You don't have permission to update this item")
+	# Check ownership - admin can update any item
+	if not is_admin:
+		if item_doc.owner_profile != owner_profile:
+			if not frappe.has_permission("Registered Item", "write"):
+				frappe.throw("You don't have permission to update this item")
 
 	# Validate status
 	valid_statuses = ["Draft", "Active", "Lost", "Recovered", "Archived"]

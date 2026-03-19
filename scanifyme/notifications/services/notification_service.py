@@ -564,6 +564,7 @@ def get_owner_notifications(
 		],
 		order_by="triggered_on desc",
 		limit=limit,
+		ignore_permissions=True,
 	)
 
 	return notifications

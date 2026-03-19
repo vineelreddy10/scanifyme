@@ -10,6 +10,11 @@
     "batch",
     "status",
     "column_break_6",
+    "print_job",
+    "distribution_record",
+    "assigned_on",
+    "assigned_to_user",
+    "stock_location",
     "registered_item",
     "created_on"
   ],
@@ -57,6 +62,44 @@
     {
       "fieldname": "column_break_6",
       "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "print_job",
+      "fieldtype": "Link",
+      "label": "Print Job",
+      "options": "QR Print Job",
+      "in_list_view": 0,
+      "in_standard_filter": 0
+    },
+    {
+      "fieldname": "distribution_record",
+      "fieldtype": "Link",
+      "label": "Distribution Record",
+      "options": "QR Distribution Record",
+      "in_list_view": 0,
+      "in_standard_filter": 0
+    },
+    {
+      "fieldname": "assigned_on",
+      "fieldtype": "Datetime",
+      "label": "Assigned On",
+      "read_only": 1,
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "assigned_to_user",
+      "fieldtype": "Link",
+      "label": "Assigned To User",
+      "options": "User",
+      "read_only": 1,
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "stock_location",
+      "fieldtype": "Data",
+      "label": "Stock Location",
+      "description": "Physical location of the tag (e.g., Warehouse A, Shelf B)",
+      "in_list_view": 0
     },
     {
       "fieldname": "registered_item",

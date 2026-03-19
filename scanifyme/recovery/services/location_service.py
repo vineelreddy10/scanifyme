@@ -181,7 +181,7 @@ def submit_location_share(
 	}
 
 
-def get_latest_case_location(recovery_case: str) -> dict:
+def get_latest_case_location(recovery_case: str) -> dict | None:
 	"""
 	Get the latest location share for a recovery case.
 
@@ -239,7 +239,7 @@ def get_latest_case_location(recovery_case: str) -> dict:
 			"maps_url": f"https://www.openstreetmap.org/?mlat={location.latitude}&mlon={location.longitude}#map=15/{location.latitude}/{location.longitude}",
 		}
 
-	return {}
+	return None
 
 
 def get_case_location_history(recovery_case: str) -> list:
@@ -266,6 +266,7 @@ def get_case_location_history(recovery_case: str) -> list:
 			"is_latest",
 		],
 		order_by="shared_on desc",
+		ignore_permissions=True,
 	)
 
 	result = []

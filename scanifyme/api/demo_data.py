@@ -214,7 +214,10 @@ def create_demo_data():
 				"item_category": "Laptop",
 				"public_label": "MacBook",
 				"recovery_note": "Please message me through this platform. I'll reply as soon as possible!",
-				"reward_note": "Reward: $50 for safe return",
+				"reward_enabled": 1,
+				"reward_amount_text": "₹500",
+				"reward_note": "Reward for safe return!",
+				"reward_visibility": "Public",
 				"status": "Active",
 				"activation_date": now_datetime(),
 			}
@@ -335,6 +338,11 @@ def create_demo_data():
 					"finder_name": "John Finder",
 					"finder_contact_hint": "+9876543210",
 					"latest_message_preview": "Hi, I found your MacBook...",
+					# Reward fields
+					"reward_offered": 1,
+					"reward_display_text": "₹500",
+					"reward_status": "Mentioned To Finder",
+					"reward_last_updated_on": now_datetime(),
 				}
 			)
 			recovery_case.insert(ignore_permissions=True)
@@ -1198,4 +1206,307 @@ def get_reliability_demo_summary():
 		"sessions": session_stats,
 		"failed_notifications": failed_notifications,
 		"stale_sessions": stale_sessions,
+	}
+
+
+# ==================== PRINT AND DISTRIBUTION DEMO DATA ====================
+
+
+@frappe.whitelist()
+def create_print_distribution_demo_data():
+	"""
+	Create demo data for print and distribution testing.
+
+	This creates:
+	- A QR batch with tags in different states
+	- A print job
+	- Tags marked as printed
+	- A distribution record
+	- Tags in various stock states: Generated, Printed, In Stock, Assigned, Activated
+
+	Returns:
+	    dict with created demo data info
+	"""
+	# Security: Only allow in development
+	if frappe.flags.in_import or frappe.flags.in_patch:
+		pass  # Allow in bench context
+	elif not has_admin_role():
+		frappe.throw("Permission denied. Admin role required.", frappe.PermissionError)
+
+	import uuid
+	from scanifyme.qr_management.services.qr_service import generate_qr_token, generate_qr_uid
+
+	created_data = {}
+
+	# Create a new batch for print/distribution demo
+	batch_suffix = str(uuid.uuid4())[:8]
+	batch_name = f"PrintDemo-Batch-{now_datetime().strftime('%Y%m%d')}-{batch_suffix}"
+	batch = frappe.get_doc(
+		{
+			"doctype": "QR Batch",
+			"batch_name": batch_name,
+			"batch_prefix": "PRINT",
+			"batch_size": 10,
+			"status": "Generated",
+			"naming_series": "QRB-.YYYY.-",
+		}
+	)
+	batch.insert(ignore_permissions=True)
+	created_data["qr_batch"] = batch.name
+
+	# Create tags in different lifecycle states
+	# 2 Generated, 2 Printed, 2 In Stock, 2 Assigned, 1 Activated, 1 Suspended
+	statuses = [
+		"Generated",
+		"Generated",
+		"Printed",
+		"Printed",
+		"In Stock",
+		"In Stock",
+		"Assigned",
+		"Assigned",
+		"Activated",
+		"Suspended",
+	]
+
+	created_tags = []
+	activated_tag = None
+	assigned_tags = []
+	for i in range(1, 11):
+		token = generate_qr_token()
+		uid = generate_qr_uid(f"PRINT{batch_suffix[:4].upper()}", i)
+		status = statuses[i - 1]
+
+		tag = frappe.get_doc(
+			{
+				"doctype": "QR Code Tag",
+				"qr_uid": uid,
+				"qr_token": token,
+				"qr_url": f"{frappe.utils.get_url()}/s/{token}",
+				"batch": batch.name,
+				"status": status,
+			}
+		)
+		tag.insert(ignore_permissions=True)
+
+		tag_data = {
+			"name": tag.name,
+			"uid": uid,
+			"token": token,
+			"status": status,
+		}
+
+		# Track activated tag to link to registered item
+		if status == "Activated":
+			activated_tag = tag_data
+		# Track assigned tags
+		if status == "Assigned":
+			assigned_tags.append(tag.name)
+
+		created_tags.append(tag_data)
+
+	created_data["qr_tags"] = created_tags
+
+	# Link activated tag to a registered item if owner profile exists
+	demo_user_email = "demo@scanifyme.app"
+	owner_profile = frappe.db.get_value("Owner Profile", {"user": demo_user_email}, "name")
+
+	if owner_profile and activated_tag:
+		# Create a registered item for the activated tag
+		# Use an existing category
+		item_category = frappe.db.get_value("Item Category", {}, "name")
+		item = frappe.get_doc(
+			{
+				"doctype": "Registered Item",
+				"item_name": "Demo Activated Item",
+				"owner_profile": owner_profile,
+				"qr_code_tag": activated_tag["name"],
+				"item_category": item_category or "Keys",
+				"public_label": "Demo Item",
+				"recovery_note": "This is a demo item for testing",
+				"status": "Active",
+				"activation_date": now_datetime(),
+			}
+		)
+		item.insert(ignore_permissions=True)
+
+		# Update QR tag to link to the registered item
+		frappe.db.set_value("QR Code Tag", activated_tag["name"], "registered_item", item.name)
+		created_data["registered_item"] = item.name
+
+	# Create a print job for the batch
+	job_name = f"PrintJob-{now_datetime().strftime('%Y%m%d%H%M%S')}"
+	print_job = frappe.get_doc(
+		{
+			"doctype": "QR Print Job",
+			"print_job_name": job_name,
+			"qr_batch": batch.name,
+			"status": "Printed",
+			"item_count": 10,
+			"generated_on": now_datetime(),
+			"printed_on": now_datetime(),
+			"created_by": "Administrator",
+			"notes": "Demo print job for testing",
+			"naming_series": "QPJ-.YYYY.-",
+		}
+	)
+	print_job.insert(ignore_permissions=True)
+
+	# Update printed tags with print job reference
+	for tag in created_tags:
+		if tag["status"] in ["Printed", "In Stock", "Assigned"]:
+			frappe.db.set_value("QR Code Tag", tag["name"], "print_job", print_job.name)
+
+	created_data["print_job"] = print_job.name
+
+	# Create a distribution record
+	dist_name = f"Dist-{now_datetime().strftime('%Y%m%d%H%M%S')}"
+	distribution = frappe.get_doc(
+		{
+			"doctype": "QR Distribution Record",
+			"distribution_name": dist_name,
+			"qr_batch": batch.name,
+			"status": "Delivered",
+			"distributed_to_type": "Demo",
+			"distributed_to_name": "Demo Distribution",
+			"quantity": 4,
+			"distributed_on": now_datetime(),
+			"created_by": "Administrator",
+			"notes": "Demo distribution for testing",
+			"naming_series": "QDIST-.YYYY.-",
+		}
+	)
+	distribution.insert(ignore_permissions=True)
+
+	# Update assigned tags with distribution record reference
+	for tag_name in assigned_tags[:2]:  # Only first 2
+		frappe.db.set_value("QR Code Tag", tag_name, "distribution_record", distribution.name)
+
+	created_data["distribution_record"] = distribution.name
+
+	frappe.db.commit()
+
+	# Get activation-eligible token (In Stock status)
+	eligible_tag = frappe.db.get_value(
+		"QR Code Tag",
+		{"batch": batch.name, "status": "In Stock"},
+		["name", "qr_uid", "qr_token"],
+		as_dict=True,
+	)
+
+	# Get activation-ineligible token (Suspended status)
+	ineligible_tag = frappe.db.get_value(
+		"QR Code Tag",
+		{"batch": batch.name, "status": "Suspended"},
+		["name", "qr_uid", "qr_token"],
+		as_dict=True,
+	)
+
+	# Get activation-ineligible token (Activated status)
+	already_activated_tag = frappe.db.get_value(
+		"QR Code Tag",
+		{"batch": batch.name, "status": "Activated"},
+		["name", "qr_uid", "qr_token"],
+		as_dict=True,
+	)
+
+	return {
+		"success": True,
+		"message": "Print and distribution demo data created",
+		"data": {
+			"qr_batch": created_data.get("qr_batch"),
+			"print_job": created_data.get("print_job"),
+			"distribution_record": created_data.get("distribution_record"),
+			"registered_item": created_data.get("registered_item"),
+			"tags": created_data.get("qr_tags"),
+			"stock_summary": {
+				"generated": 2,
+				"printed": 2,
+				"in_stock": 2,
+				"assigned": 2,
+				"activated": 1,
+				"suspended": 1,
+			},
+			"activation_eligible_token": eligible_tag.qr_token if eligible_tag else None,
+			"activation_eligible_uid": eligible_tag.qr_uid if eligible_tag else None,
+			"activation_ineligible_suspended_token": ineligible_tag.qr_token if ineligible_tag else None,
+			"activation_ineligible_suspended_uid": ineligible_tag.qr_uid if ineligible_tag else None,
+			"activation_ineligible_activated_token": already_activated_tag.qr_token
+			if already_activated_tag
+			else None,
+			"activation_ineligible_activated_uid": already_activated_tag.qr_uid
+			if already_activated_tag
+			else None,
+		},
+	}
+
+
+@frappe.whitelist()
+def get_print_distribution_demo_summary():
+	"""
+	Get summary of print and distribution demo data.
+
+	Returns:
+	    dict with demo data summary
+	"""
+	if not has_admin_role():
+		frappe.throw("Permission denied. Admin role required.", frappe.PermissionError)
+
+	# Get the print/distribution demo batch
+	demo_batch = frappe.db.get_value(
+		"QR Batch",
+		{"batch_name": ["like", "PrintDemo-Batch%"]},
+		"name",
+		order_by="creation desc",
+	)
+
+	if not demo_batch:
+		return {"success": False, "error": "Run create_print_distribution_demo_data() first"}
+
+	# Get stock summary
+	from scanifyme.qr_management.services import stock_service
+
+	stock_summary = stock_service.get_stock_summary(demo_batch)
+
+	# Get print jobs for this batch
+	print_jobs = frappe.db.get_all(
+		"QR Print Job",
+		filters={"qr_batch": demo_batch},
+		fields=["name", "print_job_name", "status", "item_count"],
+	)
+
+	# Get distribution records for this batch
+	distributions = frappe.db.get_all(
+		"QR Distribution Record",
+		filters={"qr_batch": demo_batch},
+		fields=["name", "distribution_name", "status", "distributed_to_type", "quantity"],
+	)
+
+	# Get tags
+	tags = frappe.db.get_all(
+		"QR Code Tag",
+		filters={"batch": demo_batch},
+		fields=["name", "qr_uid", "qr_token", "status", "print_job", "distribution_record"],
+		order_by="creation asc",
+	)
+
+	# Find activation-eligible and ineligible tokens
+	eligible_tag = next((t for t in tags if t.status == "In Stock"), None)
+	ineligible_suspended = next((t for t in tags if t.status == "Suspended"), None)
+	ineligible_activated = next((t for t in tags if t.status == "Activated"), None)
+
+	return {
+		"success": True,
+		"qr_batch": demo_batch,
+		"stock_summary": stock_summary,
+		"print_jobs": print_jobs,
+		"distributions": distributions,
+		"tags": tags,
+		"activation_eligible_token": eligible_tag.qr_token if eligible_tag else None,
+		"activation_ineligible_suspended_token": ineligible_suspended.qr_token
+		if ineligible_suspended
+		else None,
+		"activation_ineligible_activated_token": ineligible_activated.qr_token
+		if ineligible_activated
+		else None,
 	}

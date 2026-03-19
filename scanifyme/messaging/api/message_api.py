@@ -8,6 +8,7 @@ This module provides:
 
 import frappe
 from scanifyme.messaging.services import message_service
+from scanifyme.utils.permissions import is_scanifyme_admin
 
 
 def get_owner_profile_for_user() -> str:
@@ -22,8 +23,8 @@ def get_owner_profile_for_user() -> str:
 	if user == "Guest":
 		return None
 
-	# Administrator can access all cases
-	if user == "Administrator":
+	# Check if user is admin using centralized permission helper
+	if is_scanifyme_admin(user):
 		return "Administrator"
 
 	owner_profile = frappe.db.get_value(

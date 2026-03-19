@@ -35,17 +35,30 @@
         </div>
         {% endif %}
         
-        <!-- Reward Note -->
-        {% if item.reward_note %}
+        <!-- Reward Section - New Reward Structure -->
+        {% set reward = item.get('reward') %}
+        {% if reward and reward.has_reward %}
         <div style="padding: 20px; background: #f0fdf4; border-bottom: 1px solid #bbf7d0;">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="8" r="7"></circle>
                     <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
                 </svg>
+                {% if reward.is_public %}
                 <span style="color: #16a34a; font-weight: 600;">Reward Offered!</span>
+                {% else %}
+                <span style="color: #16a34a; font-weight: 600;">Reward Available (Contact Owner)</span>
+                {% endif %}
             </div>
-            <p style="margin: 8px 0 0; color: #166534; line-height: 1.6;">{{ item.reward_note }}</p>
+            {% if reward.is_public and reward.amount_text %}
+            <p style="margin: 8px 0 0; color: #166534; line-height: 1.6; font-size: 18px; font-weight: 600;">{{ reward.amount_text }}</p>
+            {% endif %}
+            {% if reward.is_public and reward.note %}
+            <p style="margin: 8px 0 0; color: #166534; line-height: 1.6;">{{ reward.note }}</p>
+            {% endif %}
+            {% if not reward.is_public %}
+            <p style="margin: 8px 0 0; color: #166534; line-height: 1.6;">Contact the owner to learn more about the reward.</p>
+            {% endif %}
         </div>
         {% endif %}
         

@@ -59,6 +59,9 @@ def resolve_public_token(token: str) -> dict:
 				"public_label",
 				"recovery_note",
 				"reward_note",
+				"reward_enabled",
+				"reward_amount_text",
+				"reward_visibility",
 				"status",
 			],
 			as_dict=True,
@@ -87,7 +90,7 @@ def get_public_item_context(registered_item: dict) -> dict:
 	Get public-safe item context for display on the public scan page.
 
 	This function filters out all private owner information and returns
-	only what should be visible to the public.
+	only what should be visible to the public. It applies reward visibility rules.
 
 	Args:
 	    registered_item: Registered item document dict
@@ -95,16 +98,45 @@ def get_public_item_context(registered_item: dict) -> dict:
 	Returns:
 	    dict with only public-safe fields
 	"""
-	# Return only safe public fields - NEVER expose owner info
-	return {
+	# Base context - always include basic info
+	context = {
 		"name": registered_item.get("name"),
 		"item_name": registered_item.get("item_name"),
 		"public_label": registered_item.get("public_label") or registered_item.get("item_name"),
 		"recovery_note": registered_item.get("recovery_note"),
-		"reward_note": registered_item.get("reward_note"),
 		"status": registered_item.get("status"),
 		"item_category": registered_item.get("item_category"),
 	}
+
+	# Apply reward visibility rules
+	reward_enabled = registered_item.get("reward_enabled")
+	reward_visibility = registered_item.get("reward_visibility") or "Public"
+
+	if not reward_enabled:
+		# Reward is disabled - show nothing
+		context["reward"] = None
+	elif reward_visibility == "Disabled":
+		# Reward is explicitly disabled - show nothing
+		context["reward"] = None
+	elif reward_visibility == "Public":
+		# Show full reward info to public
+		context["reward"] = {
+			"has_reward": True,
+			"amount_text": registered_item.get("reward_amount_text"),
+			"note": registered_item.get("reward_note"),
+			"is_public": True,
+		}
+	elif reward_visibility == "Private Mention On Contact":
+		# Only show that reward exists, not details
+		context["reward"] = {
+			"has_reward": True,
+			"amount_text": None,
+			"note": None,
+			"is_public": False,
+			"reward_available": True,
+		}
+
+	return context
 
 
 def hash_ip(ip_address: str) -> str:

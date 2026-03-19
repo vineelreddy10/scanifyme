@@ -123,6 +123,7 @@ def get_case_timeline(
 		],
 		order_by="event_time desc",
 		limit=limit,
+		ignore_permissions=True,
 	)
 
 	result = []

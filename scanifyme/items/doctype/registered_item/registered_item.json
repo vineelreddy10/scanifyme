@@ -12,7 +12,12 @@
     "item_category",
     "public_label",
     "recovery_note",
+    "reward_section",
+    "reward_enabled",
+    "reward_amount_text",
     "reward_note",
+    "reward_terms",
+    "reward_visibility",
     "status",
     "section_break_8",
     "activation_date",
@@ -67,11 +72,46 @@
       "description": "Instructions for finders on how to return the item"
     },
     {
+      "fieldname": "reward_section",
+      "fieldtype": "Section Break",
+      "label": "Reward Settings"
+    },
+    {
+      "fieldname": "reward_enabled",
+      "fieldtype": "Check",
+      "label": "Enable Reward",
+      "in_list_view": 0,
+      "description": "Enable reward for this item to incentivize return"
+    },
+    {
+      "fieldname": "reward_amount_text",
+      "fieldtype": "Data",
+      "label": "Reward Amount",
+      "in_list_view": 0,
+      "description": "Display text for reward (e.g., ₹500, $50)"
+    },
+    {
       "fieldname": "reward_note",
-      "fieldtype": "Text",
+      "fieldtype": "Small Text",
       "label": "Reward Note",
       "in_list_view": 0,
-      "description": "Reward information for finders"
+      "description": "Note about the reward for finders"
+    },
+    {
+      "fieldname": "reward_terms",
+      "fieldtype": "Small Text",
+      "label": "Reward Terms",
+      "in_list_view": 0,
+      "description": "Terms and conditions for claiming the reward"
+    },
+    {
+      "fieldname": "reward_visibility",
+      "fieldtype": "Select",
+      "label": "Reward Visibility",
+      "in_list_view": 0,
+      "options": "Public\nPrivate Mention On Contact\nDisabled",
+      "default": "Public",
+      "description": "Who can see the reward information"
     },
     {
       "fieldname": "status",

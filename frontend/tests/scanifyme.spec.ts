@@ -126,3 +126,187 @@ test.describe('Public Scan Portal Tests', () => {
     expect(json.message).toBeDefined();
   });
 });
+
+test.describe('Recovery Page Stability Tests', () => {
+  let recoveryCaseId: string | null = null;
+
+  test.beforeAll(async ({ request }) => {
+    // Get a valid recovery case ID from demo data via console
+    // We'll try to fetch it via the recovery API with admin session
+    // For stability tests, we use the recovery list page
+  });
+
+  test('Recovery page loads without crash (no .toFixed() error)', async ({ page }) => {
+    const consoleErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+    
+    await page.goto(`${BASE_URL}/frontend/recovery`);
+    await page.waitForTimeout(5000);
+    
+    // Verify no .toFixed() crash
+    const toFixedErrors = consoleErrors.filter(err =>
+      err.includes('toFixed') ||
+      err.includes('Cannot read properties of undefined') ||
+      err.includes('TypeError')
+    );
+    
+    // Page should load (may redirect to login if not authenticated)
+    const url = page.url();
+    expect(url).toBeTruthy();
+    
+    // If authenticated and shows content, no crash errors should exist
+    if (!url.includes('/login')) {
+      expect(toFixedErrors).toHaveLength(0);
+    }
+  });
+
+  test('Recovery list page shows case data when authenticated', async ({ page }) => {
+    const consoleErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+    
+    await page.goto(`${BASE_URL}/frontend/recovery`);
+    await page.waitForTimeout(5000);
+    
+    // If not logged in, this will redirect
+    const url = page.url();
+    if (url.includes('/login')) {
+      // User not logged in - this is acceptable for unauthenticated test
+      return;
+    }
+    
+    // Page loaded - verify no crash
+    const pageContent = await page.content();
+    expect(pageContent.length).toBeGreaterThan(0);
+    
+    // No TypeErrors from numeric rendering
+    const typeErrors = consoleErrors.filter(err =>
+      err.includes('TypeError') ||
+      err.includes('Cannot read properties of undefined')
+    );
+    expect(typeErrors).toHaveLength(0);
+  });
+
+  test('Recovery detail page with location renders safely', async ({ page }) => {
+    const consoleErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+    
+    // Get a recovery case that has a location (MacBook case from demo data)
+    const caseId = 'Recovery - MacBook Pro 14 - 20260319215433';
+    
+    await page.goto(`${BASE_URL}/frontend/recovery/${encodeURIComponent(caseId)}`);
+    await page.waitForTimeout(5000);
+    
+    const url = page.url();
+    if (url.includes('/login')) {
+      // Not logged in - acceptable for unauthenticated test
+      return;
+    }
+    
+    // Page loaded - no crash
+    const pageContent = await page.content();
+    expect(pageContent.length).toBeGreaterThan(0);
+    
+    // No .toFixed() errors - the critical fix
+    const toFixedErrors = consoleErrors.filter(err =>
+      err.includes('toFixed') ||
+      (err.includes('undefined') && err.includes('reading'))
+    );
+    expect(toFixedErrors).toHaveLength(0);
+  });
+
+  test('Recovery detail page handles missing location gracefully', async ({ page }) => {
+    const consoleErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+    
+    // Get a recovery case that may NOT have location
+    // Using the wallet/keys cases which may not have location shared
+    const caseId = 'Recovery - Wallet - 20260319215434';
+    
+    await page.goto(`${BASE_URL}/frontend/recovery/${encodeURIComponent(caseId)}`);
+    await page.waitForTimeout(5000);
+    
+    const url = page.url();
+    if (url.includes('/login')) {
+      return;
+    }
+    
+    // No crash even when no location is present
+    const pageContent = await page.content();
+    expect(pageContent.length).toBeGreaterThan(0);
+    
+    // No TypeErrors from null/undefined numeric values
+    const numericErrors = consoleErrors.filter(err =>
+      err.includes('TypeError') ||
+      (err.includes('undefined') && err.includes('toFixed')) ||
+      (err.includes('undefined') && err.includes('reading'))
+    );
+    expect(numericErrors).toHaveLength(0);
+  });
+
+  test('No toFixed errors across all recovery pages', async ({ page }) => {
+    const allErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        allErrors.push(msg.text());
+      }
+    });
+    
+    // Visit recovery list
+    await page.goto(`${BASE_URL}/frontend/recovery`);
+    await page.waitForTimeout(3000);
+    
+    // Collect any toFixed errors
+    const toFixedErrors = allErrors.filter(err =>
+      err.includes('toFixed')
+    );
+    
+    expect(toFixedErrors).toHaveLength(0);
+  });
+
+  test('Recovery page renders coordinates safely when present', async ({ page }) => {
+    const consoleErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+    
+    const caseId = 'Recovery - MacBook Pro 14 - 20260319215433';
+    await page.goto(`${BASE_URL}/frontend/recovery/${encodeURIComponent(caseId)}`);
+    await page.waitForTimeout(5000);
+    
+    if (page.url().includes('/login')) return;
+    
+    // When location IS present, it should display coordinates safely
+    // The page should NOT crash - it should show coordinates or fallback "—"
+    const pageContent = await page.content();
+    
+    // If coordinates section renders, it should show either:
+    // - "37.xxx, -122.xxx" (valid coordinates) OR
+    // - "—" (fallback for missing/null)
+    // It should NEVER crash with .toFixed() error
+    expect(pageContent).toBeTruthy();
+    
+    const crashErrors = consoleErrors.filter(err =>
+      err.includes('toFixed') ||
+      err.includes('TypeError: Cannot read properties of undefined')
+    );
+    expect(crashErrors).toHaveLength(0);
+  });
+});

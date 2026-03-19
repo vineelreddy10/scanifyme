@@ -76,6 +76,9 @@ export interface ItemDetails {
   public_label: string | null
   recovery_note: string | null
   reward_note: string | null
+  reward_enabled?: boolean
+  reward_amount_text?: string | null
+  reward_visibility?: string | null
   activation_date: string | null
   last_scan_at: string | null
   item_category: string | null
@@ -234,4 +237,70 @@ export const updateItemStatus = async (item: string, status: string): Promise<{ 
 
 export const getItemCategories = async (): Promise<ItemCategory[]> => {
   return await frappeCall<ItemCategory[]>('scanifyme.items.api.items_api.get_item_categories')
+}
+
+export interface RewardSettings {
+  item: string
+  reward_enabled: boolean
+  reward_amount_text: string | null
+  reward_note: string | null
+  reward_terms: string | null
+  reward_visibility: string | null
+}
+
+export interface RewardStatus {
+  case: string
+  reward_offered: boolean
+  reward_display_text: string | null
+  reward_status: string | null
+  reward_internal_note: string | null
+  reward_last_updated_on: string | null
+}
+
+export const getItemRewardSettings = async (item: string): Promise<RewardSettings> => {
+  return await frappeCall<RewardSettings>('scanifyme.items.api.items_api.get_item_reward_settings', {
+    item,
+  })
+}
+
+export const updateItemRewardSettings = async (
+  item: string,
+  rewardEnabled: boolean,
+  rewardAmountText?: string | null,
+  rewardNote?: string | null,
+  rewardTerms?: string | null,
+  rewardVisibility: string = 'Public'
+): Promise<{ success: boolean; message: string }> => {
+  return await frappeCall<{ success: boolean; message: string }>(
+    'scanifyme.items.api.items_api.update_item_reward_settings',
+    {
+      item,
+      reward_enabled: rewardEnabled,
+      reward_amount_text: rewardAmountText || null,
+      reward_note: rewardNote || null,
+      reward_terms: rewardTerms || null,
+      reward_visibility: rewardVisibility,
+    }
+  )
+}
+
+export const getCaseRewardStatus = async (caseId: string): Promise<RewardStatus> => {
+  return await frappeCall<RewardStatus>('scanifyme.recovery.api.recovery_api.get_case_reward_status', {
+    case_id: caseId,
+  })
+}
+
+export const updateRecoveryCaseRewardStatus = async (
+  caseId: string,
+  rewardStatus: string,
+  rewardInternalNote?: string | null
+): Promise<{ success: boolean; message: string }> => {
+  return await frappeCall<{ success: boolean; message: string }>(
+    'scanifyme.recovery.api.recovery_api.update_recovery_case_reward_status',
+    {
+      case_id: caseId,
+      reward_status: rewardStatus,
+      reward_internal_note: rewardInternalNote || null,
+    }
+  )
 }

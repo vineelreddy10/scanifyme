@@ -5,12 +5,38 @@
   "engine": "InnoDB",
   "is_submittable": 0,
   "is_child_table": 1,
+  "parent_doc": "Registered Item",
+  "parent_field": "photos",
+  "parenttype": "Link",
   "field_order": [
+    "parenttype",
+    "parent",
+    "parentfield",
     "image",
     "visibility",
     "caption"
   ],
   "fields": [
+    {
+      "fieldname": "parenttype",
+      "fieldtype": "Link",
+      "label": "Parent Type",
+      "options": "DocType",
+      "hidden": 1
+    },
+    {
+      "fieldname": "parent",
+      "fieldtype": "Dynamic Link",
+      "label": "Parent",
+      "options": "parenttype",
+      "hidden": 1
+    },
+    {
+      "fieldname": "parentfield",
+      "fieldtype": "Data",
+      "label": "Parent Field",
+      "hidden": 1
+    },
     {
       "fieldname": "image",
       "fieldtype": "Attach Image",

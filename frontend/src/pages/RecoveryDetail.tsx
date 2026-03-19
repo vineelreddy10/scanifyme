@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { safeToFixed, isValidNumber } from '../utils/number'
 
 // Types
 export interface RecoveryCaseDetails {
@@ -37,8 +38,8 @@ export interface RecoveryMessage {
 
 export interface LocationShare {
   name: string
-  latitude: number
-  longitude: number
+  latitude: number | null   // null when no location shared yet
+  longitude: number | null  // null when no location shared yet
   accuracy_meters: number | null
   source: string
   shared_on: string
@@ -65,6 +66,15 @@ export interface HandoverDetails {
   handover_note: string | null
   latest_location_summary: string | null
   valid_statuses: string[]
+}
+
+export interface RewardStatusDetails {
+  case: string
+  reward_offered: boolean
+  reward_display_text: string | null
+  reward_status: string | null
+  reward_internal_note: string | null
+  reward_last_updated_on: string | null
 }
 
 // API functions
@@ -123,8 +133,8 @@ export const updateRecoveryCaseStatus = async (caseId: string, status: string): 
   })
 }
 
-export const getLatestCaseLocation = async (caseId: string): Promise<LocationShare> => {
-  return await frappeCall<LocationShare>('scanifyme.recovery.api.recovery_api.get_latest_case_location', {
+export const getLatestCaseLocation = async (caseId: string): Promise<LocationShare | null> => {
+  return await frappeCall<LocationShare | null>('scanifyme.recovery.api.recovery_api.get_latest_case_location', {
     case_id: caseId,
   })
 }
@@ -149,6 +159,24 @@ export const updateHandoverStatus = async (caseId: string, handoverStatus: strin
   })
 }
 
+export const getCaseRewardStatus = async (caseId: string): Promise<RewardStatusDetails> => {
+  return await frappeCall<RewardStatusDetails>('scanifyme.recovery.api.recovery_api.get_case_reward_status', {
+    case_id: caseId,
+  })
+}
+
+export const updateRecoveryCaseRewardStatus = async (
+  caseId: string,
+  rewardStatus: string,
+  rewardInternalNote?: string
+): Promise<{ success: boolean; message: string }> => {
+  return await frappeCall<{ success: boolean; message: string }>('scanifyme.recovery.api.recovery_api.update_recovery_case_reward_status', {
+    case_id: caseId,
+    reward_status: rewardStatus,
+    reward_internal_note: rewardInternalNote,
+  })
+}
+
 const RecoveryDetail = () => {
   const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
@@ -158,6 +186,7 @@ const RecoveryDetail = () => {
   const [latestLocation, setLatestLocation] = useState<LocationShare | null>(null)
   const [timeline, setTimeline] = useState<TimelineEvent[]>([])
   const [handoverDetails, setHandoverDetails] = useState<HandoverDetails | null>(null)
+  const [rewardStatus, setRewardStatus] = useState<RewardStatusDetails | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [replyMessage, setReplyMessage] = useState('')
@@ -170,6 +199,9 @@ const RecoveryDetail = () => {
   const [newHandoverStatus, setNewHandoverStatus] = useState('')
   const [handoverNote, setHandoverNote] = useState('')
   const [showTimeline, setShowTimeline] = useState(false)
+  const [showRewardModal, setShowRewardModal] = useState(false)
+  const [newRewardStatus, setNewRewardStatus] = useState('')
+  const [rewardInternalNote, setRewardInternalNote] = useState('')
 
   const handleLogout = async () => {
     await logout()
@@ -185,21 +217,27 @@ const RecoveryDetail = () => {
   const loadCaseData = async () => {
     setIsLoading(true)
     try {
-      const [details, msgs, location, timelineData, handover] = await Promise.all([
+      const [details, msgs, location, timelineData, handover, reward] = await Promise.all([
         getRecoveryCaseDetails(id!),
         getRecoveryCaseMessages(id!),
         getLatestCaseLocation(id!),
         getRecoveryCaseTimeline(id!),
         getCaseHandoverDetails(id!),
+        getCaseRewardStatus(id!),
       ])
       setCaseDetails(details)
       setMessages(msgs)
       setLatestLocation(location)
       setTimeline(timelineData)
       setHandoverDetails(handover)
+      setRewardStatus(reward)
       if (handover) {
         setNewHandoverStatus(handover.handover_status)
         setHandoverNote(handover.handover_note || '')
+      }
+      if (reward) {
+        setNewRewardStatus(reward.reward_status || 'Not Applicable')
+        setRewardInternalNote(reward.reward_internal_note || '')
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load case details')
@@ -263,6 +301,22 @@ const RecoveryDetail = () => {
     }
   }
 
+  const handleRewardStatusUpdate = async () => {
+    if (!newRewardStatus) return
+    
+    try {
+      const result = await updateRecoveryCaseRewardStatus(id!, newRewardStatus, rewardInternalNote)
+      if (result.success) {
+        loadCaseData()
+        setShowRewardModal(false)
+      } else {
+        setSendError(result.message || 'Failed to update reward status')
+      }
+    } catch (err: any) {
+      setSendError(err.message || 'Failed to update reward status')
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       'Open': 'bg-yellow-100 text-yellow-800',
@@ -286,6 +340,18 @@ const RecoveryDetail = () => {
       'Recovered': 'bg-green-100 text-green-800',
       'Closed': 'bg-gray-100 text-gray-800',
       'Failed': 'bg-red-100 text-red-800',
+    }
+    return styles[status] || 'bg-gray-100 text-gray-800'
+  }
+
+  const getRewardStatusBadge = (status: string) => {
+    const styles: Record<string, string> = {
+      'Not Applicable': 'bg-gray-100 text-gray-800',
+      'Offered': 'bg-yellow-100 text-yellow-800',
+      'Mentioned To Finder': 'bg-blue-100 text-blue-800',
+      'Return Completed': 'bg-green-100 text-green-800',
+      'Closed Without Reward': 'bg-red-100 text-red-800',
+      'Cancelled': 'bg-gray-100 text-gray-800',
     }
     return styles[status] || 'bg-gray-100 text-gray-800'
   }
@@ -424,6 +490,40 @@ const RecoveryDetail = () => {
             </div>
           )}
 
+          {/* Reward Status Card */}
+          {rewardStatus && (
+            <div className="bg-white shadow rounded-lg mb-6">
+              <div className="px-4 py-5 sm:px-6">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Reward Status</h3>
+                  <button
+                    onClick={() => { setNewRewardStatus(rewardStatus.reward_status || 'Not Applicable'); setRewardInternalNote(rewardStatus.reward_internal_note || ''); setShowRewardModal(true); }}
+                    className="text-sm text-indigo-600 hover:text-indigo-800"
+                  >
+                    Update Reward
+                  </button>
+                </div>
+                <div className="mt-4">
+                  {rewardStatus.reward_offered ? (
+                    <>
+                      <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getRewardStatusBadge(rewardStatus.reward_status || 'Not Applicable')}`}>
+                        {rewardStatus.reward_status || 'Not Applicable'}
+                      </span>
+                      {rewardStatus.reward_display_text && (
+                        <p className="mt-2 text-sm text-gray-600">Reward: {rewardStatus.reward_display_text}</p>
+                      )}
+                      {rewardStatus.reward_internal_note && (
+                        <p className="mt-2 text-sm text-gray-500">Note: {rewardStatus.reward_internal_note}</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500">No reward offered for this item</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Location Card */}
           {latestLocation && (
             <div className="bg-white shadow rounded-lg mb-6">
@@ -446,7 +546,9 @@ const RecoveryDetail = () => {
                     <div className="sm:col-span-1">
                       <dt className="text-sm font-medium text-gray-500">Coordinates</dt>
                       <dd className="mt-1 text-sm text-gray-900 font-mono">
-                        {latestLocation.latitude.toFixed(6)}, {latestLocation.longitude.toFixed(6)}
+                        {isValidNumber(latestLocation.latitude) && isValidNumber(latestLocation.longitude)
+                          ? `${safeToFixed(latestLocation.latitude, 6)}°, ${safeToFixed(latestLocation.longitude, 6)}°`
+                          : '—'}
                       </dd>
                     </div>
                     {latestLocation.accuracy_meters && (
@@ -662,6 +764,51 @@ const RecoveryDetail = () => {
               </button>
               <button
                 onClick={handleHandoverStatusUpdate}
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reward Status Update Modal */}
+      {showRewardModal && rewardStatus && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Update Reward Status</h3>
+            <select
+              value={newRewardStatus}
+              onChange={(e) => setNewRewardStatus(e.target.value)}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="Not Applicable">Not Applicable</option>
+              <option value="Offered">Offered</option>
+              <option value="Mentioned To Finder">Mentioned To Finder</option>
+              <option value="Return Completed">Return Completed</option>
+              <option value="Closed Without Reward">Closed Without Reward</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">Internal Note (optional)</label>
+              <textarea
+                rows={3}
+                value={rewardInternalNote}
+                onChange={(e) => setRewardInternalNote(e.target.value)}
+                className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+                placeholder="Add an internal note about the reward..."
+              />
+            </div>
+            <div className="mt-4 flex justify-end space-x-2">
+              <button
+                onClick={() => setShowRewardModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRewardStatusUpdate}
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
               >
                 Update

@@ -120,6 +120,12 @@ const AppRoutes = () => {
   )
 }
 
+// Realtime configuration - controlled via environment variable
+// Set VITE_USE_REALTIME=false to disable socket.io connection entirely
+// Default: disabled for safety - enable only when socket server is available
+const USE_REALTIME = import.meta.env.VITE_USE_REALTIME === 'true'
+const SOCKET_PORT = USE_REALTIME ? (import.meta.env.VITE_SOCKET_PORT || '9000') : undefined
+
 function App() {
   // Use empty string for same-origin requests (FrappeProvider defaults to current origin)
   // Only use VITE_FRAPPE_URL if it's a valid non-empty absolute URL
@@ -132,7 +138,7 @@ function App() {
   return (
     <FrappeProvider
       url={frappeUrl}
-      socketPort={import.meta.env.DEV ? '9000' : undefined}
+      socketPort={SOCKET_PORT}
     >
       <AuthProvider>
         <BrowserRouter basename="/frontend">

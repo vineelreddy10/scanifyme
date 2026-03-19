@@ -7,6 +7,7 @@ This module provides API endpoints for owners to manage their notification prefe
 import frappe
 from typing import Optional
 from scanifyme.notifications.services import notification_service
+from scanifyme.utils.permissions import is_scanifyme_admin
 
 
 def get_owner_profile_for_user() -> Optional[str]:
@@ -21,8 +22,8 @@ def get_owner_profile_for_user() -> Optional[str]:
 	if user == "Guest":
 		return None
 
-	# Administrator can access all
-	if user == "Administrator":
+	# Check if user is admin using centralized permission helper
+	if is_scanifyme_admin(user):
 		return "Administrator"
 
 	owner_profile = frappe.db.get_value(

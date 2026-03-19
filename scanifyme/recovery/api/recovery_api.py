@@ -7,6 +7,7 @@ This module provides API endpoints for owners to manage recovery cases.
 import frappe
 from scanifyme.recovery.services import recovery_service
 from scanifyme.messaging.services import message_service
+from scanifyme.utils.permissions import is_scanifyme_admin, user_can_access_recovery_case
 
 
 def get_owner_profile_for_user() -> str:
@@ -21,8 +22,8 @@ def get_owner_profile_for_user() -> str:
 	if user == "Guest":
 		return None
 
-	# Administrator can access all cases
-	if user == "Administrator":
+	# Check if user is admin using centralized permission helper
+	if is_scanifyme_admin(user):
 		return "Administrator"
 
 	owner_profile = frappe.db.get_value(
@@ -87,10 +88,11 @@ def get_recovery_case_messages(case_id: str) -> list:
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
-	# Verify the case belongs to the owner
-	case = frappe.get_doc("Recovery Case", case_id)
-	if case.owner_profile != owner_profile:
-		frappe.throw("Permission denied", frappe.PermissionError)
+	# Verify the case belongs to the owner (admin can access all)
+	if owner_profile != "Administrator":
+		case = frappe.get_doc("Recovery Case", case_id)
+		if case.owner_profile != owner_profile:
+			frappe.throw("Permission denied", frappe.PermissionError)
 
 	# Get messages
 	messages = frappe.get_list(
@@ -106,6 +108,7 @@ def get_recovery_case_messages(case_id: str) -> list:
 			"is_read_by_owner",
 		],
 		order_by="created_on asc",
+		ignore_permissions=True,
 	)
 
 	# Mark messages as read
@@ -156,14 +159,17 @@ def send_owner_reply(case_id: str, message: str, attachment: str = None) -> dict
 	if not owner_profile:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
-	# Verify the case belongs to the owner
-	case = frappe.get_doc("Recovery Case", case_id)
-	if case.owner_profile != owner_profile:
-		frappe.throw("Permission denied", frappe.PermissionError)
-
-	# Get owner profile for sender name
-	owner = frappe.get_doc("Owner Profile", owner_profile)
-	sender_name = owner.display_name
+	# Verify the case belongs to the owner (admin can access all)
+	if owner_profile != "Administrator":
+		case = frappe.get_doc("Recovery Case", case_id)
+		if case.owner_profile != owner_profile:
+			frappe.throw("Permission denied", frappe.PermissionError)
+		# Get owner profile for sender name
+		owner = frappe.get_doc("Owner Profile", owner_profile)
+		sender_name = owner.display_name
+	else:
+		# Admin user - use special sender name
+		sender_name = "Administrator"
 
 	return message_service.send_owner_message(
 		case_id=case_id,
@@ -198,7 +204,7 @@ def get_recovery_case_timeline(case_id: str, limit: int = 50) -> list:
 
 
 @frappe.whitelist()
-def get_latest_case_location(case_id: str) -> dict:
+def get_latest_case_location(case_id: str) -> dict | None:
 	"""
 	Get the latest location share for a recovery case.
 
@@ -206,7 +212,7 @@ def get_latest_case_location(case_id: str) -> dict:
 	    case_id: Recovery Case name
 
 	Returns:
-	    Dict with location data or empty dict
+	    Dict with location data or None if no location shared
 	"""
 	owner_profile = get_owner_profile_for_user()
 
@@ -220,7 +226,11 @@ def get_latest_case_location(case_id: str) -> dict:
 		if case.owner_profile != owner_profile:
 			frappe.throw("Permission denied", frappe.PermissionError)
 
-	return location_service.get_latest_case_location(case_id)
+	result = location_service.get_latest_case_location(case_id)
+	# Return None explicitly so frontend gets null, not {}
+	if not result:
+		return None
+	return result
 
 
 @frappe.whitelist()
@@ -292,3 +302,56 @@ def get_case_handover_details(case_id: str) -> dict:
 		frappe.throw("Permission denied", frappe.PermissionError)
 
 	return handover_service.get_case_handover_details(case_id, owner_profile)
+
+
+# ============== REWARD APIS ==============
+
+# Import reward service
+from scanifyme.items.services import reward_service as reward_svc
+
+
+@frappe.whitelist()
+def get_case_reward_status(case_id: str) -> dict:
+	"""
+	Get reward status for a recovery case.
+
+	Args:
+	    case_id: Recovery Case name
+
+	Returns:
+	    Dict with reward status
+	"""
+	if not case_id:
+		frappe.throw("Case ID is required")
+
+	return reward_svc.get_case_reward_status(case_id)
+
+
+@frappe.whitelist()
+def update_recovery_case_reward_status(
+	case_id: str,
+	reward_status: str,
+	reward_internal_note: str = None,
+) -> dict:
+	"""
+	Update the reward status on a recovery case.
+
+	Args:
+	    case_id: Recovery Case name
+	    reward_status: New reward status
+	    reward_internal_note: Optional internal note
+
+	Returns:
+	    Dict with success status
+	"""
+	if not case_id:
+		frappe.throw("Case ID is required")
+
+	if not reward_status:
+		frappe.throw("Reward status is required")
+
+	return reward_svc.update_reward_status(
+		case=case_id,
+		reward_status=reward_status,
+		reward_internal_note=reward_internal_note,
+	)

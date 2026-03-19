@@ -88,13 +88,18 @@ def get_owner_recovery_cases(owner_profile: str, status: str = None) -> list:
 	Get recovery cases for an owner.
 
 	Args:
-	    owner_profile: Owner Profile name
+	    owner_profile: Owner Profile name, or "Administrator" for admin access
 	    status: Filter by status (optional)
 
 	Returns:
 	    List of recovery case dicts
 	"""
-	filters = {"owner_profile": owner_profile}
+	# Admin can see all cases
+	if owner_profile == "Administrator":
+		filters = {}
+	else:
+		filters = {"owner_profile": owner_profile}
+
 	if status:
 		filters["status"] = status
 
@@ -113,6 +118,7 @@ def get_owner_recovery_cases(owner_profile: str, status: str = None) -> list:
 			"latest_message_preview",
 		],
 		order_by="last_activity_on desc",
+		ignore_permissions=True,
 	)
 
 	return cases
