@@ -1,0 +1,54 @@
+2026-03-09 14:46:37,313 WARNING database DDL Query made to DB:
+create table `tabCategory` (
+			name varchar(140) primary key,
+			creation datetime(6),
+			modified datetime(6),
+			modified_by varchar(140),
+			owner varchar(140),
+			docstatus tinyint not null default '0',
+			idx int not null default '0',
+			`category_name` varchar(140) UNIQUE,
+`parent_category` varchar(140),
+`description` text,
+`lft` int(11) NOT NULL DEFAULT 0,
+`rgt` int(11) NOT NULL DEFAULT 0,
+`is_group` tinyint(4) NOT NULL DEFAULT 0,
+`old_parent` varchar(140),
+`_user_tags` text,
+`_comments` text,
+`_assign` text,
+`_liked_by` text,
+index creation(creation))
+			ENGINE=InnoDB
+			ROW_FORMAT=DYNAMIC
+			CHARACTER SET=utf8mb4
+			COLLATE=utf8mb4_unicode_ci
+2026-03-20 09:49:41,645 WARNING database DDL Query made to DB:
+create table `tabOwner Onboarding State` (
+			name varchar(140) primary key,
+			creation datetime(6),
+			modified datetime(6),
+			modified_by varchar(140),
+			owner varchar(140),
+			docstatus tinyint not null default '0',
+			idx int not null default '0',
+			`owner_profile` varchar(140) UNIQUE,
+`account_created` tinyint(4) NOT NULL DEFAULT 0,
+`profile_completed` tinyint(4) NOT NULL DEFAULT 0,
+`qr_activated` tinyint(4) NOT NULL DEFAULT 0,
+`item_registered` tinyint(4) NOT NULL DEFAULT 0,
+`recovery_note_added` tinyint(4) NOT NULL DEFAULT 0,
+`notifications_configured` tinyint(4) NOT NULL DEFAULT 0,
+`reward_reviewed` tinyint(4) NOT NULL DEFAULT 0,
+`onboarding_completed` tinyint(4) NOT NULL DEFAULT 0,
+`completion_percent` decimal(21,0) NOT NULL DEFAULT 0.0,
+`last_updated_on` datetime(6),
+`_user_tags` text,
+`_comments` text,
+`_assign` text,
+`_liked_by` text,
+index creation(creation))
+			ENGINE=InnoDB
+			ROW_FORMAT=DYNAMIC
+			CHARACTER SET=utf8mb4
+			COLLATE=utf8mb4_unicode_ci

@@ -1,0 +1,32 @@
+2026-03-18 17:22:38,491 WARNING database DDL Query made to DB:
+create table `tabQR Distribution Record` (
+			name varchar(140) primary key,
+			creation datetime(6),
+			modified datetime(6),
+			modified_by varchar(140),
+			owner varchar(140),
+			docstatus tinyint not null default '0',
+			idx int not null default '0',
+			`distribution_name` varchar(140),
+`qr_batch` varchar(140),
+`status` varchar(140) DEFAULT 'Draft',
+`distributed_to_type` varchar(140),
+`distributed_to_name` varchar(140),
+`distributed_on` datetime(6),
+`quantity` int(11) NOT NULL DEFAULT 0,
+`created_by` varchar(140),
+`notes` text,
+`_user_tags` text,
+`_comments` text,
+`_assign` text,
+`_liked_by` text,
+index creation(creation),
+index modified(modified))
+			ENGINE=InnoDB
+			ROW_FORMAT=DYNAMIC
+			CHARACTER SET=utf8mb4
+			COLLATE=utf8mb4_unicode_ci
+2026-03-18 17:32:07,124 WARNING database DDL Query made to DB:
+ALTER TABLE `tabQR Print Job` ADD COLUMN `naming_series` varchar(140) DEFAULT 'PRINT-.YYYY.-'
+2026-03-18 17:32:07,593 WARNING database DDL Query made to DB:
+ALTER TABLE `tabQR Distribution Record` ADD COLUMN `naming_series` varchar(140) DEFAULT 'DIST-.YYYY.-'

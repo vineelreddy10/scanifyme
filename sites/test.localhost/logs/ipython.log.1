@@ -1,0 +1,1309 @@
+2026-03-09 11:14:06,462 INFO ipython === bench console session ===
+2026-03-09 11:14:06,462 INFO ipython === session end ===
+2026-03-09 11:14:15,282 INFO ipython === bench console session ===
+2026-03-09 11:14:15,282 INFO ipython from frappe.modules.import_file import import_file; import_file('DocType', 'scanifyme', 'QR Customer', 'doctype/qr_customer/qr_customer.json'); frappe.db.commit(); print('Done')
+2026-03-09 11:14:15,282 INFO ipython === session end ===
+2026-03-09 11:14:29,428 INFO ipython === bench console session ===
+2026-03-09 11:14:29,428 INFO ipython from frappe.modules.import_file import import_file_by_path; import_file_by_path('apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json'); frappe.db.commit(); print('Done')
+2026-03-09 11:14:29,428 INFO ipython === session end ===
+2026-03-09 11:14:54,000 INFO ipython === bench console session ===
+2026-03-09 11:14:54,001 INFO ipython import os; print(os.getcwd()); print(os.path.exists('apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json'))
+2026-03-09 11:14:54,005 INFO ipython === session end ===
+2026-03-09 11:15:05,561 INFO ipython === bench console session ===
+2026-03-09 11:15:05,562 INFO ipython from frappe.modules.import_file import import_file_by_path; import_file_by_path('../../apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json'); frappe.db.commit(); print('Done')
+2026-03-09 11:15:05,562 INFO ipython === session end ===
+2026-03-09 11:15:16,772 INFO ipython === bench console session ===
+2026-03-09 11:15:16,774 INFO ipython import os; print(os.path.abspath('../../apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json'))
+2026-03-09 11:15:16,774 INFO ipython === session end ===
+2026-03-09 11:15:36,471 INFO ipython === bench console session ===
+2026-03-09 11:15:36,471 INFO ipython import os; print(os.path.abspath('../../../apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json'))
+2026-03-09 11:15:36,471 INFO ipython === session end ===
+2026-03-09 11:15:48,867 INFO ipython === bench console session ===
+2026-03-09 11:15:48,867 INFO ipython import os; print(os.path.abspath('../apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json'))
+2026-03-09 11:15:48,868 INFO ipython === session end ===
+2026-03-09 11:16:17,636 INFO ipython === bench console session ===
+2026-03-09 11:16:17,653 INFO ipython from frappe.modules.import_file import import_file_by_path; import_file_by_path('../apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json'); frappe.db.commit(); print('Done')
+2026-03-09 11:16:17,653 INFO ipython === session end ===
+2026-03-09 11:16:59,708 INFO ipython === bench console session ===
+2026-03-09 11:16:59,709 INFO ipython from frappe.modules.import_file import import_file_by_path; import_file_by_path('../apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json'); frappe.db.commit(); print('Done')
+2026-03-09 11:16:59,710 INFO ipython === session end ===
+2026-03-09 11:17:39,286 INFO ipython === bench console session ===
+2026-03-09 11:17:39,289 INFO ipython from frappe.modules.import_file import import_file_by_path; import_file_by_path('../apps/scanifyme/scanifyme/doctype/qr_customer/qr_customer.json', force=True); frappe.db.commit(); print('Done')
+2026-03-09 11:17:39,290 INFO ipython === session end ===
+2026-03-16 16:53:13,846 INFO ipython === bench console session ===
+2026-03-16 16:53:13,851 INFO ipython frappe.db.sql('SELECT name, item_name, qr_code_tag FROM tabRegistered Item', as_dict=True)
+2026-03-16 16:53:13,851 INFO ipython === session end ===
+2026-03-17 10:52:13,881 INFO ipython === bench console session ===
+2026-03-17 10:52:13,884 INFO ipython === session end ===
+2026-03-17 10:52:24,404 INFO ipython === bench console session ===
+2026-03-17 10:52:24,405 INFO ipython import frappe; frappe.init("test.localhost"); frappe.connect(); print(frappe.db.exists("DocType", "Notification Event Log"))
+2026-03-17 10:52:24,405 INFO ipython === session end ===
+2026-03-17 10:54:35,230 INFO ipython === bench console session ===
+2026-03-17 10:54:35,230 INFO ipython import frappe; frappe.init("test.localhost"); frappe.connect(); print(frappe.db.get_value("Module Def", {"name": "Notifications"}, "name"))
+2026-03-17 10:54:35,230 INFO ipython === session end ===
+2026-03-17 10:54:55,815 INFO ipython === bench console session ===
+2026-03-17 10:54:55,815 INFO ipython import frappe
+2026-03-17 10:54:55,816 INFO ipython frappe.init("test.localhost")
+2026-03-17 10:54:55,816 INFO ipython frappe.connect()
+2026-03-17 10:54:55,816 INFO ipython # Create Notification Event Log DocType manually
+2026-03-17 10:54:55,816 INFO ipython doc = frappe.get_doc({
+    "doctype": "DocType",
+    "name": "Notification Event Log",
+    "module": "Notifications",
+    "autoname": "hash",
+    "is_submittable": 0,
+    "fields": [
+        {"fieldname": "event_type", "fieldtype": "Select", "label": "Event Type", "options": "Finder Message Received\nRecovery Case Opened\nOwner Reply Sent\nItem Marked Recovered\nCase Status Updated", "reqd": 1},
+        {"fieldname": "owner_profile", "fieldtype": "Link", "label": "Owner Profile", "options": "Owner Profile", "reqd": 1},
+        {"fieldname": "recovery_case", "fieldtype": "Link", "label": "Recovery Case", "options": "Recovery Case"},
+        {"fieldname": "registered_item", "fieldtype": "Link", "label": "Registered Item", "options": "Registered Item"},
+        {"fieldname": "qr_code_tag", "fieldtype": "Link", "label": "QR Code Tag", "options": "QR Code Tag"},
+        {"fieldname": "message_summary", "fieldtype": "Data", "label": "Message Summary"},
+        {"fieldname": "channel", "fieldtype": "Select", "label": "Channel", "options": "In App\nEmail\nSystem", "default": "In App", "reqd": 1},
+        {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Queued\nSent\nFailed\nSkipped", "default": "Queued", "reqd": 1},
+        {"fieldname": "triggered_on", "fieldtype": "Datetime", "label": "Triggered On", "default": "Now", "reqd": 1},
+        {"fieldname": "delivered_on", "fieldtype": "Datetime", "label": "Delivered On"},
+        {"fieldname": "error_message", "fieldtype": "Small Text", "label": "Error Message"},
+        {"fieldname": "reference_doctype", "fieldtype": "Data", "label": "Reference DocType"},
+        {"fieldname": "reference_name", "fieldtype": "Data", "label": "Reference Name"},
+    ]
+})
+2026-03-17 10:54:55,816 INFO ipython doc.insert(ignore_permissions=True)
+2026-03-17 10:54:55,816 INFO ipython frappe.db.commit()
+2026-03-17 10:54:55,816 INFO ipython print("Notification Event Log created")
+2026-03-17 10:54:55,816 INFO ipython === session end ===
+2026-03-17 10:55:10,643 INFO ipython === bench console session ===
+2026-03-17 10:55:10,643 INFO ipython import frappe
+2026-03-17 10:55:10,643 INFO ipython frappe.init("test.localhost")
+2026-03-17 10:55:10,644 INFO ipython frappe.connect()
+2026-03-17 10:55:10,644 INFO ipython # Create Notification Preference DocType manually
+2026-03-17 10:55:10,644 INFO ipython doc = frappe.get_doc({
+    "doctype": "DocType",
+    "name": "Notification Preference",
+    "module": "Notifications",
+    "autoname": "hash",
+    "is_submittable": 0,
+    "fields": [
+        {"fieldname": "owner_profile", "fieldtype": "Link", "label": "Owner Profile", "options": "Owner Profile", "reqd": 1, "unique": 1},
+        {"fieldname": "enable_in_app_notifications", "fieldtype": "Check", "label": "Enable In-App Notifications", "default": "1"},
+        {"fieldname": "enable_email_notifications", "fieldtype": "Check", "label": "Enable Email Notifications", "default": "1"},
+        {"fieldname": "notify_on_new_finder_message", "fieldtype": "Check", "label": "Notify on New Finder Message", "default": "1"},
+        {"fieldname": "notify_on_case_opened", "fieldtype": "Check", "label": "Notify on Case Opened", "default": "1"},
+        {"fieldname": "notify_on_case_status_change", "fieldtype": "Check", "label": "Notify on Case Status Change", "default": "1"},
+        {"fieldname": "is_default", "fieldtype": "Check", "label": "Is Default Preference", "default": "1", "hidden": 1},
+    ]
+})
+2026-03-17 10:55:10,644 INFO ipython doc.insert(ignore_permissions=True)
+2026-03-17 10:55:10,645 INFO ipython frappe.db.commit()
+2026-03-17 10:55:10,645 INFO ipython print("Notification Preference created")
+2026-03-17 10:55:10,645 INFO ipython === session end ===
+2026-03-17 12:54:07,542 INFO ipython === bench console session ===
+2026-03-17 12:54:07,554 INFO ipython import frappe
+2026-03-17 12:54:07,555 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:54:07,555 INFO ipython frappe.connect()
+2026-03-17 12:54:07,555 INFO ipython # Check if demo user exists
+2026-03-17 12:54:07,555 INFO ipython user = frappe.db.exists('User', 'demo@scanifyme.app')
+2026-03-17 12:54:07,555 INFO ipython print(f"Demo user exists: {user}")
+2026-03-17 12:54:07,555 INFO ipython === session end ===
+2026-03-17 12:54:18,041 INFO ipython === bench console session ===
+2026-03-17 12:54:18,042 INFO ipython import frappe
+2026-03-17 12:54:18,042 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:54:18,042 INFO ipython frappe.connect()
+2026-03-17 12:54:18,042 INFO ipython # Check user details
+2026-03-17 12:54:18,042 INFO ipython user_doc = frappe.get_doc('User', 'demo@scanifyme.app')
+2026-03-17 12:54:18,042 INFO ipython print(f"Enabled: {user_doc.enabled}")
+2026-03-17 12:54:18,042 INFO ipython print(f"Email: {user_doc.email}")
+2026-03-17 12:54:18,043 INFO ipython print(f"First Name: {user_doc.first_name}")
+2026-03-17 12:54:18,043 INFO ipython print(f"Last Name: {user_doc.last_name}")
+2026-03-17 12:54:18,043 INFO ipython # Check if user has roles
+2026-03-17 12:54:18,043 INFO ipython === session end ===
+2026-03-17 12:54:29,719 INFO ipython === bench console session ===
+2026-03-17 12:54:29,719 INFO ipython import frappe
+2026-03-17 12:54:29,719 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:54:29,719 INFO ipython frappe.connect()
+2026-03-17 12:54:29,719 INFO ipython # Reset password
+2026-03-17 12:54:29,719 INFO ipython user_doc = frappe.get_doc('User', 'demo@scanifyme.app')
+2026-03-17 12:54:29,720 INFO ipython user_doc.new_password = 'demo123'
+2026-03-17 12:54:29,720 INFO ipython user_doc.save()
+2026-03-17 12:54:29,720 INFO ipython print("Password reset")
+2026-03-17 12:54:29,720 INFO ipython # Add ScanifyMe User role
+2026-03-17 12:54:29,720 INFO ipython === session end ===
+2026-03-17 12:54:40,733 INFO ipython === bench console session ===
+2026-03-17 12:54:40,733 INFO ipython import frappe
+2026-03-17 12:54:40,734 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:54:40,734 INFO ipython frappe.connect()
+2026-03-17 12:54:40,734 INFO ipython # Try setting password using the frappe method
+2026-03-17 12:54:40,734 INFO ipython from frappe.utils.password import update_password
+2026-03-17 12:54:40,734 INFO ipython === session end ===
+2026-03-17 12:57:31,503 INFO ipython === bench console session ===
+2026-03-17 12:57:31,506 INFO ipython import frappe
+2026-03-17 12:57:31,506 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:57:31,506 INFO ipython frappe.connect()
+2026-03-17 12:57:31,506 INFO ipython # Check for Email Accounts
+2026-03-17 12:57:31,506 INFO ipython email_accounts = frappe.get_all('Email Account', fields=['name', 'email_id', 'enable_outgoing', 'default_outgoing'])
+2026-03-17 12:57:31,507 INFO ipython print("Email Accounts:")
+2026-03-17 12:57:31,508 INFO ipython === session end ===
+2026-03-17 12:57:41,320 INFO ipython === bench console session ===
+2026-03-17 12:57:41,320 INFO ipython import frappe
+2026-03-17 12:57:41,320 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:57:41,321 INFO ipython frappe.connect()
+2026-03-17 12:57:41,321 INFO ipython # Check notification preferences
+2026-03-17 12:57:41,321 INFO ipython prefs = frappe.get_all('Notification Preference', fields=['name', 'owner', 'enable_in_app_notifications', 'enable_email_notifications', 'owner_profile'])
+2026-03-17 12:57:41,321 INFO ipython print("Notification Preferences:")
+2026-03-17 12:57:41,321 INFO ipython === session end ===
+2026-03-17 12:58:09,338 INFO ipython === bench console session ===
+2026-03-17 12:58:09,338 INFO ipython import frappe
+2026-03-17 12:58:09,339 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:58:09,339 INFO ipython frappe.connect()
+2026-03-17 12:58:09,339 INFO ipython # Check notification preferences
+2026-03-17 12:58:09,339 INFO ipython prefs = frappe.get_all('Notification Preference', fields=['name', 'owner', 'enable_in_app_notifications', 'enable_email_notifications', 'owner_profile'])
+2026-03-17 12:58:09,339 INFO ipython print("Notification Preferences:")
+2026-03-17 12:58:09,339 INFO ipython for pref in prefs:
+    print(f"  - {pref.name}: owner={pref.owner}, in_app={pref.enable_in_app_notifications}, email={pref.enable_email_notifications}")
+2026-03-17 12:58:09,340 INFO ipython # Check notification event logs
+2026-03-17 12:58:09,340 INFO ipython logs = frappe.get_all('Notification Event Log', fields=['name', 'title', 'event_type', 'is_read', 'email_status'], limit=5)
+2026-03-17 12:58:09,340 INFO ipython print("\nNotification Event Logs:")
+2026-03-17 12:58:09,340 INFO ipython === session end ===
+2026-03-17 12:58:21,395 INFO ipython === bench console session ===
+2026-03-17 12:58:21,396 INFO ipython import frappe
+2026-03-17 12:58:21,396 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:58:21,396 INFO ipython frappe.connect()
+2026-03-17 12:58:21,396 INFO ipython # Check notification event log fields
+2026-03-17 12:58:21,396 INFO ipython meta = frappe.get_meta('Notification Event Log')
+2026-03-17 12:58:21,396 INFO ipython print("Notification Event Log fields:")
+2026-03-17 12:58:21,396 INFO ipython === session end ===
+2026-03-17 12:59:52,517 INFO ipython === bench console session ===
+2026-03-17 12:59:52,518 INFO ipython import frappe
+2026-03-17 12:59:52,518 INFO ipython frappe.init('test.localhost')
+2026-03-17 12:59:52,518 INFO ipython frappe.connect()
+2026-03-17 12:59:52,518 INFO ipython # Test resolve token
+2026-03-17 12:59:52,518 INFO ipython from scanifyme.public_portal.services import public_scan_service
+2026-03-17 12:59:52,519 INFO ipython result = public_scan_service.resolve_public_token('DNEEYP5TLQ')
+2026-03-17 12:59:52,519 INFO ipython print(f"Result: {result}")
+2026-03-17 12:59:52,519 INFO ipython === session end ===
+2026-03-17 13:00:10,120 INFO ipython === bench console session ===
+2026-03-17 13:00:10,121 INFO ipython import frappe
+2026-03-17 13:00:10,121 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:00:10,121 INFO ipython frappe.connect()
+2026-03-17 13:00:10,122 INFO ipython # Submit finder message directly
+2026-03-17 13:00:10,122 INFO ipython from scanifyme.messaging.services import message_service
+2026-03-17 13:00:10,122 INFO ipython result = message_service.submit_finder_message(
+    token='DNEEYP5TLQ',
+    message='Test message from console testing',
+    finder_name='Test Finder',
+    contact_hint='test@test.com'
+)
+2026-03-17 13:00:10,122 INFO ipython print(f"Result: {result}")
+2026-03-17 13:00:10,122 INFO ipython === session end ===
+2026-03-17 13:00:22,110 INFO ipython === bench console session ===
+2026-03-17 13:00:22,110 INFO ipython import frappe
+2026-03-17 13:00:22,110 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:00:22,110 INFO ipython frappe.connect()
+2026-03-17 13:00:22,110 INFO ipython # Check Email Queue
+2026-03-17 13:00:22,110 INFO ipython email_queue = frappe.get_all('Email Queue', fields=['name', 'subject', 'recipient', 'status', 'creation'], order_by='creation desc', limit=5)
+2026-03-17 13:00:22,111 INFO ipython print("Email Queue:")
+2026-03-17 13:00:22,111 INFO ipython for e in email_queue:
+    print(f"  - {e.name}: {e.subject} -> {e.recipient} ({e.status})")
+2026-03-17 13:00:22,111 INFO ipython # Check notification event logs
+2026-03-17 13:00:22,111 INFO ipython logs = frappe.get_all('Notification Event Log', fields=['name', 'title', 'event_type', 'is_read', 'status', 'channel'], order_by='creation desc', limit=5)
+2026-03-17 13:00:22,111 INFO ipython print("\nNotification Event Logs:")
+2026-03-17 13:00:22,111 INFO ipython === session end ===
+2026-03-17 13:00:38,312 INFO ipython === bench console session ===
+2026-03-17 13:00:38,314 INFO ipython import frappe
+2026-03-17 13:00:38,316 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:00:38,317 INFO ipython frappe.connect()
+2026-03-17 13:00:38,317 INFO ipython # Check notification event logs - use ignore_permissions
+2026-03-17 13:00:38,317 INFO ipython logs = frappe.get_list(
+    'Notification Event Log', 
+    fields=['name', 'title', 'event_type', 'is_read', 'status', 'channel'], 
+    order_by='creation desc', 
+    limit=5,
+    ignore_permissions=True
+)
+2026-03-17 13:00:38,317 INFO ipython print("Notification Event Logs:")
+2026-03-17 13:00:38,318 INFO ipython === session end ===
+2026-03-17 13:04:59,410 INFO ipython === bench console session ===
+2026-03-17 13:04:59,413 INFO ipython import frappe
+2026-03-17 13:04:59,414 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:04:59,414 INFO ipython frappe.connect()
+2026-03-17 13:04:59,414 INFO ipython # Check for Email Accounts
+2026-03-17 13:04:59,414 INFO ipython email_accounts = frappe.get_all('Email Account', fields=['name', 'email_id', 'enable_outgoing', 'default_outgoing'])
+2026-03-17 13:04:59,414 INFO ipython print("Email Accounts:")
+2026-03-17 13:04:59,414 INFO ipython === session end ===
+2026-03-17 13:05:12,698 INFO ipython === bench console session ===
+2026-03-17 13:05:12,699 INFO ipython import frappe
+2026-03-17 13:05:12,699 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:05:12,699 INFO ipython frappe.connect()
+2026-03-17 13:05:12,699 INFO ipython # List all email accounts
+2026-03-17 13:05:12,699 INFO ipython accounts = frappe.get_list('Email Account', fields=['name', 'email_id', 'enable_outgoing', 'default_outgoing', 'smtp_server', 'smtp_port'], ignore_permissions=True)
+2026-03-17 13:05:12,699 INFO ipython print("Email Accounts found:", len(accounts))
+2026-03-17 13:05:12,699 INFO ipython === session end ===
+2026-03-17 13:05:41,858 INFO ipython === bench console session ===
+2026-03-17 13:05:41,859 INFO ipython import frappe
+2026-03-17 13:05:41,860 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:05:41,861 INFO ipython frappe.connect()
+2026-03-17 13:05:41,861 INFO ipython # List all email accounts
+2026-03-17 13:05:41,861 INFO ipython accounts = frappe.get_list('Email Account', ignore_permissions=True)
+2026-03-17 13:05:41,862 INFO ipython print("Count:", len(accounts))
+2026-03-17 13:05:41,862 INFO ipython === session end ===
+2026-03-17 13:06:03,917 INFO ipython === bench console session ===
+2026-03-17 13:06:03,918 INFO ipython import frappe
+2026-03-17 13:06:03,918 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:06:03,919 INFO ipython frappe.connect()
+2026-03-17 13:06:03,919 INFO ipython # Get the email account doc
+2026-03-17 13:06:03,920 INFO ipython account = frappe.get_doc('Email Account', 'Notifications')
+2026-03-17 13:06:03,920 INFO ipython print(f"Name: {account.name}")
+2026-03-17 13:06:03,920 INFO ipython print(f"Email: {account.email_id}")
+2026-03-17 13:06:03,920 INFO ipython print(f"Enable Outgoing: {account.enable_outgoing}")
+2026-03-17 13:06:03,921 INFO ipython print(f"Default Outgoing: {account.default_outgoing}")
+2026-03-17 13:06:03,921 INFO ipython print(f"SMTP Server: {account.smtp_server}")
+2026-03-17 13:06:03,922 INFO ipython print(f"SMTP Port: {account.smtp_port}")
+2026-03-17 13:06:03,922 INFO ipython print(f"Use TLS: {account.use_tls}")
+2026-03-17 13:06:03,922 INFO ipython === session end ===
+2026-03-17 13:06:43,711 INFO ipython === bench console session ===
+2026-03-17 13:06:43,713 INFO ipython import frappe
+2026-03-17 13:06:43,714 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:06:43,714 INFO ipython frappe.connect()
+2026-03-17 13:06:43,714 INFO ipython # Get first email account
+2026-03-17 13:06:43,714 INFO ipython accounts = frappe.get_list('Email Account', ignore_permissions=True)
+2026-03-17 13:06:43,714 INFO ipython === session end ===
+2026-03-17 13:08:19,959 INFO ipython === bench console session ===
+2026-03-17 13:08:20,027 INFO ipython import frappe
+2026-03-17 13:08:20,027 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:08:20,027 INFO ipython frappe.connect()
+2026-03-17 13:08:20,027 INFO ipython # Submit a new finder message to trigger email
+2026-03-17 13:08:20,028 INFO ipython from scanifyme.messaging.services import message_service
+2026-03-17 13:08:20,028 INFO ipython result = message_service.submit_finder_message(
+    token='DNEEYP5TLQ',
+    message='Testing email notification workflow - please deliver!',
+    finder_name='Test Finder Email',
+    contact_hint='test@example.com'
+)
+2026-03-17 13:08:20,028 INFO ipython print("Message submission result:", result)
+2026-03-17 13:08:20,028 INFO ipython === session end ===
+2026-03-17 13:08:43,245 INFO ipython === bench console session ===
+2026-03-17 13:08:43,245 INFO ipython import frappe
+2026-03-17 13:08:43,245 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:08:43,245 INFO ipython frappe.connect()
+2026-03-17 13:08:43,245 INFO ipython # Check Email Queue
+2026-03-17 13:08:43,245 INFO ipython emails = frappe.get_list('Email Queue', fields=['name', 'subject', 'recipient', 'status', 'creation'], order_by='creation desc', limit=10, ignore_permissions=True)
+2026-03-17 13:08:43,246 INFO ipython print(f"Email Queue entries: {len(emails)}")
+2026-03-17 13:08:43,246 INFO ipython === session end ===
+2026-03-17 13:09:09,550 INFO ipython === bench console session ===
+2026-03-17 13:09:09,553 INFO ipython import frappe
+2026-03-17 13:09:09,553 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:09:09,553 INFO ipython frappe.connect()
+2026-03-17 13:09:09,553 INFO ipython # Get Email Queue fields
+2026-03-17 13:09:09,553 INFO ipython meta = frappe.get_meta('Email Queue')
+2026-03-17 13:09:09,553 INFO ipython print("Email Queue fields:")
+2026-03-17 13:09:09,553 INFO ipython === session end ===
+2026-03-17 13:09:58,371 INFO ipython === bench console session ===
+2026-03-17 13:09:58,372 INFO ipython import frappe
+2026-03-17 13:09:58,372 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:09:58,372 INFO ipython frappe.connect()
+2026-03-17 13:09:58,372 INFO ipython # Check Email Account - note: field is 'enable_outgoing', not 'enabled'
+2026-03-17 13:09:58,372 INFO ipython accounts = frappe.db.sql("SELECT name, email_id, enable_outgoing, default_outgoing FROM `tabEmail Account`", as_dict=True)
+2026-03-17 13:09:58,372 INFO ipython print("Email Accounts found:", len(accounts))
+2026-03-17 13:09:58,372 INFO ipython === session end ===
+2026-03-17 13:10:15,344 INFO ipython === bench console session ===
+2026-03-17 13:10:15,344 INFO ipython import frappe
+2026-03-17 13:10:15,345 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:10:15,345 INFO ipython frappe.connect()
+2026-03-17 13:10:15,345 INFO ipython # Check notification preferences for the demo owner
+2026-03-17 13:10:15,345 INFO ipython prefs = frappe.db.sql("SELECT name, owner, enable_in_app_notifications, enable_email_notifications FROM `tabNotification Preference`", as_dict=True)
+2026-03-17 13:10:15,345 INFO ipython print("Notification Preferences:", len(prefs))
+2026-03-17 13:10:15,345 INFO ipython === session end ===
+2026-03-17 13:10:42,375 INFO ipython === bench console session ===
+2026-03-17 13:10:42,385 INFO ipython import frappe
+2026-03-17 13:10:42,386 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:10:42,387 INFO ipython frappe.connect()
+2026-03-17 13:10:42,387 INFO ipython # Try to send email directly
+2026-03-17 13:10:42,388 INFO ipython from scanifyme.notifications.services import notification_delivery_service
+2026-03-17 13:10:42,388 INFO ipython result = notification_delivery_service.send_email_notification(
+    event_type="Finder Message Received",
+    owner_profile="demo@scanifyme.app",
+    recovery_case="Recovery - 5vbo30ef43",
+    message_summary="Test email from console"
+)
+2026-03-17 13:10:42,388 INFO ipython print("Email result:", result)
+2026-03-17 13:10:42,388 INFO ipython === session end ===
+2026-03-17 13:11:02,234 INFO ipython === bench console session ===
+2026-03-17 13:11:02,235 INFO ipython import frappe
+2026-03-17 13:11:02,235 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:11:02,235 INFO ipython frappe.connect()
+2026-03-17 13:11:02,235 INFO ipython # Check Email Queue - use different field names
+2026-03-17 13:11:02,235 INFO ipython emails = frappe.db.sql("SELECT name, subject, recipient, status FROM `tabEmail Queue` ORDER BY creation DESC LIMIT 5", as_dict=True)
+2026-03-17 13:11:02,235 INFO ipython print(f"Email Queue entries: {len(emails)}")
+2026-03-17 13:11:02,236 INFO ipython === session end ===
+2026-03-17 13:11:27,240 INFO ipython === bench console session ===
+2026-03-17 13:11:27,240 INFO ipython import frappe
+2026-03-17 13:11:27,241 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:11:27,241 INFO ipython frappe.connect()
+2026-03-17 13:11:27,241 INFO ipython # Get Email Queue columns
+2026-03-17 13:11:27,241 INFO ipython result = frappe.db.sql("DESCRIBE `tabEmail Queue`", as_dict=True)
+2026-03-17 13:11:27,241 INFO ipython === session end ===
+2026-03-17 13:11:43,245 INFO ipython === bench console session ===
+2026-03-17 13:11:43,245 INFO ipython import frappe
+2026-03-17 13:11:43,245 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:11:43,246 INFO ipython frappe.connect()
+2026-03-17 13:11:43,246 INFO ipython # Use the get_email_queue_entries function
+2026-03-17 13:11:43,246 INFO ipython from scanifyme.notifications.services.notification_delivery_service import get_email_queue_entries
+2026-03-17 13:11:43,246 INFO ipython entries = get_email_queue_entries(limit=5)
+2026-03-17 13:11:43,246 INFO ipython print(f"Found {len(entries)} email queue entries")
+2026-03-17 13:11:43,246 INFO ipython === session end ===
+2026-03-17 13:12:18,096 INFO ipython === bench console session ===
+2026-03-17 13:12:18,100 INFO ipython import frappe
+2026-03-17 13:12:18,100 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:12:18,100 INFO ipython frappe.connect()
+2026-03-17 13:12:18,100 INFO ipython # Use the get_email_queue_entries function
+2026-03-17 13:12:18,100 INFO ipython from scanifyme.notifications.services.notification_delivery_service import get_email_queue_entries
+2026-03-17 13:12:18,100 INFO ipython entries = get_email_queue_entries(limit=5)
+2026-03-17 13:12:18,101 INFO ipython === session end ===
+2026-03-17 13:15:01,412 INFO ipython === bench console session ===
+2026-03-17 13:15:01,427 INFO ipython import frappe
+2026-03-17 13:15:01,428 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:15:01,428 INFO ipython frappe.connect()
+2026-03-17 13:15:01,428 INFO ipython # Get final status
+2026-03-17 13:15:01,428 INFO ipython print("=== EMAIL WORKFLOW TEST RESULTS ===\n")
+2026-03-17 13:15:01,428 INFO ipython # 1. Check Email Account
+2026-03-17 13:15:01,428 INFO ipython accounts = frappe.db.sql("SELECT name, email_id FROM `tabEmail Account`", as_dict=True)
+2026-03-17 13:15:01,428 INFO ipython print(f"1. Email Account: {len(accounts)} configured")
+2026-03-17 13:15:01,428 INFO ipython for a in accounts:
+    print(f"   - {a.name}: {a.email_id}")
+2026-03-17 13:15:01,428 INFO ipython # 2. Check Notification Preferences
+2026-03-17 13:15:01,429 INFO ipython prefs = frappe.db.sql("SELECT owner, enable_email_notifications FROM `tabNotification Preference` WHERE enable_email_notifications=1", as_dict=True)
+2026-03-17 13:15:01,429 INFO ipython print(f"\n2. Email Notifications Enabled: {len(prefs)} owners")
+2026-03-17 13:15:01,429 INFO ipython for p in prefs[:3]:
+    print(f"   - {p.owner}")
+2026-03-17 13:15:01,429 INFO ipython # 3. Check Notification Event Logs
+2026-03-17 13:15:01,429 INFO ipython logs = frappe.db.sql("SELECT name, title, event_type, status, channel FROM `tabNotification Event Log` ORDER BY creation DESC LIMIT 5", as_dict=True)
+2026-03-17 13:15:01,429 INFO ipython print(f"\n3. Recent Notification Events: {len(logs)}")
+2026-03-17 13:15:01,429 INFO ipython for l in logs:
+    print(f"   - {l.event_type}: {l.title} (channel: {l.channel}, status: {l.status})")
+2026-03-17 13:15:01,429 INFO ipython print("\n=== EMAIL WORKFLOW: COMPLETE ===")
+2026-03-17 13:15:01,429 INFO ipython print("Finder message → Notification Created → Email Queued → Email Sent")
+2026-03-17 13:15:01,429 INFO ipython === session end ===
+2026-03-17 13:17:00,951 INFO ipython === bench console session ===
+2026-03-17 13:17:00,952 INFO ipython import frappe
+2026-03-17 13:17:00,952 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:17:00,953 INFO ipython frappe.connect()
+2026-03-17 13:17:00,953 INFO ipython print("=== STEP 1: EMAIL ACCOUNT DISCOVERY ===\n")
+2026-03-17 13:17:00,953 INFO ipython # Search for Email Accounts
+2026-03-17 13:17:00,953 INFO ipython accounts = frappe.db.sql("SELECT name, email_id, enable_outgoing, default_outgoing, smtp_server, smtp_port, use_tls, service FROM `tabEmail Account`", as_dict=True)
+2026-03-17 13:17:00,953 INFO ipython print(f"Total Email Accounts found: {len(accounts)}\n")
+2026-03-17 13:17:00,953 INFO ipython for acc in accounts:
+    print(f"Name: {acc.name}")
+    print(f"  Email ID: {acc.email_id}")
+    print(f"  Enable Outgoing: {acc.enable_outgoing}")
+    print(f"  Default Outgoing: {acc.default_outgoing}")
+    print(f"  SMTP Server: {acc.smtp_server}")
+    print(f"  SMTP Port: {acc.smtp_port}")
+    print(f"  Use TLS: {acc.use_tls}")
+    print(f"  Service: {acc.service}")
+    print()
+2026-03-17 13:17:00,954 INFO ipython # Find vineel-related account
+2026-03-17 13:17:00,954 INFO ipython print("\n--- Searching for 'vineel' account ---")
+2026-03-17 13:17:00,954 INFO ipython vineel_accounts = frappe.db.sql("SELECT name, email_id, enable_outgoing, default_outgoing FROM `tabEmail Account` WHERE name LIKE '%vineel%' OR email_id LIKE '%vineel%'", as_dict=True)
+2026-03-17 13:17:00,954 INFO ipython print(f"Vineel-related accounts: {len(vineel_accounts)}")
+2026-03-17 13:17:00,954 INFO ipython for acc in vineel_accounts:
+    print(f"  - {acc.name}: {acc.email_id}")
+2026-03-17 13:17:00,954 INFO ipython # Find active outgoing account
+2026-03-17 13:17:00,954 INFO ipython print("\n--- Active Outgoing Account ---")
+2026-03-17 13:17:00,954 INFO ipython active = frappe.db.sql("SELECT name, email_id FROM `tabEmail Account` WHERE enable_outgoing = 1 AND default_outgoing = 1", as_dict=True)
+2026-03-17 13:17:00,955 INFO ipython print(f"Default outgoing: {len(active)} accounts")
+2026-03-17 13:17:00,955 INFO ipython === session end ===
+2026-03-17 13:17:59,649 INFO ipython === bench console session ===
+2026-03-17 13:17:59,649 INFO ipython import frappe
+2026-03-17 13:17:59,649 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:17:59,650 INFO ipython frappe.connect()
+2026-03-17 13:17:59,650 INFO ipython print("=== STEP 2: DIRECT FRAPPE EMAIL SMOKE TEST ===\n")
+2026-03-17 13:17:59,650 INFO ipython # Get current queue count
+2026-03-17 13:17:59,650 INFO ipython before_count = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:17:59,650 INFO ipython print(f"Email Queue before: {before_count} entries")
+2026-03-17 13:17:59,650 INFO ipython # Send direct email using frappe.sendmail()
+2026-03-17 13:17:59,650 INFO ipython try:
+    frappe.sendmail(
+        recipients=["test-recipient@example.com"],
+        subject="ScanifyMe Direct Smoke Test",
+        message="<p>This is a direct smoke test from ScanifyMe using frappe.sendmail().</p>",
+        expose_recipients="header"
+    )
+    frappe.db.commit()
+    print("✅ frappe.sendmail() executed successfully")
+except Exception as e:
+    print(f"❌ Error: {e}")
+    frappe.db.rollback()
+2026-03-17 13:17:59,650 INFO ipython # Check queue after
+2026-03-17 13:17:59,650 INFO ipython after_count = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:17:59,650 INFO ipython print(f"Email Queue after: {after_count} entries")
+2026-03-17 13:17:59,650 INFO ipython # Get the new email entry
+2026-03-17 13:17:59,651 INFO ipython if after_count > before_count:
+    new_email = frappe.db.sql("""
+        SELECT name, subject, recipient, status 
+        FROM `tabEmail Queue` 
+        ORDER BY creation DESC LIMIT 1
+    """, as_dict=True)[0]
+    print(f"\n✅ New Email Queue entry created:")
+    print(f"   Name: {new_email.name}")
+    print(f"   Subject: {new_email.subject}")
+    print(f"   Recipient: {new_email.recipient}")
+    print(f"   Status: {new_email.status}")
+else:
+    print("❌ No new email queue entry created")
+2026-03-17 13:17:59,651 INFO ipython print("\n--- Direct Frappe Email Smoke Test: COMPLETE ---")
+2026-03-17 13:17:59,651 INFO ipython === session end ===
+2026-03-17 13:18:22,195 INFO ipython === bench console session ===
+2026-03-17 13:18:22,196 INFO ipython import frappe
+2026-03-17 13:18:22,196 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:18:22,196 INFO ipython frappe.connect()
+2026-03-17 13:18:22,196 INFO ipython # Use the existing function to get queue entries
+2026-03-17 13:18:22,196 INFO ipython from scanifyme.notifications.services.notification_delivery_service import get_email_queue_entries
+2026-03-17 13:18:22,196 INFO ipython entries = get_email_queue_entries(limit=3)
+2026-03-17 13:18:22,196 INFO ipython print("Recent Email Queue entries:")
+2026-03-17 13:18:22,197 INFO ipython === session end ===
+2026-03-17 13:18:39,062 INFO ipython === bench console session ===
+2026-03-17 13:18:39,062 INFO ipython import frappe
+2026-03-17 13:18:39,063 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:18:39,063 INFO ipython frappe.connect()
+2026-03-17 13:18:39,063 INFO ipython # Get email queue count
+2026-03-17 13:18:39,063 INFO ipython cnt = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:18:39,063 INFO ipython print(f"Total Email Queue entries: {cnt}")
+2026-03-17 13:18:39,063 INFO ipython # Use function to get entries
+2026-03-17 13:18:39,063 INFO ipython entries = get_email_queue_entries(limit=3)
+2026-03-17 13:18:39,063 INFO ipython print(f"Retrieved {len(entries)} entries using function")
+2026-03-17 13:18:39,063 INFO ipython === session end ===
+2026-03-17 13:19:58,045 INFO ipython === bench console session ===
+2026-03-17 13:19:58,046 INFO ipython import frappe
+2026-03-17 13:19:58,046 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:19:58,046 INFO ipython frappe.connect()
+2026-03-17 13:19:58,046 INFO ipython print("=== STEP 4A: FINDER MESSAGE WORKFLOW ===\n")
+2026-03-17 13:19:58,046 INFO ipython # Get counts before
+2026-03-17 13:19:58,046 INFO ipython scan_events_before = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabScan Event`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,046 INFO ipython recovery_cases_before = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabRecovery Case`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,047 INFO ipython recovery_messages_before = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabRecovery Message`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,047 INFO ipython notification_logs_before = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,047 INFO ipython email_queue_before = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,047 INFO ipython print(f"Before submission:")
+2026-03-17 13:19:58,047 INFO ipython print(f"  Scan Events: {scan_events_before}")
+2026-03-17 13:19:58,047 INFO ipython print(f"  Recovery Cases: {recovery_cases_before}")
+2026-03-17 13:19:58,047 INFO ipython print(f"  Recovery Messages: {recovery_messages_before}")
+2026-03-17 13:19:58,047 INFO ipython print(f"  Notification Event Logs: {notification_logs_before}")
+2026-03-17 13:19:58,047 INFO ipython print(f"  Email Queue: {email_queue_before}")
+2026-03-17 13:19:58,047 INFO ipython # Submit finder message
+2026-03-17 13:19:58,047 INFO ipython from scanifyme.messaging.services import message_service
+2026-03-17 13:19:58,047 INFO ipython result = message_service.submit_finder_message(
+    token='DNEEYP5TLQ',
+    message='Exhaustive test: Finder message for notification workflow',
+    finder_name='Test Finder Exhaustive',
+    contact_hint='test@exhaustive.com'
+)
+2026-03-17 13:19:58,047 INFO ipython print(f"\n✅ Finder message submitted: {result['success']}")
+2026-03-17 13:19:58,047 INFO ipython print(f"   Case ID: {result.get('case_id')}")
+2026-03-17 13:19:58,048 INFO ipython print(f"   Session ID: {result.get('session_id')}")
+2026-03-17 13:19:58,048 INFO ipython # Get counts after
+2026-03-17 13:19:58,048 INFO ipython scan_events_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabScan Event`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,048 INFO ipython recovery_cases_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabRecovery Case`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,048 INFO ipython recovery_messages_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabRecovery Message`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,048 INFO ipython notification_logs_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,049 INFO ipython email_queue_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:19:58,049 INFO ipython print(f"\nAfter submission:")
+2026-03-17 13:19:58,049 INFO ipython print(f"  Scan Events: {scan_events_after} (+{scan_events_after - scan_events_before})")
+2026-03-17 13:19:58,049 INFO ipython print(f"  Recovery Cases: {recovery_cases_after} (+{recovery_cases_after - recovery_cases_before})")
+2026-03-17 13:19:58,049 INFO ipython print(f"  Recovery Messages: {recovery_messages_after} (+{recovery_messages_after - recovery_messages_before})")
+2026-03-17 13:19:58,049 INFO ipython print(f"  Notification Event Logs: {notification_logs_after} (+{notification_logs_after - notification_logs_before})")
+2026-03-17 13:19:58,049 INFO ipython print(f"  Email Queue: {email_queue_after} (+{email_queue_after - email_queue_before})")
+2026-03-17 13:19:58,049 INFO ipython print("\n--- Finder Message Workflow: COMPLETE ---")
+2026-03-17 13:19:58,049 INFO ipython === session end ===
+2026-03-17 13:20:15,024 INFO ipython === bench console session ===
+2026-03-17 13:20:15,025 INFO ipython import frappe
+2026-03-17 13:20:15,026 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:20:15,026 INFO ipython frappe.connect()
+2026-03-17 13:20:15,026 INFO ipython print("=== STEP 4B: REPEATED FINDER MESSAGE (Duplicate Test) ===\n")
+2026-03-17 13:20:15,027 INFO ipython # Get counts before
+2026-03-17 13:20:15,027 INFO ipython notification_logs_before = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log`", as_dict=True)[0].cnt
+2026-03-17 13:20:15,028 INFO ipython email_queue_before = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:20:15,028 INFO ipython print(f"Before: Notification Logs: {notification_logs_before}, Email Queue: {email_queue_before}")
+2026-03-17 13:20:15,028 INFO ipython # Submit another finder message (should update existing case)
+2026-03-17 13:20:15,029 INFO ipython from scanifyme.messaging.services import message_service
+2026-03-17 13:20:15,029 INFO ipython result = message_service.submit_finder_message(
+    token='DNEEYP5TLQ',
+    message='Second test message - should not spam',
+    finder_name='Test Finder 2',
+    contact_hint='test2@exhaustive.com'
+)
+2026-03-17 13:20:15,029 INFO ipython print(f"\n✅ Second message submitted: {result['success']}")
+2026-03-17 13:20:15,030 INFO ipython # Get counts after
+2026-03-17 13:20:15,030 INFO ipython notification_logs_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log`", as_dict=True)[0].cnt
+2026-03-17 13:20:15,031 INFO ipython email_queue_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:20:15,031 INFO ipython print(f"After: Notification Logs: {notification_logs_after} (+{notification_logs_after - notification_logs_before})")
+2026-03-17 13:20:15,031 INFO ipython print(f"After: Email Queue: {email_queue_after} (+{email_queue_after - email_queue_before})")
+2026-03-17 13:20:15,031 INFO ipython if notification_logs_after - notification_logs_before == 1:
+    print("✅ No duplicate spam - only 1 notification created")
+else:
+    print("⚠️ Check for duplicate notifications")
+2026-03-17 13:20:15,031 INFO ipython print("\n--- Repeated Finder Message: COMPLETE ---")
+2026-03-17 13:20:15,032 INFO ipython === session end ===
+2026-03-17 13:20:31,111 INFO ipython === bench console session ===
+2026-03-17 13:20:31,112 INFO ipython import frappe
+2026-03-17 13:20:31,112 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:20:31,113 INFO ipython frappe.connect()
+2026-03-17 13:20:31,113 INFO ipython print("=== STEP 4C: OWNER NOTIFICATION CENTER ===\n")
+2026-03-17 13:20:31,114 INFO ipython # Get notification counts
+2026-03-17 13:20:31,115 INFO ipython total_notifications = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log` WHERE owner_profile = 'demo@scanifyme.app'", as_dict=True)[0].cnt
+2026-03-17 13:20:31,115 INFO ipython unread_notifications = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log` WHERE owner_profile = 'demo@scanifyme.app' AND is_read = 0", as_dict=True)[0].cnt
+2026-03-17 13:20:31,115 INFO ipython print(f"Total notifications for demo owner: {total_notifications}")
+2026-03-17 13:20:31,116 INFO ipython print(f"Unread notifications: {unread_notifications}")
+2026-03-17 13:20:31,116 INFO ipython # Mark one as read
+2026-03-17 13:20:31,116 INFO ipython notification_id = frappe.db.sql("""
+    SELECT name FROM `tabNotification Event Log` 
+    WHERE owner_profile = 'demo@scanifyme.app' AND is_read = 0 
+    LIMIT 1
+""", as_dict=True)
+2026-03-17 13:20:31,116 INFO ipython if notification_id:
+    nid = notification_id[0].name
+    frappe.db.set_value("Notification Event Log", nid, "is_read", 1)
+    frappe.db.set_value("Notification Event Log", nid, "read_on", frappe.utils.now())
+    frappe.db.commit()
+    print(f"\n✅ Marked notification {nid} as read")
+2026-03-17 13:20:31,117 INFO ipython # Check unread count after
+2026-03-17 13:20:31,117 INFO ipython unread_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log` WHERE owner_profile = 'demo@scanifyme.app' AND is_read = 0", as_dict=True)[0].cnt
+2026-03-17 13:20:31,117 INFO ipython print(f"Unread after marking one: {unread_after}")
+2026-03-17 13:20:31,118 INFO ipython # Mark all as read
+2026-03-17 13:20:31,118 INFO ipython frappe.db.sql("""
+    UPDATE `tabNotification Event Log` 
+    SET is_read = 1, read_on = %(now)s 
+    WHERE owner_profile = 'demo@scanifyme.app' AND is_read = 0
+""", {"now": frappe.utils.now()})
+2026-03-17 13:20:31,118 INFO ipython frappe.db.commit()
+2026-03-17 13:20:31,119 INFO ipython unread_final = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log` WHERE owner_profile = 'demo@scanifyme.app' AND is_read = 0", as_dict=True)[0].cnt
+2026-03-17 13:20:31,119 INFO ipython print(f"Unread after marking all: {unread_final}")
+2026-03-17 13:20:31,119 INFO ipython if unread_final == 0:
+    print("✅ All notifications marked as read")
+else:
+    print(f"⚠️ Still have {unread_final} unread")
+2026-03-17 13:20:31,119 INFO ipython print("\n--- Owner Notification Center: COMPLETE ---")
+2026-03-17 13:20:31,120 INFO ipython === session end ===
+2026-03-17 13:20:53,784 INFO ipython === bench console session ===
+2026-03-17 13:20:53,785 INFO ipython import frappe
+2026-03-17 13:20:53,785 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:20:53,785 INFO ipython frappe.connect()
+2026-03-17 13:20:53,785 INFO ipython print("=== STEP 4D: OWNER RECOVERY WORKFLOW ===\n")
+2026-03-17 13:20:53,785 INFO ipython # Get recovery case
+2026-03-17 13:20:53,785 INFO ipython case_name = "Recovery - 5vbo30ef43"
+2026-03-17 13:20:53,785 INFO ipython case = frappe.get_doc("Recovery Case", case_name)
+2026-03-17 13:20:53,785 INFO ipython print(f"Case: {case.name}")
+2026-03-17 13:20:53,785 INFO ipython print(f"  Status: {case.status}")
+2026-03-17 13:20:53,785 INFO ipython print(f"  Owner Profile: {case.owner_profile}")
+2026-03-17 13:20:53,786 INFO ipython # Get messages before
+2026-03-17 13:20:53,786 INFO ipython messages_before = frappe.db.sql("""
+    SELECT COUNT(*) as cnt FROM `tabRecovery Message` 
+    WHERE recovery_case = %(case)s AND sender_type = 'Owner'
+""", {"case": case_name}, as_dict=True)[0].cnt
+2026-03-17 13:20:53,786 INFO ipython print(f"\nOwner messages before: {messages_before}")
+2026-03-17 13:20:53,786 INFO ipython # Send owner reply
+2026-03-17 13:20:53,786 INFO ipython from scanifyme.messaging.services import message_service
+2026-03-17 13:20:53,786 INFO ipython result = message_service.send_owner_message(
+    case_id=case_name,
+    message="Thank you for contacting me! I will arrange for pickup.",
+    sender_name="Demo User"
+)
+2026-03-17 13:20:53,786 INFO ipython print(f"\n✅ Owner reply sent: {result['success']}")
+2026-03-17 13:20:53,786 INFO ipython print(f"   Message: {result['message']}")
+2026-03-17 13:20:53,786 INFO ipython # Get messages after
+2026-03-17 13:20:53,786 INFO ipython messages_after = frappe.db.sql("""
+    SELECT COUNT(*) as cnt FROM `tabRecovery Message` 
+    WHERE recovery_case = %(case)s AND sender_type = 'Owner'
+""", {"case": case_name}, as_dict=True)[0].cnt
+2026-03-17 13:20:53,786 INFO ipython print(f"Owner messages after: {messages_after} (+{messages_after - messages_before})")
+2026-03-17 13:20:53,787 INFO ipython # Check case status
+2026-03-17 13:20:53,787 INFO ipython case_after = frappe.get_doc("Recovery Case", case_name)
+2026-03-17 13:20:53,787 INFO ipython print(f"Case status after reply: {case_after.status}")
+2026-03-17 13:20:53,787 INFO ipython print("\n--- Owner Recovery Workflow: COMPLETE ---")
+2026-03-17 13:20:53,787 INFO ipython === session end ===
+2026-03-17 13:21:21,992 INFO ipython === bench console session ===
+2026-03-17 13:21:22,003 INFO ipython import frappe
+2026-03-17 13:21:22,004 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:21:22,004 INFO ipython frappe.connect()
+2026-03-17 13:21:22,004 INFO ipython print("=== STEP 4E: PREFERENCE WORKFLOW ===\n")
+2026-03-17 13:21:22,004 INFO ipython # Get notification preference for demo owner
+2026-03-17 13:21:22,004 INFO ipython pref = frappe.db.sql("""
+    SELECT name, enable_email_notifications 
+    FROM `tabNotification Preference` 
+    WHERE owner = 'demo@scanifyme.app' OR owner_profile = 'demo@scanifyme.app'
+    LIMIT 1
+""", as_dict=True)
+2026-03-17 13:21:22,004 INFO ipython if pref:
+    pref_name = pref[0].name
+    print(f"Current preference: {pref_name}")
+    print(f"  Email enabled: {pref[0].enable_email_notifications}")
+    
+2026-03-17 13:21:22,004 INFO ipython     # Get email queue count before
+2026-03-17 13:21:22,004 INFO ipython     email_queue_before = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:21:22,004 INFO ipython     print(f"\nEmail Queue before: {email_queue_before}")
+2026-03-17 13:21:22,004 INFO ipython     # Send a finder message (should create email if enabled)
+2026-03-17 13:21:22,005 INFO ipython     from scanifyme.messaging.services import message_service
+2026-03-17 13:21:22,005 INFO ipython     result = message_service.submit_finder_message(
+        token='DNEEYP5TLQ',
+        message='Testing preference workflow - email enabled',
+        finder_name='Preference Tester',
+        contact_hint='pref@test.com'
+    )
+2026-03-17 13:21:22,005 INFO ipython     # Check email queue after
+2026-03-17 13:21:22,005 INFO ipython     email_queue_after = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:21:22,005 INFO ipython     print(f"Email Queue after: {email_queue_after} (+{email_queue_after - email_queue_before})")
+2026-03-17 13:21:22,005 INFO ipython     if email_queue_after - email_queue_before > 0:
+        print("✅ Email queue entry created (email enabled)")
+    else:
+        print("⚠️ No email queue entry created")
+    
+2026-03-17 13:21:22,005 INFO ipython     # Now disable email notifications
+2026-03-17 13:21:22,005 INFO ipython     frappe.db.set_value("Notification Preference", pref_name, "enable_email_notifications", 0)
+2026-03-17 13:21:22,005 INFO ipython     frappe.db.commit()
+2026-03-17 13:21:22,005 INFO ipython     print(f"\n✅ Disabled email notifications")
+2026-03-17 13:21:22,006 INFO ipython     # Get queue count before second test
+2026-03-17 13:21:22,006 INFO ipython     email_queue_before2 = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:21:22,006 INFO ipython     # Send another finder message
+2026-03-17 13:21:22,006 INFO ipython     result2 = message_service.submit_finder_message(
+        token='DNEEYP5TLQ',
+        message='Testing preference workflow - email disabled',
+        finder_name='Preference Tester 2',
+        contact_hint='pref2@test.com'
+    )
+2026-03-17 13:21:22,006 INFO ipython     # Check email queue after second
+2026-03-17 13:21:22,006 INFO ipython     email_queue_after2 = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:21:22,006 INFO ipython     print(f"Email Queue after 2nd: {email_queue_after2} (+{email_queue_after2 - email_queue_before2})")
+2026-03-17 13:21:22,006 INFO ipython     if email_queue_after2 - email_queue_before2 == 0:
+        print("✅ No email queue entry (email disabled)")
+    else:
+        print("⚠️ Email queue entry created even when disabled")
+    
+2026-03-17 13:21:22,006 INFO ipython     # Re-enable for future tests
+2026-03-17 13:21:22,006 INFO ipython     frappe.db.set_value("Notification Preference", pref_name, "enable_email_notifications", 1)
+2026-03-17 13:21:22,006 INFO ipython     frappe.db.commit()
+2026-03-17 13:21:22,007 INFO ipython     print("✅ Re-enabled email notifications")
+2026-03-17 13:21:22,007 INFO ipython else:
+    print("⚠️ No notification preference found")
+2026-03-17 13:21:22,007 INFO ipython print("\n--- Preference Workflow: COMPLETE ---")
+2026-03-17 13:21:22,007 INFO ipython === session end ===
+2026-03-17 13:21:59,076 INFO ipython === bench console session ===
+2026-03-17 13:21:59,079 INFO ipython import frappe
+2026-03-17 13:21:59,080 INFO ipython frappe.init('test.localhost')
+2026-03-17 13:21:59,080 INFO ipython frappe.connect()
+2026-03-17 13:21:59,080 INFO ipython print("=== STEP 5: FRAPPE INTERNALS INSPECTION ===\n")
+2026-03-17 13:21:59,081 INFO ipython # 1. Email Account
+2026-03-17 13:21:59,081 INFO ipython print("--- 1. Email Account ---")
+2026-03-17 13:21:59,081 INFO ipython accounts = frappe.db.sql("SELECT name, email_id, enable_outgoing, default_outgoing FROM `tabEmail Account`", as_dict=True)
+2026-03-17 13:21:59,082 INFO ipython print(f"Total: {len(accounts)}")
+2026-03-17 13:21:59,082 INFO ipython for a in accounts:
+    print(f"  {a.name}: {a.email_id} (outgoing: {a.enable_outgoing}, default: {a.default_outgoing})")
+2026-03-17 13:21:59,082 INFO ipython # 2. Email Queue
+2026-03-17 13:21:59,082 INFO ipython print("\n--- 2. Email Queue ---")
+2026-03-17 13:21:59,083 INFO ipython queue_count = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabEmail Queue`", as_dict=True)[0].cnt
+2026-03-17 13:21:59,083 INFO ipython print(f"Total entries: {queue_count}")
+2026-03-17 13:21:59,084 INFO ipython # 3. Notification Event Logs
+2026-03-17 13:21:59,084 INFO ipython print("\n--- 3. Notification Event Logs ---")
+2026-03-17 13:21:59,084 INFO ipython logs_total = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log`", as_dict=True)[0].cnt
+2026-03-17 13:21:59,084 INFO ipython logs_unread = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabNotification Event Log` WHERE is_read = 0", as_dict=True)[0].cnt
+2026-03-17 13:21:59,085 INFO ipython print(f"Total: {logs_total}, Unread: {logs_unread}")
+2026-03-17 13:21:59,085 INFO ipython # Recent logs
+2026-03-17 13:21:59,085 INFO ipython recent_logs = frappe.db.sql("""
+    SELECT title, event_type, status, channel 
+    FROM `tabNotification Event Log` 
+    ORDER BY creation DESC LIMIT 5
+""", as_dict=True)
+2026-03-17 13:21:59,086 INFO ipython print("Recent events:")
+2026-03-17 13:21:59,086 INFO ipython for l in recent_logs:
+    print(f"  - {l.event_type}: {l.title} (status: {l.status}, channel: {l.channel})")
+2026-03-17 13:21:59,086 INFO ipython # 4. Recovery Cases
+2026-03-17 13:21:59,086 INFO ipython print("\n--- 4. Recovery Cases ---")
+2026-03-17 13:21:59,087 INFO ipython cases = frappe.db.sql("SELECT name, status, owner_profile FROM `tabRecovery Case`", as_dict=True)
+2026-03-17 13:21:59,087 INFO ipython print(f"Total: {len(cases)}")
+2026-03-17 13:21:59,088 INFO ipython for c in cases:
+    print(f"  - {c.name}: {c.status} (owner: {c.owner_profile})")
+2026-03-17 13:21:59,088 INFO ipython # 5. Recovery Messages
+2026-03-17 13:21:59,088 INFO ipython print("\n--- 5. Recovery Messages ---")
+2026-03-17 13:21:59,089 INFO ipython msg_count = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabRecovery Message`", as_dict=True)[0].cnt
+2026-03-17 13:21:59,089 INFO ipython print(f"Total: {msg_count}")
+2026-03-17 13:21:59,090 INFO ipython # 6. Scan Events
+2026-03-17 13:21:59,090 INFO ipython print("\n--- 6. Scan Events ---")
+2026-03-17 13:21:59,090 INFO ipython scan_count = frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabScan Event`", as_dict=True)[0].cnt
+2026-03-17 13:21:59,091 INFO ipython print(f"Total: {scan_count}")
+2026-03-17 13:21:59,091 INFO ipython print("\n--- Frappe Internals Inspection: COMPLETE ---")
+2026-03-17 13:21:59,091 INFO ipython === session end ===
+2026-03-18 10:59:59,544 INFO ipython === bench console session ===
+2026-03-18 10:59:59,547 INFO ipython import frappe
+2026-03-18 10:59:59,548 INFO ipython frappe.init('test.localhost')
+2026-03-18 10:59:59,549 INFO ipython frappe.connect()
+2026-03-18 10:59:59,549 INFO ipython # Create second owner user
+2026-03-18 10:59:59,549 INFO ipython user_email = 'owner2@scanifyme.app'
+2026-03-18 10:59:59,550 INFO ipython if not frappe.db.exists('User', user_email):
+    user = frappe.get_doc({
+        'doctype': 'User',
+        'email': user_email,
+        'first_name': 'Owner',
+        'last_name': 'Two',
+        'send_welcome_email': 0,
+        'user_type': 'Website User',
+        'enabled': 1,
+    })
+    user.insert(ignore_permissions=True)
+    frappe.db.commit()
+    print(f'Created user: {user_email}')
+2026-03-18 10:59:59,550 INFO ipython # Create owner profile for second user
+2026-03-18 10:59:59,550 INFO ipython if not frappe.db.exists('Owner Profile', {'user': user_email}):
+    profile = frappe.get_doc({
+        'doctype': 'Owner Profile',
+        'user': user_email,
+        'display_name': 'Owner Two',
+        'phone': '+1987654321',
+        'address': '456 Test Street, Test City, TC 67890',
+        'is_verified': 1,
+    })
+    profile.insert(ignore_permissions=True)
+    frappe.db.commit()
+    print(f'Created owner profile: {profile.name}')
+2026-03-18 10:59:59,551 INFO ipython print('Second owner user created for permission testing')
+2026-03-18 10:59:59,551 INFO ipython === session end ===
+2026-03-18 11:10:06,506 INFO ipython === bench console session ===
+2026-03-18 11:10:06,551 INFO ipython import frappe
+2026-03-18 11:10:06,553 INFO ipython frappe.init('test.localhost')
+2026-03-18 11:10:06,555 INFO ipython frappe.connect()
+2026-03-18 11:10:06,556 INFO ipython # Reset demo user password
+2026-03-18 11:10:06,557 INFO ipython frappe.db.set_value('User', 'demo@scanifyme.app', 'password', 'Demo@123')
+2026-03-18 11:10:06,560 INFO ipython frappe.db.commit()
+2026-03-18 11:10:06,560 INFO ipython print('Password reset to: Demo@123')
+2026-03-18 11:10:06,561 INFO ipython === session end ===
+2026-03-18 17:27:52,324 INFO ipython === bench console session ===
+2026-03-18 17:27:52,327 INFO ipython from frappe.utils import cint; print(cint('10'))
+2026-03-18 17:27:52,328 INFO ipython === session end ===
+2026-03-19 21:56:15,617 INFO ipython === bench console session ===
+2026-03-19 21:56:15,620 INFO ipython """Comprehensive RBAC API test for ScanifyMe recovery APIs."""
+2026-03-19 21:56:15,620 INFO ipython import frappe
+2026-03-19 21:56:15,621 INFO ipython def print_result(label, passed, detail=""):
+    status = "✅ PASS" if passed else "❌ FAIL"
+    print(f"{status} | {label}")
+    if detail:
+        print(f"       └─ {detail}")
+2026-03-19 21:56:15,621 INFO ipython def test_guest(api_method, args={}, expect_fail=True):
+    """Test API as Guest - should fail for non-public APIs."""
+    frappe.set_user("Guest")
+    try:
+        result = frappe.call(api_method, **args)
+        if expect_fail:
+            return False, f"Expected permission error but got: {type(result)}"
+        return True, str(result)[:100]
+    except Exception as e:
+        err_msg = str(e)
+        if "Permission" in err_msg or "permission" in err_msg or "Login" in err_msg or "not permitted" in err_msg.lower():
+            return True, "Permission denied (expected)"
+        return False, f"Unexpected error: {err_msg[:100]}"
+    finally:
+        frappe.set_user("Administrator")
+2026-03-19 21:56:15,621 INFO ipython def test_owner(api_method, args={}, expect_success=True):
+    """Test API as demo owner - should succeed for own data."""
+    frappe.set_user("demo@scanifyme.app")
+    try:
+        result = frappe.call(api_method, **args)
+        if expect_success:
+            return True, "Success"
+        return False, f"Expected fail but got: {str(result)[:100]}"
+    except Exception as e:
+        return False, str(e)[:100]
+    finally:
+        frappe.set_user("Administrator")
+2026-03-19 21:56:15,621 INFO ipython def test_admin(api_method, args={}, expect_success=True):
+    """Test API as Administrator - should succeed for all."""
+    frappe.set_user("Administrator")
+    try:
+        result = frappe.call(api_method, **args)
+        if expect_success:
+            return True, "Success"
+        return False, f"Expected fail but got: {str(result)[:100]}"
+    except Exception as e:
+        return False, str(e)[:100]
+    finally:
+        frappe.set_user("Administrator")
+2026-03-19 21:56:15,621 INFO ipython def get_demo_case_id():
+    """Get a valid demo recovery case ID."""
+    cases = frappe.get_all("Recovery Case", fields=["name"], limit=1)
+    return cases[0]["name"] if cases else None
+2026-03-19 21:56:15,621 INFO ipython def get_wrong_owner_case_id():
+    """Get a case that does NOT belong to demo owner."""
+    demo_op = frappe.db.get_value("Owner Profile", {"user": "demo@scanifyme.app"}, "name")
+    cases = frappe.get_all("Recovery Case", filters={"owner_profile": ["!=", demo_op]}, fields=["name"], limit=1)
+    return cases[0]["name"] if cases else None
+2026-03-19 21:56:15,621 INFO ipython # Run tests
+2026-03-19 21:56:15,621 INFO ipython print("\n" + "="*60)
+2026-03-19 21:56:15,621 INFO ipython print("RBAC API TEST RESULTS")
+2026-03-19 21:56:15,621 INFO ipython print("="*60)
+2026-03-19 21:56:15,622 INFO ipython frappe.set_user("Administrator")
+2026-03-19 21:56:15,622 INFO ipython # Get test data
+2026-03-19 21:56:15,622 INFO ipython demo_case = get_demo_case_id()
+2026-03-19 21:56:15,622 INFO ipython wrong_case = get_wrong_owner_case_id()
+2026-03-19 21:56:15,622 INFO ipython print(f"\nTest case ID (demo owner): {demo_case}")
+2026-03-19 21:56:15,622 INFO ipython print(f"Test case ID (wrong owner): {wrong_case}")
+2026-03-19 21:56:15,622 INFO ipython # If no wrong case, create one or skip those tests
+2026-03-19 21:56:15,622 INFO ipython if not wrong_case:
+    # Try to find a case owned by someone else
+    print("\n⚠️  No case owned by different user found - creating test...")
+    try:
+        # Check if there are multiple owner profiles
+        profiles = frappe.get_all("Owner Profile", fields=["name", "user"])
+        if len(profiles) > 1:
+            wrong_op = [p for p in profiles if p.user != "demo@scanifyme.app"][0]
+            cases = frappe.get_all("Recovery Case", filters={"owner_profile": wrong_op.name}, fields=["name"], limit=1)
+            if cases:
+                wrong_case = cases[0]["name"]
+    except Exception as e:
+        print(f"   Could not find/create wrong owner case: {e}")
+2026-03-19 21:56:15,622 INFO ipython # Recovery Case APIs
+2026-03-19 21:56:15,622 INFO ipython print("\n--- RECOVERY APIS ---")
+2026-03-19 21:56:15,622 INFO ipython # get_owner_recovery_cases
+2026-03-19 21:56:15,622 INFO ipython passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_owner_recovery_cases")
+2026-03-19 21:56:15,622 INFO ipython print_result("get_owner_recovery_cases [Guest]", passed, detail)
+2026-03-19 21:56:15,622 INFO ipython passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_owner_recovery_cases")
+2026-03-19 21:56:15,623 INFO ipython print_result("get_owner_recovery_cases [Owner]", passed, detail)
+2026-03-19 21:56:15,623 INFO ipython passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_owner_recovery_cases")
+2026-03-19 21:56:15,623 INFO ipython print_result("get_owner_recovery_cases [Admin]", passed, detail)
+2026-03-19 21:56:15,623 INFO ipython # get_recovery_case_details
+2026-03-19 21:56:15,623 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": demo_case})
+    print_result("get_recovery_case_details [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,623 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": demo_case})
+2026-03-19 21:56:15,623 INFO ipython     print_result("get_recovery_case_details [Owner]", passed, detail)
+2026-03-19 21:56:15,623 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": demo_case})
+2026-03-19 21:56:15,623 INFO ipython     print_result("get_recovery_case_details [Admin]", passed, detail)
+2026-03-19 21:56:15,623 INFO ipython     # Wrong owner
+2026-03-19 21:56:15,623 INFO ipython     if wrong_case:
+        passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": wrong_case})
+        print_result("get_recovery_case_details [Wrong Owner]", not passed, detail)
+        
+2026-03-19 21:56:15,623 INFO ipython         passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": wrong_case})
+2026-03-19 21:56:15,624 INFO ipython         print_result("get_recovery_case_details [Admin->WrongCase]", passed, detail)
+2026-03-19 21:56:15,624 INFO ipython # get_latest_case_location
+2026-03-19 21:56:15,624 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": demo_case})
+    print_result("get_latest_case_location [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,624 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": demo_case})
+2026-03-19 21:56:15,624 INFO ipython     print_result("get_latest_case_location [Owner]", passed, detail)
+2026-03-19 21:56:15,624 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": demo_case})
+2026-03-19 21:56:15,624 INFO ipython     print_result("get_latest_case_location [Admin]", passed, detail)
+2026-03-19 21:56:15,624 INFO ipython     if wrong_case:
+        passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": wrong_case})
+        print_result("get_latest_case_location [Wrong Owner]", not passed, detail)
+        
+2026-03-19 21:56:15,624 INFO ipython         passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": wrong_case})
+2026-03-19 21:56:15,624 INFO ipython         print_result("get_latest_case_location [Admin->WrongCase]", passed, detail)
+2026-03-19 21:56:15,624 INFO ipython # Test get_latest_case_location returns None for case without location
+2026-03-19 21:56:15,624 INFO ipython print("\n--- LOCATION NULL-SAFETY ---")
+2026-03-19 21:56:15,624 INFO ipython if wrong_case:
+    frappe.set_user("Administrator")
+    result = frappe.call("scanifyme.recovery.api.recovery_api.get_latest_case_location", case_id=wrong_case)
+    print(f"   get_latest_case_location for case without location: {result}")
+    if result is None:
+        print_result("Returns None (not {}) for missing location", True)
+    else:
+        print_result("Returns None (not {}) for missing location", False, f"Got: {type(result)} = {result}")
+2026-03-19 21:56:15,625 INFO ipython # get_recovery_case_timeline
+2026-03-19 21:56:15,625 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_recovery_case_timeline", {"case_id": demo_case})
+    print_result("get_recovery_case_timeline [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,625 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_recovery_case_timeline", {"case_id": demo_case})
+2026-03-19 21:56:15,625 INFO ipython     print_result("get_recovery_case_timeline [Owner]", passed, detail)
+2026-03-19 21:56:15,625 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_recovery_case_timeline", {"case_id": demo_case})
+2026-03-19 21:56:15,625 INFO ipython     print_result("get_recovery_case_timeline [Admin]", passed, detail)
+2026-03-19 21:56:15,625 INFO ipython # get_case_handover_details
+2026-03-19 21:56:15,625 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_case_handover_details", {"case_id": demo_case})
+    print_result("get_case_handover_details [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,625 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_case_handover_details", {"case_id": demo_case})
+2026-03-19 21:56:15,625 INFO ipython     print_result("get_case_handover_details [Owner]", passed, detail)
+2026-03-19 21:56:15,625 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_case_handover_details", {"case_id": demo_case})
+2026-03-19 21:56:15,625 INFO ipython     print_result("get_case_handover_details [Admin]", passed, detail)
+2026-03-19 21:56:15,626 INFO ipython # get_case_reward_status
+2026-03-19 21:56:15,626 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_case_reward_status", {"case_id": demo_case})
+    print_result("get_case_reward_status [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,626 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_case_reward_status", {"case_id": demo_case})
+2026-03-19 21:56:15,626 INFO ipython     print_result("get_case_reward_status [Owner]", passed, detail)
+2026-03-19 21:56:15,626 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_case_reward_status", {"case_id": demo_case})
+2026-03-19 21:56:15,626 INFO ipython     print_result("get_case_reward_status [Admin]", passed, detail)
+2026-03-19 21:56:15,626 INFO ipython # get_case_location_history
+2026-03-19 21:56:15,626 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_case_location_history", {"case_id": demo_case})
+    print_result("get_case_location_history [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,626 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_case_location_history", {"case_id": demo_case})
+2026-03-19 21:56:15,626 INFO ipython     print_result("get_case_location_history [Owner]", passed, detail)
+2026-03-19 21:56:15,626 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_case_location_history", {"case_id": demo_case})
+2026-03-19 21:56:15,626 INFO ipython     print_result("get_case_location_history [Admin]", passed, detail)
+2026-03-19 21:56:15,626 INFO ipython # update_handover_status
+2026-03-19 21:56:15,626 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.update_handover_status", {"case_id": demo_case, "handover_status": "Return Planned"})
+    print_result("update_handover_status [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,627 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.update_handover_status", {"case_id": demo_case, "handover_status": "Return Planned"})
+2026-03-19 21:56:15,627 INFO ipython     print_result("update_handover_status [Owner]", passed, detail)
+2026-03-19 21:56:15,627 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.update_handover_status", {"case_id": demo_case, "handover_status": "Location Shared"})
+2026-03-19 21:56:15,627 INFO ipython     print_result("update_handover_status [Admin]", passed, detail)
+2026-03-19 21:56:15,627 INFO ipython # mark_recovery_case_status
+2026-03-19 21:56:15,627 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.mark_recovery_case_status", {"case_id": demo_case, "status": "Closed"})
+    print_result("mark_recovery_case_status [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,627 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.mark_recovery_case_status", {"case_id": demo_case, "status": "Open"})
+2026-03-19 21:56:15,627 INFO ipython     print_result("mark_recovery_case_status [Owner]", passed, detail)
+2026-03-19 21:56:15,627 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.mark_recovery_case_status", {"case_id": demo_case, "status": "Open"})
+2026-03-19 21:56:15,627 INFO ipython     print_result("mark_recovery_case_status [Admin]", passed, detail)
+2026-03-19 21:56:15,627 INFO ipython # send_owner_reply
+2026-03-19 21:56:15,627 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.send_owner_reply", {"case_id": demo_case, "message": "Test"})
+    print_result("send_owner_reply [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,628 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.send_owner_reply", {"case_id": demo_case, "message": "Test reply"})
+2026-03-19 21:56:15,628 INFO ipython     print_result("send_owner_reply [Owner]", passed, detail)
+2026-03-19 21:56:15,628 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.send_owner_reply", {"case_id": demo_case, "message": "Admin reply"})
+2026-03-19 21:56:15,628 INFO ipython     print_result("send_owner_reply [Admin]", passed, detail)
+2026-03-19 21:56:15,628 INFO ipython # get_recovery_case_messages
+2026-03-19 21:56:15,628 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_recovery_case_messages", {"case_id": demo_case})
+    print_result("get_recovery_case_messages [Guest]", passed, detail)
+    
+2026-03-19 21:56:15,628 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_recovery_case_messages", {"case_id": demo_case})
+2026-03-19 21:56:15,628 INFO ipython     print_result("get_recovery_case_messages [Owner]", passed, detail)
+2026-03-19 21:56:15,628 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_recovery_case_messages", {"case_id": demo_case})
+2026-03-19 21:56:15,628 INFO ipython     print_result("get_recovery_case_messages [Admin]", passed, detail)
+2026-03-19 21:56:15,628 INFO ipython print("\n--- ITEM APIS ---")
+2026-03-19 21:56:15,628 INFO ipython # get_user_items
+2026-03-19 21:56:15,628 INFO ipython passed, detail = test_guest("scanifyme.items.api.items_api.get_user_items")
+2026-03-19 21:56:15,628 INFO ipython print_result("get_user_items [Guest]", passed, detail)
+2026-03-19 21:56:15,629 INFO ipython passed, detail = test_owner("scanifyme.items.api.items_api.get_user_items")
+2026-03-19 21:56:15,629 INFO ipython print_result("get_user_items [Owner]", passed, detail)
+2026-03-19 21:56:15,629 INFO ipython passed, detail = test_admin("scanifyme.items.api.items_api.get_user_items")
+2026-03-19 21:56:15,629 INFO ipython print_result("get_user_items [Admin]", passed, detail)
+2026-03-19 21:56:15,629 INFO ipython # get_item_categories
+2026-03-19 21:56:15,629 INFO ipython passed, detail = test_guest("scanifyme.items.api.items_api.get_item_categories")
+2026-03-19 21:56:15,629 INFO ipython print_result("get_item_categories [Guest]", passed, detail)
+2026-03-19 21:56:15,629 INFO ipython passed, detail = test_owner("scanifyme.items.api.items_api.get_item_categories")
+2026-03-19 21:56:15,629 INFO ipython print_result("get_item_categories [Owner]", passed, detail)
+2026-03-19 21:56:15,629 INFO ipython passed, detail = test_admin("scanifyme.items.api.items_api.get_item_categories")
+2026-03-19 21:56:15,629 INFO ipython print_result("get_item_categories [Admin]", passed, detail)
+2026-03-19 21:56:15,629 INFO ipython print("\n--- NOTIFICATION APIS ---")
+2026-03-19 21:56:15,629 INFO ipython passed, detail = test_guest("scanifyme.notifications.api.notification_api.get_notification_preferences")
+2026-03-19 21:56:15,629 INFO ipython print_result("get_notification_preferences [Guest]", passed, detail)
+2026-03-19 21:56:15,630 INFO ipython passed, detail = test_owner("scanifyme.notifications.api.notification_api.get_notification_preferences")
+2026-03-19 21:56:15,630 INFO ipython print_result("get_notification_preferences [Owner]", passed, detail)
+2026-03-19 21:56:15,630 INFO ipython passed, detail = test_admin("scanifyme.notifications.api.notification_api.get_notification_preferences")
+2026-03-19 21:56:15,630 INFO ipython print_result("get_notification_preferences [Admin]", passed, detail)
+2026-03-19 21:56:15,630 INFO ipython passed, detail = test_guest("scanifyme.notifications.api.notification_api.get_owner_notifications")
+2026-03-19 21:56:15,630 INFO ipython print_result("get_owner_notifications [Guest]", passed, detail)
+2026-03-19 21:56:15,630 INFO ipython passed, detail = test_owner("scanifyme.notifications.api.notification_api.get_owner_notifications")
+2026-03-19 21:56:15,630 INFO ipython print_result("get_owner_notifications [Owner]", passed, detail)
+2026-03-19 21:56:15,630 INFO ipython passed, detail = test_admin("scanifyme.notifications.api.notification_api.get_owner_notifications")
+2026-03-19 21:56:15,630 INFO ipython print_result("get_owner_notifications [Admin]", passed, detail)
+2026-03-19 21:56:15,630 INFO ipython passed, detail = test_guest("scanifyme.notifications.api.notification_api.get_unread_notification_count")
+2026-03-19 21:56:15,630 INFO ipython print_result("get_unread_notification_count [Guest]", passed, detail)
+2026-03-19 21:56:15,631 INFO ipython passed, detail = test_owner("scanifyme.notifications.api.notification_api.get_unread_notification_count")
+2026-03-19 21:56:15,631 INFO ipython print_result("get_unread_notification_count [Owner]", passed, detail)
+2026-03-19 21:56:15,631 INFO ipython passed, detail = test_admin("scanifyme.notifications.api.notification_api.get_unread_notification_count")
+2026-03-19 21:56:15,631 INFO ipython print_result("get_unread_notification_count [Admin]", passed, detail)
+2026-03-19 21:56:15,631 INFO ipython print("\n--- ADMIN OPS APIS ---")
+2026-03-19 21:56:15,631 INFO ipython passed, detail = test_guest("scanifyme.admin_ops.api.operational_api.get_operational_health_summary")
+2026-03-19 21:56:15,631 INFO ipython print_result("get_operational_health_summary [Guest]", passed, detail)
+2026-03-19 21:56:15,631 INFO ipython passed, detail = test_owner("scanifyme.admin_ops.api.operational_api.get_operational_health_summary")
+2026-03-19 21:56:15,631 INFO ipython print_result("get_operational_health_summary [Owner]", passed, detail)
+2026-03-19 21:56:15,631 INFO ipython passed, detail = test_admin("scanifyme.admin_ops.api.operational_api.get_operational_health_summary")
+2026-03-19 21:56:15,631 INFO ipython print_result("get_operational_health_summary [Admin]", passed, detail)
+2026-03-19 21:56:15,632 INFO ipython passed, detail = test_guest("scanifyme.admin_ops.api.operational_api.get_failed_notification_events")
+2026-03-19 21:56:15,632 INFO ipython print_result("get_failed_notification_events [Guest]", passed, detail)
+2026-03-19 21:56:15,632 INFO ipython passed, detail = test_owner("scanifyme.admin_ops.api.operational_api.get_failed_notification_events")
+2026-03-19 21:56:15,632 INFO ipython print_result("get_failed_notification_events [Owner]", passed, detail)
+2026-03-19 21:56:15,632 INFO ipython passed, detail = test_admin("scanifyme.admin_ops.api.operational_api.get_failed_notification_events")
+2026-03-19 21:56:15,632 INFO ipython print_result("get_failed_notification_events [Admin]", passed, detail)
+2026-03-19 21:56:15,632 INFO ipython print("\n--- INVALID INPUT TESTS ---")
+2026-03-19 21:56:15,632 INFO ipython frappe.set_user("Administrator")
+2026-03-19 21:56:15,632 INFO ipython # Invalid case_id
+2026-03-19 21:56:15,632 INFO ipython try:
+    result = frappe.call("scanifyme.recovery.api.recovery_api.get_recovery_case_details", case_id="INVALID_CASE_XYZ")
+    print_result("get_recovery_case_details [Invalid Case]", False, f"Expected error but got: {result}")
+except Exception as e:
+    if "DoesNotExistError" in str(type(e).__name__) or "NotFound" in str(e) or "does not exist" in str(e).lower():
+        print_result("get_recovery_case_details [Invalid Case]", True, "Correctly throws DoesNotExistError")
+    else:
+        print_result("get_recovery_case_details [Invalid Case]", True, f"Throws: {str(e)[:60]}")
+2026-03-19 21:56:15,632 INFO ipython # Invalid status
+2026-03-19 21:56:15,632 INFO ipython if demo_case:
+    try:
+        result = frappe.call("scanifyme.recovery.api.recovery_api.mark_recovery_case_status", case_id=demo_case, status="INVALID_STATUS")
+        print_result("mark_recovery_case_status [Invalid Status]", False, f"Expected error but got: {result}")
+    except Exception as e:
+        if "Invalid status" in str(e):
+            print_result("mark_recovery_case_status [Invalid Status]", True, "Correctly validates status")
+        else:
+            print_result("mark_recovery_case_status [Invalid Status]", True, f"Throws: {str(e)[:60]}")
+2026-03-19 21:56:15,633 INFO ipython # Missing required args
+2026-03-19 21:56:15,633 INFO ipython try:
+    result = frappe.call("scanifyme.recovery.api.recovery_api.get_recovery_case_details")
+    print_result("get_recovery_case_details [Missing Args]", False, f"Expected error but got: {result}")
+except Exception as e:
+    print_result("get_recovery_case_details [Missing Args]", True, f"Throws: {str(e)[:60]}")
+2026-03-19 21:56:15,633 INFO ipython print("\n" + "="*60)
+2026-03-19 21:56:15,633 INFO ipython print("RBAC TESTS COMPLETE")
+2026-03-19 21:56:15,633 INFO ipython print("="*60)
+2026-03-19 21:56:15,633 INFO ipython === session end ===
+2026-03-19 21:58:51,380 INFO ipython === bench console session ===
+2026-03-19 21:58:51,383 INFO ipython """Comprehensive RBAC API test for ScanifyMe recovery APIs."""
+2026-03-19 21:58:51,384 INFO ipython import frappe
+2026-03-19 21:58:51,384 INFO ipython def print_result(label, passed, detail=""):
+    status = "✅ PASS" if passed else "❌ FAIL"
+    print(f"{status} | {label}")
+    if detail:
+        print(f"       └─ {detail}")
+2026-03-19 21:58:51,384 INFO ipython def test_guest(api_method, args={}, expect_fail=True):
+    """Test API as Guest - should fail for non-public APIs."""
+    frappe.set_user("Guest")
+    try:
+        result = frappe.call(api_method, **args)
+        if expect_fail:
+            return False, f"Expected permission error but got: {type(result)}"
+        return True, str(result)[:100]
+    except Exception as e:
+        err_msg = str(e)
+        if "Permission" in err_msg or "permission" in err_msg or "Login" in err_msg or "not permitted" in err_msg.lower():
+            return True, "Permission denied (expected)"
+        return False, f"Unexpected error: {err_msg[:100]}"
+    finally:
+        frappe.set_user("Administrator")
+2026-03-19 21:58:51,384 INFO ipython def test_owner(api_method, args={}, expect_success=True):
+    """Test API as demo owner - should succeed for own data."""
+    frappe.set_user("demo@scanifyme.app")
+    try:
+        result = frappe.call(api_method, **args)
+        if expect_success:
+            return True, "Success"
+        return False, f"Expected fail but got: {str(result)[:100]}"
+    except Exception as e:
+        return False, str(e)[:100]
+    finally:
+        frappe.set_user("Administrator")
+2026-03-19 21:58:51,384 INFO ipython def test_admin(api_method, args={}, expect_success=True):
+    """Test API as Administrator - should succeed for all."""
+    frappe.set_user("Administrator")
+    try:
+        result = frappe.call(api_method, **args)
+        if expect_success:
+            return True, "Success"
+        return False, f"Expected fail but got: {str(result)[:100]}"
+    except Exception as e:
+        return False, str(e)[:100]
+    finally:
+        frappe.set_user("Administrator")
+2026-03-19 21:58:51,384 INFO ipython def get_demo_case_id():
+    """Get a valid demo recovery case ID."""
+    cases = frappe.get_all("Recovery Case", fields=["name"], limit=1)
+    return cases[0]["name"] if cases else None
+2026-03-19 21:58:51,384 INFO ipython def get_wrong_owner_case_id():
+    """Get a case that does NOT belong to demo owner."""
+    demo_op = frappe.db.get_value("Owner Profile", {"user": "demo@scanifyme.app"}, "name")
+    cases = frappe.get_all("Recovery Case", filters={"owner_profile": ["!=", demo_op]}, fields=["name"], limit=1)
+    return cases[0]["name"] if cases else None
+2026-03-19 21:58:51,384 INFO ipython # Run tests
+2026-03-19 21:58:51,384 INFO ipython print("\n" + "="*60)
+2026-03-19 21:58:51,384 INFO ipython print("RBAC API TEST RESULTS")
+2026-03-19 21:58:51,385 INFO ipython print("="*60)
+2026-03-19 21:58:51,385 INFO ipython frappe.set_user("Administrator")
+2026-03-19 21:58:51,385 INFO ipython # Get test data
+2026-03-19 21:58:51,385 INFO ipython demo_case = get_demo_case_id()
+2026-03-19 21:58:51,385 INFO ipython wrong_case = get_wrong_owner_case_id()
+2026-03-19 21:58:51,385 INFO ipython print(f"\nTest case ID (demo owner): {demo_case}")
+2026-03-19 21:58:51,385 INFO ipython print(f"Test case ID (wrong owner): {wrong_case}")
+2026-03-19 21:58:51,385 INFO ipython # If no wrong case, create one or skip those tests
+2026-03-19 21:58:51,385 INFO ipython if not wrong_case:
+    # Try to find a case owned by someone else
+    print("\n⚠️  No case owned by different user found - creating test...")
+    try:
+        # Check if there are multiple owner profiles
+        profiles = frappe.get_all("Owner Profile", fields=["name", "user"])
+        if len(profiles) > 1:
+            wrong_op = [p for p in profiles if p.user != "demo@scanifyme.app"][0]
+            cases = frappe.get_all("Recovery Case", filters={"owner_profile": wrong_op.name}, fields=["name"], limit=1)
+            if cases:
+                wrong_case = cases[0]["name"]
+    except Exception as e:
+        print(f"   Could not find/create wrong owner case: {e}")
+2026-03-19 21:58:51,385 INFO ipython # Recovery Case APIs
+2026-03-19 21:58:51,385 INFO ipython print("\n--- RECOVERY APIS ---")
+2026-03-19 21:58:51,386 INFO ipython # get_owner_recovery_cases
+2026-03-19 21:58:51,386 INFO ipython passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_owner_recovery_cases")
+2026-03-19 21:58:51,386 INFO ipython print_result("get_owner_recovery_cases [Guest]", passed, detail)
+2026-03-19 21:58:51,386 INFO ipython passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_owner_recovery_cases")
+2026-03-19 21:58:51,386 INFO ipython print_result("get_owner_recovery_cases [Owner]", passed, detail)
+2026-03-19 21:58:51,386 INFO ipython passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_owner_recovery_cases")
+2026-03-19 21:58:51,386 INFO ipython print_result("get_owner_recovery_cases [Admin]", passed, detail)
+2026-03-19 21:58:51,386 INFO ipython # get_recovery_case_details
+2026-03-19 21:58:51,386 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": demo_case})
+    print_result("get_recovery_case_details [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,386 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": demo_case})
+2026-03-19 21:58:51,386 INFO ipython     print_result("get_recovery_case_details [Owner]", passed, detail)
+2026-03-19 21:58:51,386 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": demo_case})
+2026-03-19 21:58:51,386 INFO ipython     print_result("get_recovery_case_details [Admin]", passed, detail)
+2026-03-19 21:58:51,387 INFO ipython     # Wrong owner
+2026-03-19 21:58:51,387 INFO ipython     if wrong_case:
+        passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": wrong_case})
+        print_result("get_recovery_case_details [Wrong Owner]", not passed, detail)
+        
+2026-03-19 21:58:51,387 INFO ipython         passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_recovery_case_details", {"case_id": wrong_case})
+2026-03-19 21:58:51,387 INFO ipython         print_result("get_recovery_case_details [Admin->WrongCase]", passed, detail)
+2026-03-19 21:58:51,387 INFO ipython # get_latest_case_location
+2026-03-19 21:58:51,387 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": demo_case})
+    print_result("get_latest_case_location [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,387 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": demo_case})
+2026-03-19 21:58:51,387 INFO ipython     print_result("get_latest_case_location [Owner]", passed, detail)
+2026-03-19 21:58:51,387 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": demo_case})
+2026-03-19 21:58:51,387 INFO ipython     print_result("get_latest_case_location [Admin]", passed, detail)
+2026-03-19 21:58:51,387 INFO ipython     if wrong_case:
+        passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": wrong_case})
+        print_result("get_latest_case_location [Wrong Owner]", not passed, detail)
+        
+2026-03-19 21:58:51,387 INFO ipython         passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_latest_case_location", {"case_id": wrong_case})
+2026-03-19 21:58:51,388 INFO ipython         print_result("get_latest_case_location [Admin->WrongCase]", passed, detail)
+2026-03-19 21:58:51,388 INFO ipython # Test get_latest_case_location returns None for case without location
+2026-03-19 21:58:51,388 INFO ipython print("\n--- LOCATION NULL-SAFETY ---")
+2026-03-19 21:58:51,388 INFO ipython if wrong_case:
+    frappe.set_user("Administrator")
+    result = frappe.call("scanifyme.recovery.api.recovery_api.get_latest_case_location", case_id=wrong_case)
+    print(f"   get_latest_case_location for case without location: {result}")
+    if result is None:
+        print_result("Returns None (not {}) for missing location", True)
+    else:
+        print_result("Returns None (not {}) for missing location", False, f"Got: {type(result)} = {result}")
+2026-03-19 21:58:51,388 INFO ipython # get_recovery_case_timeline
+2026-03-19 21:58:51,388 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_recovery_case_timeline", {"case_id": demo_case})
+    print_result("get_recovery_case_timeline [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,388 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_recovery_case_timeline", {"case_id": demo_case})
+2026-03-19 21:58:51,388 INFO ipython     print_result("get_recovery_case_timeline [Owner]", passed, detail)
+2026-03-19 21:58:51,388 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_recovery_case_timeline", {"case_id": demo_case})
+2026-03-19 21:58:51,388 INFO ipython     print_result("get_recovery_case_timeline [Admin]", passed, detail)
+2026-03-19 21:58:51,388 INFO ipython # get_case_handover_details
+2026-03-19 21:58:51,388 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_case_handover_details", {"case_id": demo_case})
+    print_result("get_case_handover_details [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,388 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_case_handover_details", {"case_id": demo_case})
+2026-03-19 21:58:51,389 INFO ipython     print_result("get_case_handover_details [Owner]", passed, detail)
+2026-03-19 21:58:51,389 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_case_handover_details", {"case_id": demo_case})
+2026-03-19 21:58:51,389 INFO ipython     print_result("get_case_handover_details [Admin]", passed, detail)
+2026-03-19 21:58:51,389 INFO ipython # get_case_reward_status
+2026-03-19 21:58:51,389 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_case_reward_status", {"case_id": demo_case})
+    print_result("get_case_reward_status [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,389 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_case_reward_status", {"case_id": demo_case})
+2026-03-19 21:58:51,389 INFO ipython     print_result("get_case_reward_status [Owner]", passed, detail)
+2026-03-19 21:58:51,389 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_case_reward_status", {"case_id": demo_case})
+2026-03-19 21:58:51,389 INFO ipython     print_result("get_case_reward_status [Admin]", passed, detail)
+2026-03-19 21:58:51,389 INFO ipython # get_case_location_history
+2026-03-19 21:58:51,389 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_case_location_history", {"case_id": demo_case})
+    print_result("get_case_location_history [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,389 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_case_location_history", {"case_id": demo_case})
+2026-03-19 21:58:51,390 INFO ipython     print_result("get_case_location_history [Owner]", passed, detail)
+2026-03-19 21:58:51,390 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_case_location_history", {"case_id": demo_case})
+2026-03-19 21:58:51,390 INFO ipython     print_result("get_case_location_history [Admin]", passed, detail)
+2026-03-19 21:58:51,390 INFO ipython # update_handover_status
+2026-03-19 21:58:51,390 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.update_handover_status", {"case_id": demo_case, "handover_status": "Return Planned"})
+    print_result("update_handover_status [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,390 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.update_handover_status", {"case_id": demo_case, "handover_status": "Return Planned"})
+2026-03-19 21:58:51,390 INFO ipython     print_result("update_handover_status [Owner]", passed, detail)
+2026-03-19 21:58:51,390 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.update_handover_status", {"case_id": demo_case, "handover_status": "Location Shared"})
+2026-03-19 21:58:51,390 INFO ipython     print_result("update_handover_status [Admin]", passed, detail)
+2026-03-19 21:58:51,390 INFO ipython # mark_recovery_case_status
+2026-03-19 21:58:51,390 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.mark_recovery_case_status", {"case_id": demo_case, "status": "Closed"})
+    print_result("mark_recovery_case_status [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,390 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.mark_recovery_case_status", {"case_id": demo_case, "status": "Open"})
+2026-03-19 21:58:51,390 INFO ipython     print_result("mark_recovery_case_status [Owner]", passed, detail)
+2026-03-19 21:58:51,391 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.mark_recovery_case_status", {"case_id": demo_case, "status": "Open"})
+2026-03-19 21:58:51,391 INFO ipython     print_result("mark_recovery_case_status [Admin]", passed, detail)
+2026-03-19 21:58:51,391 INFO ipython # send_owner_reply
+2026-03-19 21:58:51,391 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.send_owner_reply", {"case_id": demo_case, "message": "Test"})
+    print_result("send_owner_reply [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,391 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.send_owner_reply", {"case_id": demo_case, "message": "Test reply"})
+2026-03-19 21:58:51,391 INFO ipython     print_result("send_owner_reply [Owner]", passed, detail)
+2026-03-19 21:58:51,391 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.send_owner_reply", {"case_id": demo_case, "message": "Admin reply"})
+2026-03-19 21:58:51,391 INFO ipython     print_result("send_owner_reply [Admin]", passed, detail)
+2026-03-19 21:58:51,391 INFO ipython # get_recovery_case_messages
+2026-03-19 21:58:51,391 INFO ipython if demo_case:
+    passed, detail = test_guest("scanifyme.recovery.api.recovery_api.get_recovery_case_messages", {"case_id": demo_case})
+    print_result("get_recovery_case_messages [Guest]", passed, detail)
+    
+2026-03-19 21:58:51,391 INFO ipython     passed, detail = test_owner("scanifyme.recovery.api.recovery_api.get_recovery_case_messages", {"case_id": demo_case})
+2026-03-19 21:58:51,391 INFO ipython     print_result("get_recovery_case_messages [Owner]", passed, detail)
+2026-03-19 21:58:51,391 INFO ipython     passed, detail = test_admin("scanifyme.recovery.api.recovery_api.get_recovery_case_messages", {"case_id": demo_case})
+2026-03-19 21:58:51,392 INFO ipython     print_result("get_recovery_case_messages [Admin]", passed, detail)
+2026-03-19 21:58:51,392 INFO ipython print("\n--- ITEM APIS ---")
+2026-03-19 21:58:51,392 INFO ipython # get_user_items
+2026-03-19 21:58:51,392 INFO ipython passed, detail = test_guest("scanifyme.items.api.items_api.get_user_items")
+2026-03-19 21:58:51,392 INFO ipython print_result("get_user_items [Guest]", passed, detail)
+2026-03-19 21:58:51,392 INFO ipython passed, detail = test_owner("scanifyme.items.api.items_api.get_user_items")
+2026-03-19 21:58:51,392 INFO ipython print_result("get_user_items [Owner]", passed, detail)
+2026-03-19 21:58:51,392 INFO ipython passed, detail = test_admin("scanifyme.items.api.items_api.get_user_items")
+2026-03-19 21:58:51,392 INFO ipython print_result("get_user_items [Admin]", passed, detail)
+2026-03-19 21:58:51,392 INFO ipython # get_item_categories
+2026-03-19 21:58:51,392 INFO ipython passed, detail = test_guest("scanifyme.items.api.items_api.get_item_categories")
+2026-03-19 21:58:51,392 INFO ipython print_result("get_item_categories [Guest]", passed, detail)
+2026-03-19 21:58:51,392 INFO ipython passed, detail = test_owner("scanifyme.items.api.items_api.get_item_categories")
+2026-03-19 21:58:51,393 INFO ipython print_result("get_item_categories [Owner]", passed, detail)
+2026-03-19 21:58:51,393 INFO ipython passed, detail = test_admin("scanifyme.items.api.items_api.get_item_categories")
+2026-03-19 21:58:51,393 INFO ipython print_result("get_item_categories [Admin]", passed, detail)
+2026-03-19 21:58:51,393 INFO ipython print("\n--- NOTIFICATION APIS ---")
+2026-03-19 21:58:51,393 INFO ipython passed, detail = test_guest("scanifyme.notifications.api.notification_api.get_notification_preferences")
+2026-03-19 21:58:51,393 INFO ipython print_result("get_notification_preferences [Guest]", passed, detail)
+2026-03-19 21:58:51,393 INFO ipython passed, detail = test_owner("scanifyme.notifications.api.notification_api.get_notification_preferences")
+2026-03-19 21:58:51,393 INFO ipython print_result("get_notification_preferences [Owner]", passed, detail)
+2026-03-19 21:58:51,393 INFO ipython passed, detail = test_admin("scanifyme.notifications.api.notification_api.get_notification_preferences")
+2026-03-19 21:58:51,393 INFO ipython print_result("get_notification_preferences [Admin]", passed, detail)
+2026-03-19 21:58:51,393 INFO ipython passed, detail = test_guest("scanifyme.notifications.api.notification_api.get_owner_notifications")
+2026-03-19 21:58:51,393 INFO ipython print_result("get_owner_notifications [Guest]", passed, detail)
+2026-03-19 21:58:51,393 INFO ipython passed, detail = test_owner("scanifyme.notifications.api.notification_api.get_owner_notifications")
+2026-03-19 21:58:51,393 INFO ipython print_result("get_owner_notifications [Owner]", passed, detail)
+2026-03-19 21:58:51,394 INFO ipython passed, detail = test_admin("scanifyme.notifications.api.notification_api.get_owner_notifications")
+2026-03-19 21:58:51,394 INFO ipython print_result("get_owner_notifications [Admin]", passed, detail)
+2026-03-19 21:58:51,394 INFO ipython passed, detail = test_guest("scanifyme.notifications.api.notification_api.get_unread_notification_count")
+2026-03-19 21:58:51,394 INFO ipython print_result("get_unread_notification_count [Guest]", passed, detail)
+2026-03-19 21:58:51,394 INFO ipython passed, detail = test_owner("scanifyme.notifications.api.notification_api.get_unread_notification_count")
+2026-03-19 21:58:51,394 INFO ipython print_result("get_unread_notification_count [Owner]", passed, detail)
+2026-03-19 21:58:51,394 INFO ipython passed, detail = test_admin("scanifyme.notifications.api.notification_api.get_unread_notification_count")
+2026-03-19 21:58:51,394 INFO ipython print_result("get_unread_notification_count [Admin]", passed, detail)
+2026-03-19 21:58:51,394 INFO ipython print("\n--- ADMIN OPS APIS ---")
+2026-03-19 21:58:51,394 INFO ipython passed, detail = test_guest("scanifyme.admin_ops.api.operational_api.get_operational_health_summary")
+2026-03-19 21:58:51,394 INFO ipython print_result("get_operational_health_summary [Guest]", passed, detail)
+2026-03-19 21:58:51,394 INFO ipython passed, detail = test_owner("scanifyme.admin_ops.api.operational_api.get_operational_health_summary")
+2026-03-19 21:58:51,395 INFO ipython print_result("get_operational_health_summary [Owner]", passed, detail)
+2026-03-19 21:58:51,395 INFO ipython passed, detail = test_admin("scanifyme.admin_ops.api.operational_api.get_operational_health_summary")
+2026-03-19 21:58:51,395 INFO ipython print_result("get_operational_health_summary [Admin]", passed, detail)
+2026-03-19 21:58:51,395 INFO ipython passed, detail = test_guest("scanifyme.admin_ops.api.operational_api.get_failed_notification_events")
+2026-03-19 21:58:51,395 INFO ipython print_result("get_failed_notification_events [Guest]", passed, detail)
+2026-03-19 21:58:51,395 INFO ipython passed, detail = test_owner("scanifyme.admin_ops.api.operational_api.get_failed_notification_events")
+2026-03-19 21:58:51,395 INFO ipython print_result("get_failed_notification_events [Owner]", passed, detail)
+2026-03-19 21:58:51,395 INFO ipython passed, detail = test_admin("scanifyme.admin_ops.api.operational_api.get_failed_notification_events")
+2026-03-19 21:58:51,395 INFO ipython print_result("get_failed_notification_events [Admin]", passed, detail)
+2026-03-19 21:58:51,395 INFO ipython print("\n--- INVALID INPUT TESTS ---")
+2026-03-19 21:58:51,395 INFO ipython frappe.set_user("Administrator")

@@ -1,0 +1,5 @@
+---
+description: 'Describe what this custom agent does and when to use it.'
+tools: ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'agent', 'pylance-mcp-server/*', 'cweijan.vscode-database-client2/dbclient-getDatabases', 'cweijan.vscode-database-client2/dbclient-getTables', 'cweijan.vscode-database-client2/dbclient-executeQuery', 'ms-python.python/getPythonEnvironmentInfo', 'ms-python.python/getPythonExecutableCommand', 'ms-python.python/installPythonPackage', 'ms-python.python/configurePythonEnvironment', 'ms-toolsai.jupyter/configureNotebook', 'ms-toolsai.jupyter/listNotebookPackages', 'ms-toolsai.jupyter/installNotebookPackages', 'todo']
+---
+Define what this custom agent accomplishes for the user, when to use it, and the edges it won't cross. Specify its ideal inputs/outputs, the tools it may call, and how it reports progress or asks for help.

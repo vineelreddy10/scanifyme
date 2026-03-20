@@ -1,0 +1,60 @@
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260227_120007-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-02-27 12:00:09.480106
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260227_120007-test_localhost-site_config_backup.json 127.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260227_120007-test_localhost-database.sql.gz 239.1KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260305_120016-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-05 12:00:20.129272
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260305_120016-test_localhost-site_config_backup.json 127.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260305_120016-test_localhost-database.sql.gz 248.1KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260306_120009-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-06 12:00:12.019368
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260306_120009-test_localhost-site_config_backup.json 127.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260306_120009-test_localhost-database.sql.gz 251.7KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260315_120004-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-15 12:00:07.200336
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260315_120004-test_localhost-site_config_backup.json 127.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260315_120004-test_localhost-database.sql.gz 259.2KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260315_180003-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-15 18:00:05.991437
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260315_180003-test_localhost-site_config_backup.json 127.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260315_180003-test_localhost-database.sql.gz 262.8KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260316_120006-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-16 12:00:08.506920
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260316_120006-test_localhost-site_config_backup.json 127.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260316_120006-test_localhost-database.sql.gz 269.8KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260317_120004-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-17 12:00:06.695755
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260317_120004-test_localhost-site_config_backup.json 149.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260317_120004-test_localhost-database.sql.gz 290.5KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260320_000006-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-20 00:00:09.741181
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260320_000006-test_localhost-site_config_backup.json 216.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260320_000006-test_localhost-database.sql.gz 357.5KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260320_120003-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-20 12:00:06.602877
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260320_120003-test_localhost-site_config_backup.json 216.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260320_120003-test_localhost-database.sql.gz 371.6KiB
+Backup for Site test.localhost has been successfully completed
+set -o pipefail; /usr/bin/mariadb-dump --user=_72502705ae46cf4b --host=127.0.0.1 --port=3306 --password=********** --single-transaction --quick --lock-tables=false _72502705ae46cf4b | /usr/bin/gzip >> ./test.localhost/private/backups/20260320_180004-test_localhost-database.sql.gz
+
+Backup Summary for test.localhost at 2026-03-20 18:00:13.053572
+Config  : /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260320_180004-test_localhost-site_config_backup.json 216.0B
+Database: /home/vineelreddykamireddy/frappe/scanifyme/sites/test.localhost/private/backups/20260320_180004-test_localhost-database.sql.gz 377.0KiB
+Backup for Site test.localhost has been successfully completed

@@ -1,0 +1,234 @@
+2026-03-19 21:58:51,395 INFO ipython # Invalid case_id
+2026-03-19 21:58:51,410 INFO ipython try:
+    result = frappe.call("scanifyme.recovery.api.recovery_api.get_recovery_case_details", case_id="INVALID_CASE_XYZ")
+    print_result("get_recovery_case_details [Invalid Case]", False, f"Expected error but got: {result}")
+except Exception as e:
+    if "DoesNotExistError" in str(type(e).__name__) or "NotFound" in str(e) or "does not exist" in str(e).lower():
+        print_result("get_recovery_case_details [Invalid Case]", True, "Correctly throws DoesNotExistError")
+    else:
+        print_result("get_recovery_case_details [Invalid Case]", True, f"Throws: {str(e)[:60]}")
+2026-03-19 21:58:51,410 INFO ipython # Invalid status
+2026-03-19 21:58:51,410 INFO ipython if demo_case:
+    try:
+        result = frappe.call("scanifyme.recovery.api.recovery_api.mark_recovery_case_status", case_id=demo_case, status="INVALID_STATUS")
+        print_result("mark_recovery_case_status [Invalid Status]", False, f"Expected error but got: {result}")
+    except Exception as e:
+        if "Invalid status" in str(e):
+            print_result("mark_recovery_case_status [Invalid Status]", True, "Correctly validates status")
+        else:
+            print_result("mark_recovery_case_status [Invalid Status]", True, f"Throws: {str(e)[:60]}")
+2026-03-19 21:58:51,410 INFO ipython # Missing required args
+2026-03-19 21:58:51,410 INFO ipython try:
+    result = frappe.call("scanifyme.recovery.api.recovery_api.get_recovery_case_details")
+    print_result("get_recovery_case_details [Missing Args]", False, f"Expected error but got: {result}")
+except Exception as e:
+    print_result("get_recovery_case_details [Missing Args]", True, f"Throws: {str(e)[:60]}")
+2026-03-19 21:58:51,410 INFO ipython print("\n" + "="*60)
+2026-03-19 21:58:51,410 INFO ipython print("RBAC TESTS COMPLETE")
+2026-03-19 21:58:51,410 INFO ipython print("="*60)
+2026-03-19 21:58:51,411 INFO ipython === session end ===
+2026-03-19 22:07:08,434 INFO ipython === bench console session ===
+2026-03-19 22:07:08,435 INFO ipython import frappe
+2026-03-19 22:07:08,435 INFO ipython frappe.set_user("Administrator")
+2026-03-19 22:07:08,435 INFO ipython # Test 1: get_latest_case_location for case WITH location
+2026-03-19 22:07:08,436 INFO ipython case_with_loc = "Recovery - MacBook Pro 14 - 20260319215433"
+2026-03-19 22:07:08,436 INFO ipython result = frappe.call("scanifyme.recovery.api.recovery_api.get_latest_case_location", case_id=case_with_loc)
+2026-03-19 22:07:08,436 INFO ipython print(f"Case with location: {type(result).__name__} = {result}")
+2026-03-19 22:07:08,436 INFO ipython # Test 2: get_latest_case_location for case WITHOUT location
+2026-03-19 22:07:08,436 INFO ipython case_no_loc = "Recovery - Keys - 20260319215434"
+2026-03-19 22:07:08,449 INFO ipython result2 = frappe.call("scanifyme.recovery.api.recovery_api.get_latest_case_location", case_id=case_no_loc)
+2026-03-19 22:07:08,455 INFO ipython print(f"Case without location: {type(result2).__name__} = {result2}")
+2026-03-19 22:07:08,455 INFO ipython # Test 3: Verify coordinates rendering is safe
+2026-03-19 22:07:08,456 INFO ipython === session end ===
+2026-03-19 22:07:40,817 INFO ipython === bench console session ===
+2026-03-19 22:07:40,821 INFO ipython import frappe
+2026-03-19 22:07:40,821 INFO ipython frappe.set_user("Administrator")
+2026-03-19 22:07:40,822 INFO ipython cases = frappe.get_all("Recovery Case", fields=["name", "case_title", "handover_status", "status"])
+2026-03-19 22:07:40,822 INFO ipython print(f"Total recovery cases: {len(cases)}")
+2026-03-19 22:07:40,822 INFO ipython === session end ===
+2026-03-19 22:07:52,803 INFO ipython === bench console session ===
+2026-03-19 22:07:52,804 INFO ipython === session end ===
+2026-03-19 22:08:10,011 INFO ipython === bench console session ===
+2026-03-19 22:08:10,011 INFO ipython import frappe
+2026-03-19 22:08:10,011 INFO ipython frappe.set_user("Administrator")
+2026-03-19 22:08:10,011 INFO ipython cases = frappe.get_all("Recovery Case", fields=["name"])
+2026-03-19 22:08:10,011 INFO ipython === session end ===
+2026-03-20 11:01:26,986 INFO ipython === bench console session ===
+2026-03-20 11:01:26,990 INFO ipython from scanifyme.onboarding.services.onboarding_service import compute_onboarding_state, persist_onboarding_state, compute_owner_next_actions
+2026-03-20 11:01:26,991 INFO ipython from scanifyme.utils.permissions import has_admin_role
+2026-03-20 11:01:26,991 INFO ipython # Test 1: Admin gets full state (no recursion)
+2026-03-20 11:01:26,991 INFO ipython print('=== Test 1: compute_onboarding_state(Administrator) ===')
+2026-03-20 11:01:26,992 INFO ipython result = compute_onboarding_state('Administrator')
+2026-03-20 11:01:26,992 INFO ipython print(f'completion_percent: {result["completion_percent"]}')
+2026-03-20 11:01:26,993 INFO ipython print(f'onboarding_completed: {result["onboarding_completed"]}')
+2026-03-20 11:01:26,993 INFO ipython # Test 2: Admin gets empty next actions (no recursion)
+2026-03-20 11:01:26,993 INFO ipython print()
+2026-03-20 11:01:26,993 INFO ipython print('=== Test 2: compute_owner_next_actions(Administrator) ===')
+2026-03-20 11:01:26,993 INFO ipython actions = compute_owner_next_actions('Administrator')
+2026-03-20 11:01:26,993 INFO ipython print(f'Actions count: {len(actions)}')
+2026-03-20 11:01:26,993 INFO ipython # Test 3: persist creates doc (no recursion)
+2026-03-20 11:01:26,993 INFO ipython print()
+2026-03-20 11:01:26,993 INFO ipython print('=== Test 3: persist_onboarding_state (test owner) ===')
+2026-03-20 11:01:26,993 INFO ipython result = persist_onboarding_state('NonExistentOwner@nonexistent.app')
+2026-03-20 11:01:26,993 INFO ipython print(f'success: {result["success"]}')
+2026-03-20 11:01:26,994 INFO ipython print(f'message: {result["message"]}')
+2026-03-20 11:01:26,994 INFO ipython # Test 4: has_admin_role
+2026-03-20 11:01:26,994 INFO ipython print()
+2026-03-20 11:01:26,994 INFO ipython print('=== Test 4: has_admin_role(Administrator) ===')
+2026-03-20 11:01:26,994 INFO ipython print(f'Result: {has_admin_role("Administrator")}')
+2026-03-20 11:01:26,994 INFO ipython print()
+2026-03-20 11:01:26,994 INFO ipython print('=== ALL TESTS PASSED (no RecursionError) ===')
+2026-03-20 11:01:26,994 INFO ipython === session end ===
+2026-03-20 11:02:51,181 INFO ipython === bench console session ===
+2026-03-20 11:02:51,182 INFO ipython from scanifyme.onboarding.services.onboarding_service import compute_onboarding_state, persist_onboarding_state, compute_owner_next_actions
+2026-03-20 11:02:51,183 INFO ipython from scanifyme.utils.permissions import has_admin_role
+2026-03-20 11:02:51,183 INFO ipython # Test 1: Admin gets full state (no recursion)
+2026-03-20 11:02:51,183 INFO ipython print('=== Test 1: compute_onboarding_state(Administrator) ===')
+2026-03-20 11:02:51,184 INFO ipython result = compute_onboarding_state('Administrator')
+2026-03-20 11:02:51,184 INFO ipython assert result['completion_percent'] == 100.0, f"Expected 100.0, got {result['completion_percent']}"
+2026-03-20 11:02:51,184 INFO ipython assert result['onboarding_completed'] == True
+2026-03-20 11:02:51,184 INFO ipython print('PASS: Admin gets 100% completion')
+2026-03-20 11:02:51,184 INFO ipython # Test 2: Admin gets empty next actions (no recursion)
+2026-03-20 11:02:51,184 INFO ipython print()
+2026-03-20 11:02:51,184 INFO ipython print('=== Test 2: compute_owner_next_actions(Administrator) ===')
+2026-03-20 11:02:51,184 INFO ipython actions = compute_owner_next_actions('Administrator')
+2026-03-20 11:02:51,184 INFO ipython assert isinstance(actions, list)
+2026-03-20 11:02:51,184 INFO ipython assert len(actions) == 0
+2026-03-20 11:02:51,184 INFO ipython print(f'PASS: Admin gets empty actions list ({len(actions)} items)')
+2026-03-20 11:02:51,184 INFO ipython # Test 3: persist for non-existent profile should throw DoesNotExistError (NOT LinkValidationError)
+2026-03-20 11:02:51,184 INFO ipython print()
+2026-03-20 11:02:51,185 INFO ipython print('=== Test 3: persist_onboarding_state (non-existent profile) ===')
+2026-03-20 11:02:51,185 INFO ipython try:
+    result = persist_onboarding_state('NonExistentOwner@nonexistent.app')
+    print(f'FAIL: Should have thrown, got: {result}')
+except frappe.DoesNotExistError as e:
+    print(f'PASS: Throws DoesNotExistError (not LinkValidationError)')
+except Exception as e:
+    print(f'FAIL: Threw {type(e).__name__}: {e}')
+2026-03-20 11:02:51,185 INFO ipython # Test 4: persist for demo@ owner (should exist)
+2026-03-20 11:02:51,185 INFO ipython print()
+2026-03-20 11:02:51,185 INFO ipython print('=== Test 4: persist_onboarding_state (demo owner) ===')
+2026-03-20 11:02:51,185 INFO ipython try:
+    result = persist_onboarding_state('demo@scanifyme.app')
+    assert result['success'] == True
+    assert 'state' in result
+    print(f'PASS: Persisted for demo owner. Message: {result["message"]}')
+except frappe.DoesNotExistError:
+    print('NOTE: demo@ owner profile does not exist in DB (may need demo_data)')
+except Exception as e:
+    print(f'Result: {type(e).__name__}: {e}')
+2026-03-20 11:02:51,185 INFO ipython # Test 5: has_admin_role (no args)
+2026-03-20 11:02:51,185 INFO ipython print()
+2026-03-20 11:02:51,185 INFO ipython print('=== Test 5: has_admin_role() ===')
+2026-03-20 11:02:51,185 INFO ipython result = has_admin_role()
+2026-03-20 11:02:51,185 INFO ipython print(f'Result for Administrator: {result}')
+2026-03-20 11:02:51,185 INFO ipython # Test 6: compute_onboarding_state for non-existent profile (should return empty state)
+2026-03-20 11:02:51,186 INFO ipython print()
+2026-03-20 11:02:51,186 INFO ipython print('=== Test 6: compute_onboarding_state (non-existent profile) ===')
+2026-03-20 11:02:51,186 INFO ipython result = compute_onboarding_state('NonExistentOwner@nonexistent.app')
+2026-03-20 11:02:51,186 INFO ipython assert result['completion_percent'] == 0.0
+2026-03-20 11:02:51,186 INFO ipython assert result['onboarding_completed'] == False
+2026-03-20 11:02:51,186 INFO ipython print(f'PASS: Returns empty state (0% completion)')
+2026-03-20 11:02:51,186 INFO ipython print()
+2026-03-20 11:02:51,186 INFO ipython print('=== ALL SERVICE TESTS PASSED ===')
+2026-03-20 11:02:51,186 INFO ipython === session end ===
+2026-03-20 11:05:19,694 INFO ipython === bench console session ===
+2026-03-20 11:05:19,694 INFO ipython # Check QR Code Tag fields
+2026-03-20 11:05:19,694 INFO ipython fields = frappe.get_list("DocField", filters={"parent": "QR Code Tag"}, fields=["fieldname", "fieldtype", "options"], limit=30)
+2026-03-20 11:05:19,694 INFO ipython === session end ===
+2026-03-20 11:05:27,593 INFO ipython === bench console session ===
+2026-03-20 11:05:27,593 INFO ipython fields = frappe.get_all("DocField", filters={"parent": "QR Code Tag"}, fields=["fieldname", "fieldtype"], limit=50, ignore_permissions=True)
+2026-03-20 11:05:27,593 INFO ipython === session end ===
+2026-03-20 11:07:57,692 INFO ipython === bench console session ===
+2026-03-20 11:07:57,692 INFO ipython print("=== LIVE API VALIDATION: Onboarding Module ===\n")
+2026-03-20 11:07:57,692 INFO ipython # Test 1: Compute state (no recursion)
+2026-03-20 11:07:57,693 INFO ipython print("1. compute_onboarding_state(Administrator)")
+2026-03-20 11:07:57,693 INFO ipython from scanifyme.onboarding.services.onboarding_service import compute_onboarding_state
+2026-03-20 11:07:57,693 INFO ipython result = compute_onboarding_state('Administrator')
+2026-03-20 11:07:57,693 INFO ipython print(f"   completion_percent: {result['completion_percent']} (expected 100.0)")
+2026-03-20 11:07:57,694 INFO ipython assert result['completion_percent'] == 100.0
+2026-03-20 11:07:57,694 INFO ipython print("   PASS: No recursion\n")
+2026-03-20 11:07:57,694 INFO ipython # Test 2: Compute next actions (no recursion)
+2026-03-20 11:07:57,695 INFO ipython print("2. compute_owner_next_actions(Administrator)")
+2026-03-20 11:07:57,695 INFO ipython from scanifyme.onboarding.services.onboarding_service import compute_owner_next_actions
+2026-03-20 11:07:57,695 INFO ipython actions = compute_owner_next_actions('Administrator')
+2026-03-20 11:07:57,696 INFO ipython print(f"   count: {len(actions)} (expected 0)")
+2026-03-20 11:07:57,696 INFO ipython assert len(actions) == 0
+2026-03-20 11:07:57,696 INFO ipython print("   PASS: No recursion\n")
+2026-03-20 11:07:57,697 INFO ipython # Test 3: Admin API - get_onboarding_overview
+2026-03-20 11:07:57,697 INFO ipython print("3. get_onboarding_overview (admin API)")
+2026-03-20 11:07:57,697 INFO ipython frappe.set_user("Administrator")
+2026-03-20 11:07:57,698 INFO ipython from scanifyme.onboarding.api.admin_onboarding_api import get_onboarding_overview
+2026-03-20 11:07:57,698 INFO ipython result = get_onboarding_overview()
+2026-03-20 11:07:57,698 INFO ipython print(f"   total_owners: {result.get('total_owners')}")
+2026-03-20 11:07:57,699 INFO ipython print(f"   completed: {result.get('completed')}")
+2026-03-20 11:07:57,699 INFO ipython assert 'total_owners' in result
+2026-03-20 11:07:57,699 INFO ipython print("   PASS: Admin API works\n")
+2026-03-20 11:07:57,699 INFO ipython # Test 4: Admin API - get_incomplete_onboarding_summary  
+2026-03-20 11:07:57,700 INFO ipython print("4. get_incomplete_onboarding_summary (admin API)")
+2026-03-20 11:07:57,700 INFO ipython from scanifyme.onboarding.api.admin_onboarding_api import get_incomplete_onboarding_summary
+2026-03-20 11:07:57,700 INFO ipython result = get_incomplete_onboarding_summary()
+2026-03-20 11:07:57,701 INFO ipython print(f"   returned list with {len(result)} items")
+2026-03-20 11:07:57,701 INFO ipython assert isinstance(result, list)
+2026-03-20 11:07:57,701 INFO ipython print("   PASS: Admin summary works\n")
+2026-03-20 11:07:57,701 INFO ipython # Test 5: has_admin_role
+2026-03-20 11:07:57,702 INFO ipython print("5. has_admin_role()")
+2026-03-20 11:07:57,702 INFO ipython from scanifyme.utils.permissions import has_admin_role
+2026-03-20 11:07:57,702 INFO ipython result = has_admin_role()
+2026-03-20 11:07:57,702 INFO ipython print(f"   result: {result} (expected True for Administrator)")
+2026-03-20 11:07:57,703 INFO ipython assert result == True
+2026-03-20 11:07:57,703 INFO ipython print("   PASS\n")
+2026-03-20 11:07:57,703 INFO ipython # Test 6: is_scanifyme_admin for Administrator
+2026-03-20 11:07:57,704 INFO ipython print("6. is_scanifyme_admin('Administrator')")
+2026-03-20 11:07:57,704 INFO ipython from scanifyme.utils.permissions import is_scanifyme_admin
+2026-03-20 11:07:57,704 INFO ipython result = is_scanifyme_admin('Administrator')
+2026-03-20 11:07:57,705 INFO ipython print(f"   result: {result} (expected True)")
+2026-03-20 11:07:57,705 INFO ipython assert result == True
+2026-03-20 11:07:57,705 INFO ipython print("   PASS\n")
+2026-03-20 11:07:57,706 INFO ipython print("=== ALL LIVE VALIDATION TESTS PASSED ===")
+2026-03-20 11:07:57,706 INFO ipython === session end ===
+2026-03-20 15:17:19,652 INFO ipython === bench console session ===
+2026-03-20 15:17:19,662 INFO ipython frappe.db.sql("SELECT name, qr_token FROM `tabQR Code Tag` WHERE status='Activated' LIMIT 1", as_dict=1)
+2026-03-20 15:17:19,663 INFO ipython === session end ===
+2026-03-20 15:17:38,799 INFO ipython === bench console session ===
+2026-03-20 15:17:38,799 INFO ipython frappe.db.sql("SELECT name, qr_token, status FROM `tabQR Code Tag` WHERE qr_token IS NOT NULL LIMIT 5", as_dict=1)
+2026-03-20 15:17:38,799 INFO ipython === session end ===
+2026-03-20 15:17:49,316 INFO ipython === bench console session ===
+2026-03-20 15:17:49,316 INFO ipython frappe.db.sql("SELECT t1.name, t1.qr_token, t1.status, t2.name as item_name, t2.status as item_status FROM `tabQR Code Tag` t1 LEFT JOIN `tabRegistered Item` t2 ON t1.name = t2.qr_code_tag WHERE t2.name IS NOT NULL LIMIT 5", as_dict=1)
+2026-03-20 15:17:49,317 INFO ipython === session end ===
+2026-03-20 15:18:21,908 INFO ipython === bench console session ===
+2026-03-20 15:18:21,909 INFO ipython frappe.db.get_value('QR Code Tag', '3sq770khi4', ['name', 'qr_token', 'status', 'registered_item'], as_dict=1)
+2026-03-20 15:18:21,909 INFO ipython === session end ===
+2026-03-20 15:18:32,761 INFO ipython === bench console session ===
+2026-03-20 15:18:32,761 INFO ipython frappe.db.sql("SELECT name, qr_token, status, registered_item FROM `tabQR Code Tag` WHERE registered_item IS NOT NULL LIMIT 3", as_dict=1)
+2026-03-20 15:18:32,761 INFO ipython === session end ===
+2026-03-20 15:18:44,276 INFO ipython === bench console session ===
+2026-03-20 15:18:44,277 INFO ipython frappe.db.get_value('Registered Item', '5vbo30ef43', ['name', 'item_name', 'status'], as_dict=1)
+2026-03-20 15:18:44,277 INFO ipython === session end ===
+2026-03-20 15:19:36,054 INFO ipython === bench console session ===
+2026-03-20 15:19:36,055 INFO ipython frappe.db.sql("SELECT COUNT(*) as cnt FROM `tabScan Event` WHERE token='DNEEYP5TLQ'", as_dict=1)
+2026-03-20 15:19:36,055 INFO ipython === session end ===
+2026-03-20 15:24:24,576 INFO ipython === bench console session ===
+2026-03-20 15:24:24,577 INFO ipython frappe.db.sql("SELECT * FROM `tabScan Event` WHERE token='DNEEYP5TLQ' ORDER BY modified DESC LIMIT 3", as_dict=1)
+2026-03-20 15:24:24,577 INFO ipython === session end ===
+2026-03-20 15:25:11,887 INFO ipython === bench console session ===
+2026-03-20 15:25:11,887 INFO ipython frappe.db.sql("SELECT name, route, page_or_generator FROM `tabWebsite Route Redirect` WHERE route LIKE '%/s/%' LIMIT 5", as_dict=1)
+2026-03-20 15:25:11,887 INFO ipython === session end ===
+2026-03-20 15:25:15,409 INFO ipython === bench console session ===
+2026-03-20 15:25:15,409 INFO ipython frappe.db.sql("SELECT name, module, pure_path, app_path FROM `tabWebsite Page` WHERE path LIKE '%/s/%' LIMIT 5", as_dict=1)
+2026-03-20 15:25:15,409 INFO ipython === session end ===
+2026-03-20 15:25:28,226 INFO ipython === bench console session ===
+2026-03-20 15:25:28,226 INFO ipython frappe.db.get_value('Website Settings', 'Website Settings', 'routes')
+2026-03-20 15:25:28,226 INFO ipython === session end ===
+2026-03-20 15:26:21,097 INFO ipython === bench console session ===
+2026-03-20 15:26:21,097 INFO ipython frappe.db.get_value('Registered Item', '5vbo30ef43', ['name', 'item_name', 'status', 'public_label', 'reward_enabled', 'reward_visibility'], as_dict=1)
+2026-03-20 15:26:21,097 INFO ipython === session end ===
+2026-03-20 15:26:31,404 INFO ipython === bench console session ===
+2026-03-20 15:26:31,405 INFO ipython from scanifyme.public_portal.services.public_scan_service import resolve_public_token; result = resolve_public_token('DNEEYP5TLQ'); print('error:', result.get('error')); print('item:', result.get('registered_item') is not None)
+2026-03-20 15:26:31,405 INFO ipython === session end ===
+2026-03-20 15:30:32,939 INFO ipython === bench console session ===
+2026-03-20 15:30:32,939 INFO ipython frappe.get_hooks('website_route_rules')
+2026-03-20 15:30:32,939 INFO ipython === session end ===
+2026-03-20 15:33:08,900 INFO ipython === bench console session ===
+2026-03-20 15:33:08,901 INFO ipython import frappe; frappe.get_hooks('website_route_rules')
+2026-03-20 15:33:08,901 INFO ipython === session end ===

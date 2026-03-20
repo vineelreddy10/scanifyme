@@ -1,0 +1,248 @@
+2026-03-17 11:45:03,916 INFO frappe.testing started with: site=test.localhost, app=scanifyme, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 11:45:04,601 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 11:45:04,906 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 11:45:04,990 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 11:45:04,990 INFO frappe.testing scanifyme.items.tests.test_item_service.TestItemService
+2026-03-17 11:45:05,225 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryAPI
+2026-03-17 11:45:05,234 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryService
+2026-03-17 11:45:05,505 INFO frappe.testing scanifyme.public_portal.tests.test_public_scan.TestPublicScanService
+2026-03-17 12:35:00,956 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.notifications.tests.test_notification_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 12:35:01,766 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 12:35:02,089 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 12:35:02,136 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 12:35:04,525 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-17 12:35:04,724 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-17 12:35:58,861 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.notifications.tests.test_notification_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 12:35:59,967 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 12:36:00,212 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 12:36:00,239 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 12:36:01,124 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-17 12:36:01,413 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-17 12:36:34,198 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.notifications.tests.test_notification_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 12:36:35,119 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 12:36:35,370 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 12:36:35,397 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 12:36:36,309 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-17 12:36:36,577 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-17 12:36:38,506 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestNotificationService
+2026-03-17 12:37:21,130 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.notifications.tests.test_notification_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 12:37:22,046 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 12:37:22,279 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 12:37:22,304 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 12:37:23,230 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-17 12:37:24,843 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-17 12:37:25,451 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestNotificationService
+2026-03-17 12:37:55,333 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.notifications.tests.test_notification_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 12:37:56,320 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 12:37:56,556 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 12:37:56,582 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 12:37:57,482 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-17 12:37:59,195 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-17 12:37:59,792 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestNotificationService
+2026-03-17 12:52:56,765 INFO frappe.testing started with: site=test.localhost, app=scanifyme, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 12:52:58,583 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 12:52:59,244 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 12:52:59,377 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 12:52:59,378 INFO frappe.testing scanifyme.items.tests.test_item_service.TestItemService
+2026-03-17 12:52:59,824 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryAPI
+2026-03-17 12:52:59,830 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryService
+2026-03-17 12:53:00,966 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-17 12:53:01,160 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-17 12:53:01,994 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestNotificationService
+2026-03-17 12:53:02,217 INFO frappe.testing scanifyme.public_portal.tests.test_public_scan.TestPublicScanService
+2026-03-17 15:02:26,610 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.recovery.tests.test_location_handover_timeline, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 15:02:27,376 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 15:02:27,826 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 15:02:27,928 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 15:02:27,929 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestHandoverService
+2026-03-17 15:02:28,149 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestLocationService
+2026-03-17 15:02:28,150 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestTimelineService
+2026-03-17 15:03:37,644 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.recovery.tests.test_location_handover_timeline, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 15:03:40,778 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 15:03:41,643 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 15:03:41,762 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 15:03:41,762 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestHandoverService
+2026-03-17 15:03:42,089 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestLocationService
+2026-03-17 15:03:42,090 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestTimelineService
+2026-03-17 15:06:09,389 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.recovery.tests.test_location_handover_timeline, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 15:06:10,837 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 15:06:11,597 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 15:06:11,707 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 15:06:11,707 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestHandoverService
+2026-03-17 15:06:11,950 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestLocationService
+2026-03-17 15:06:11,951 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestTimelineService
+2026-03-17 15:08:06,530 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.recovery.tests.test_location_handover_timeline, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 15:08:09,249 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 15:08:09,937 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 15:08:10,048 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 15:08:10,048 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestHandoverService
+2026-03-17 15:08:10,262 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestLocationService
+2026-03-17 15:08:10,262 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestTimelineService
+2026-03-17 15:08:18,890 INFO frappe.testing started with: site=test.localhost, app=scanifyme, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 15:08:20,155 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 15:08:20,452 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 15:08:20,529 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 15:08:20,529 INFO frappe.testing scanifyme.items.tests.test_item_service.TestItemService
+2026-03-17 15:08:20,950 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryAPI
+2026-03-17 15:08:20,958 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryService
+2026-03-17 15:08:21,273 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestHandoverService
+2026-03-17 15:08:21,277 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestLocationService
+2026-03-17 15:08:21,277 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestTimelineService
+2026-03-17 15:08:22,249 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-17 15:08:22,589 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-17 15:08:23,657 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestNotificationService
+2026-03-17 15:08:23,899 INFO frappe.testing scanifyme.public_portal.tests.test_public_scan.TestPublicScanService
+2026-03-17 16:00:42,911 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.notifications.tests.test_deduplication, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 16:00:43,675 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 16:00:43,998 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 16:00:44,066 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 16:00:44,067 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestCleanupService
+2026-03-17 16:00:44,071 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestDeduplicationService
+2026-03-17 16:00:44,273 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestNotificationBacklog
+2026-03-17 16:00:44,299 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestReliabilityService
+2026-03-17 16:01:52,533 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.recovery.tests.test_cleanup_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-17 16:01:53,325 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-17 16:01:53,624 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-17 16:01:53,651 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-17 16:01:53,652 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestCleanupService
+2026-03-17 16:01:53,945 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestHealthChecks
+2026-03-17 16:01:53,954 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestMaintenanceJobs
+2026-03-18 11:01:05,907 INFO frappe.testing started with: site=test.localhost, app=scanifyme, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-18 11:01:23,389 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-18 11:01:32,507 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-18 11:01:33,578 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-18 11:01:33,585 INFO frappe.testing scanifyme.items.tests.test_item_service.TestItemService
+2026-03-18 11:01:40,137 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryAPI
+2026-03-18 11:01:40,261 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryService
+2026-03-18 11:01:42,180 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestHandoverService
+2026-03-18 11:01:42,230 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestLocationService
+2026-03-18 11:01:42,233 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestTimelineService
+2026-03-18 11:01:42,271 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestCleanupService
+2026-03-18 11:01:42,606 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestHealthChecks
+2026-03-18 11:01:42,694 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestMaintenanceJobs
+2026-03-18 11:01:51,364 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-18 11:01:57,172 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-18 11:02:05,818 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestNotificationService
+2026-03-18 11:02:09,279 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestCleanupService
+2026-03-18 11:02:09,351 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestDeduplicationService
+2026-03-18 11:02:09,594 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestNotificationBacklog
+2026-03-18 17:26:22,732 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.qr_management.tests.test_print_distribution, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-18 17:26:23,927 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-18 17:26:24,520 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-18 17:26:24,636 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-18 17:26:24,637 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestDistributionService
+2026-03-18 17:26:25,882 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestPrintService
+2026-03-18 17:26:26,073 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestQRAPIPermissions
+2026-03-18 17:26:26,103 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestStockService
+2026-03-18 17:28:00,786 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.qr_management.tests.test_print_distribution, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-18 17:28:02,983 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-18 17:28:03,597 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-18 17:28:03,706 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-18 17:28:03,707 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestDistributionService
+2026-03-18 17:28:05,021 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestPrintService
+2026-03-18 17:28:05,242 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestQRAPIPermissions
+2026-03-18 17:28:09,054 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestStockService
+2026-03-18 17:30:40,872 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.qr_management.tests.test_print_distribution, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-18 17:30:42,614 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-18 17:30:43,282 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-18 17:30:43,429 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-18 17:30:43,430 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestDistributionService
+2026-03-18 17:30:45,122 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestPrintService
+2026-03-18 17:30:45,436 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestQRAPIPermissions
+2026-03-18 17:30:46,484 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestStockService
+2026-03-18 17:40:02,973 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.qr_management.tests.test_print_distribution, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-18 17:40:06,116 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-18 17:40:06,897 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-18 17:40:07,021 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-18 17:40:07,022 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestDistributionService
+2026-03-18 17:40:10,141 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestPrintService
+2026-03-18 17:40:10,636 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestQRAPIPermissions
+2026-03-18 17:40:10,936 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestStockService
+2026-03-18 17:42:21,887 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.qr_management.tests.test_print_distribution, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-18 17:42:24,830 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-18 17:42:25,555 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-18 17:42:25,692 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-18 17:42:25,692 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestDistributionService
+2026-03-18 17:42:27,565 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestPrintService
+2026-03-18 17:42:27,922 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestQRAPIPermissions
+2026-03-18 17:42:30,684 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestStockService
+2026-03-19 22:06:32,240 INFO frappe.testing started with: site=test.localhost, app=scanifyme, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-19 22:06:33,780 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-19 22:06:34,864 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-19 22:06:35,225 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-19 22:06:35,226 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestDistributionService
+2026-03-19 22:06:37,836 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestPrintService
+2026-03-19 22:06:38,571 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestQRAPIPermissions
+2026-03-19 22:06:43,472 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestStockService
+2026-03-19 22:06:45,038 INFO frappe.testing scanifyme.items.tests.test_item_service.TestItemService
+2026-03-19 22:06:45,139 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryAPI
+2026-03-19 22:06:45,154 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryService
+2026-03-19 22:06:45,379 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestHandoverService
+2026-03-19 22:06:45,382 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestLocationService
+2026-03-19 22:06:45,383 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestTimelineService
+2026-03-19 22:06:45,387 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestCleanupService
+2026-03-19 22:06:45,398 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestHealthChecks
+2026-03-19 22:06:45,418 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestMaintenanceJobs
+2026-03-19 22:06:45,533 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-19 22:06:45,730 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-19 22:06:47,051 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestNotificationService
+2026-03-19 22:06:47,394 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestCleanupService
+2026-03-19 22:06:47,396 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestDeduplicationService
+2026-03-19 22:06:47,420 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestNotificationBacklog
+2026-03-19 22:06:47,444 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestReliabilityService
+2026-03-19 22:06:47,490 INFO frappe.testing scanifyme.public_portal.tests.test_public_scan.TestPublicScanService
+2026-03-20 00:45:44,406 INFO frappe.testing started with: site=test.localhost, app=scanifyme, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-20 00:45:45,190 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-20 00:45:45,488 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-20 00:45:45,590 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-20 00:45:45,591 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestDistributionService
+2026-03-20 00:45:47,388 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestPrintService
+2026-03-20 00:45:47,770 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestQRAPIPermissions
+2026-03-20 00:45:49,176 INFO frappe.testing scanifyme.qr_management.tests.test_print_distribution.TestStockService
+2026-03-20 00:45:50,039 INFO frappe.testing scanifyme.items.tests.test_item_service.TestItemService
+2026-03-20 00:45:50,101 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryAPI
+2026-03-20 00:45:50,107 INFO frappe.testing scanifyme.recovery.tests.test_recovery.TestRecoveryService
+2026-03-20 00:45:50,245 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestHandoverService
+2026-03-20 00:45:50,249 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestLocationService
+2026-03-20 00:45:50,250 INFO frappe.testing scanifyme.recovery.tests.test_location_handover_timeline.TestTimelineService
+2026-03-20 00:45:50,254 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestCleanupService
+2026-03-20 00:45:50,266 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestHealthChecks
+2026-03-20 00:45:50,276 INFO frappe.testing scanifyme.recovery.tests.test_cleanup_service.TestMaintenanceJobs
+2026-03-20 00:45:50,359 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailNotificationDelivery
+2026-03-20 00:45:50,482 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestEmailQueueIntegration
+2026-03-20 00:45:52,213 INFO frappe.testing scanifyme.notifications.tests.test_notification_service.TestNotificationService
+2026-03-20 00:45:52,647 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestCleanupService
+2026-03-20 00:45:52,651 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestDeduplicationService
+2026-03-20 00:45:52,678 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestNotificationBacklog
+2026-03-20 00:45:52,707 INFO frappe.testing scanifyme.notifications.tests.test_deduplication.TestReliabilityService
+2026-03-20 00:45:52,733 INFO frappe.testing scanifyme.public_portal.tests.test_public_scan.TestPublicScanService
+2026-03-20 00:45:53,968 INFO frappe.testing scanifyme.reports.tests.test_dashboard_service.TestDashboardService
+2026-03-20 00:45:55,424 INFO frappe.testing scanifyme.reports.tests.test_dashboard_service.TestRecoveryMetricsService
+2026-03-20 00:45:56,799 INFO frappe.testing scanifyme.reports.tests.test_dashboard_service.TestStockMetricsService
+2026-03-20 00:52:43,057 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.reports.tests.test_dashboard_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-20 00:52:43,933 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-20 00:52:44,579 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-20 00:52:44,705 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-20 00:52:46,430 INFO frappe.testing scanifyme.reports.tests.test_dashboard_service.TestDashboardService
+2026-03-20 00:52:46,930 INFO frappe.testing scanifyme.reports.tests.test_dashboard_service.TestRecoveryMetricsService
+2026-03-20 00:52:47,622 INFO frappe.testing scanifyme.reports.tests.test_dashboard_service.TestStockMetricsService
+2026-03-20 11:02:50,765 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.onboarding.tests.test_onboarding_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-20 11:02:51,559 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-20 11:02:51,866 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-20 11:02:51,900 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-20 11:02:51,900 INFO frappe.testing scanifyme.onboarding.tests.test_onboarding_service.TestOnboardingService
+2026-03-20 11:03:56,352 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.onboarding.tests.test_onboarding_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-20 11:03:57,256 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-20 11:03:57,494 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-20 11:03:57,522 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-20 11:03:57,523 INFO frappe.testing scanifyme.onboarding.tests.test_onboarding_service.TestOnboardingService
+2026-03-20 11:04:57,517 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.onboarding.tests.test_onboarding_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-20 11:04:58,392 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-20 11:04:58,623 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-20 11:04:58,652 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-20 11:05:00,821 INFO frappe.testing scanifyme.onboarding.tests.test_onboarding_service.TestOnboardingService
+2026-03-20 11:07:10,894 INFO frappe.testing started with: site=test.localhost, app=scanifyme, module=scanifyme.onboarding.tests.test_onboarding_service, verbose=False, tests=(), force=False, profile=False, failfast=False, skip_before_tests=False, debug=False, selected_categories=[]
+2026-03-20 11:07:11,579 INFO frappe.testing Adding type validator in 'frappe' (up to level 0)...
+2026-03-20 11:07:11,805 INFO frappe.testing Adding type validator in 'scanifyme' (up to level 0)...
+2026-03-20 11:07:11,833 INFO frappe.testing Starting tests for app: scanifyme, category: unspecified-category
+2026-03-20 11:07:14,105 INFO frappe.testing scanifyme.onboarding.tests.test_onboarding_service.TestOnboardingService

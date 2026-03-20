@@ -1,0 +1,502 @@
+2026-03-05 11:50:12,983 ERROR scheduler Skipped queueing frappe.search.sqlite_search.build_index_if_not_exists because it was found in queue for test.localhost
+2026-03-05 11:50:12,990 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-05 11:50:12,996 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-05 11:50:13,002 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-05 11:50:13,017 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-05 11:50:13,032 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-05 11:50:13,073 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-05 11:50:13,078 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-05 11:50:13,087 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-05 11:50:13,104 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-05 11:50:13,114 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-05 11:50:13,117 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-05 11:50:13,120 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-05 11:50:13,122 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-05 11:50:13,125 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-05 11:50:13,132 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-05 11:50:13,135 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-05 11:50:13,203 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-05 11:50:13,227 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-05 11:50:13,248 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-05 11:50:13,253 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-05 11:54:24,356 ERROR scheduler Skipped queueing frappe.core.doctype.log_settings.log_settings.run_log_clean_up because it was found in queue for test.localhost
+2026-03-05 11:54:26,558 ERROR scheduler Skipped queueing frappe.automation.doctype.auto_repeat.auto_repeat.make_auto_repeat_entry because it was found in queue for test.localhost
+2026-03-05 11:54:26,582 ERROR scheduler Skipped queueing frappe.desk.notifications.clear_notifications because it was found in queue for test.localhost
+2026-03-05 11:54:26,591 ERROR scheduler Skipped queueing frappe.core.doctype.user_invitation.user_invitation.mark_expired_invitations because it was found in queue for test.localhost
+2026-03-05 11:54:26,598 ERROR scheduler Skipped queueing frappe.email.doctype.auto_email_report.auto_email_report.send_daily because it was found in queue for test.localhost
+2026-03-09 11:10:39,403 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-09 11:10:51,804 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-09 11:10:51,813 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-09 11:10:51,904 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-09 11:10:51,939 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-09 11:10:52,068 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-15 10:30:00,683 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-15 10:30:00,722 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-15 10:30:00,770 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-16 07:26:02,380 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-16 07:30:00,568 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-16 07:34:01,133 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-16 07:38:00,755 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-16 11:54:00,364 ERROR scheduler Exception in Enqueue Events for Site test.localhost
+Traceback (most recent call last):
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 2610, in get_connection
+    connection.can_read()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 1110, in can_read
+    return self._parser.can_read(timeout)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/_parsers/hiredis.py", line 101, in can_read
+    return self.read_from_socket(timeout=timeout, raise_on_timeout=False)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/_parsers/hiredis.py", line 112, in read_from_socket
+    raise ConnectionError(SERVER_CLOSED_CONNECTION_ERROR)
+redis.exceptions.ConnectionError: Connection closed by server.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 855, in connect_check_health
+    sock = self.retry.call_with_retry(
+        lambda: self._connect(), lambda error: self.disconnect(error)
+    )
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/retry.py", line 116, in call_with_retry
+    return do()
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 856, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 1306, in _connect
+    raise err
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 1290, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/scheduler.py", line 120, in enqueue_events_for_site
+    enqueue_events()
+    ~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/scheduler.py", line 140, in enqueue_events
+    if job_type.enqueue():
+       ~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/core/doctype/scheduled_job_type/scheduled_job_type.py", line 74, in enqueue
+    if not self.is_job_in_queue():
+           ~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/core/doctype/scheduled_job_type/scheduled_job_type.py", line 96, in is_job_in_queue
+    return is_job_enqueued(self.rq_job_id)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 671, in is_job_enqueued
+    return get_job_status(job_id) in (JobStatus.QUEUED, JobStatus.STARTED)
+           ~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 676, in get_job_status
+    if job := get_job(job_id):
+              ~~~~~~~^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 682, in get_job
+    return Job.fetch(create_job_id(job_id), connection=get_redis_conn())
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/rq/job.py", line 654, in fetch
+    job.refresh()
+    ~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/rq/job.py", line 1011, in refresh
+    data = self.connection.hgetall(self.key)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/commands/core.py", line 5269, in hgetall
+    return self.execute_command("HGETALL", name, keys=[name])
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/client.py", line 657, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/client.py", line 663, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/utils.py", line 196, in wrapper
+    return func(*args, **kwargs)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 2617, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 846, in connect
+    self.connect_check_health(check_health=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 863, in connect_check_health
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to 127.0.0.1:11002. Connection refused.
+2026-03-16 11:58:00,724 ERROR scheduler Exception in Enqueue Events for Site test.localhost
+Traceback (most recent call last):
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 855, in connect_check_health
+    sock = self.retry.call_with_retry(
+        lambda: self._connect(), lambda error: self.disconnect(error)
+    )
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/retry.py", line 116, in call_with_retry
+    return do()
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 856, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 1306, in _connect
+    raise err
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 1290, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/scheduler.py", line 120, in enqueue_events_for_site
+    enqueue_events()
+    ~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/scheduler.py", line 140, in enqueue_events
+    if job_type.enqueue():
+       ~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/core/doctype/scheduled_job_type/scheduled_job_type.py", line 74, in enqueue
+    if not self.is_job_in_queue():
+           ~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/core/doctype/scheduled_job_type/scheduled_job_type.py", line 96, in is_job_in_queue
+    return is_job_enqueued(self.rq_job_id)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 671, in is_job_enqueued
+    return get_job_status(job_id) in (JobStatus.QUEUED, JobStatus.STARTED)
+           ~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 676, in get_job_status
+    if job := get_job(job_id):
+              ~~~~~~~^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 682, in get_job
+    return Job.fetch(create_job_id(job_id), connection=get_redis_conn())
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/rq/job.py", line 654, in fetch
+    job.refresh()
+    ~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/rq/job.py", line 1011, in refresh
+    data = self.connection.hgetall(self.key)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/commands/core.py", line 5269, in hgetall
+    return self.execute_command("HGETALL", name, keys=[name])
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/client.py", line 657, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/client.py", line 663, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/utils.py", line 196, in wrapper
+    return func(*args, **kwargs)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 2603, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 846, in connect
+    self.connect_check_health(check_health=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 863, in connect_check_health
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to 127.0.0.1:11002. Connection refused.
+2026-03-16 12:02:00,996 ERROR scheduler Exception in Enqueue Events for Site test.localhost
+Traceback (most recent call last):
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 855, in connect_check_health
+    sock = self.retry.call_with_retry(
+        lambda: self._connect(), lambda error: self.disconnect(error)
+    )
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/retry.py", line 116, in call_with_retry
+    return do()
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 856, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 1306, in _connect
+    raise err
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 1290, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/scheduler.py", line 120, in enqueue_events_for_site
+    enqueue_events()
+    ~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/scheduler.py", line 140, in enqueue_events
+    if job_type.enqueue():
+       ~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/core/doctype/scheduled_job_type/scheduled_job_type.py", line 74, in enqueue
+    if not self.is_job_in_queue():
+           ~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/core/doctype/scheduled_job_type/scheduled_job_type.py", line 96, in is_job_in_queue
+    return is_job_enqueued(self.rq_job_id)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 671, in is_job_enqueued
+    return get_job_status(job_id) in (JobStatus.QUEUED, JobStatus.STARTED)
+           ~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 676, in get_job_status
+    if job := get_job(job_id):
+              ~~~~~~~^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/apps/frappe/frappe/utils/background_jobs.py", line 682, in get_job
+    return Job.fetch(create_job_id(job_id), connection=get_redis_conn())
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/rq/job.py", line 654, in fetch
+    job.refresh()
+    ~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/rq/job.py", line 1011, in refresh
+    data = self.connection.hgetall(self.key)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/commands/core.py", line 5269, in hgetall
+    return self.execute_command("HGETALL", name, keys=[name])
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/client.py", line 657, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/client.py", line 663, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/utils.py", line 196, in wrapper
+    return func(*args, **kwargs)
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 2603, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 846, in connect
+    self.connect_check_health(check_health=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/vineelreddykamireddy/frappe/scanifyme/env/lib/python3.14/site-packages/redis/connection.py", line 863, in connect_check_health
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to 127.0.0.1:11002. Connection refused.
+2026-03-17 16:34:03,129 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-17 16:38:00,169 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-17 16:42:00,250 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-18 11:10:01,459 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 11:10:01,647 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 11:10:01,650 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 11:10:01,819 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 11:10:01,824 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-18 11:10:01,831 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 11:10:01,849 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 11:10:01,851 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 11:10:01,855 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 11:10:01,865 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 11:10:01,909 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 11:10:01,916 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 11:10:01,923 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-18 11:18:05,738 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 11:18:07,561 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-18 11:18:08,494 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 11:18:09,687 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 11:18:11,109 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 11:18:13,647 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 11:18:14,463 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 11:18:14,976 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 11:18:14,984 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 11:18:15,134 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 11:18:15,186 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-18 11:18:15,649 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 11:18:15,664 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 11:18:15,673 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-18 11:18:15,700 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 11:25:26,419 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-18 11:25:28,784 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 11:25:30,596 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 11:25:32,060 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 11:25:33,555 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 11:25:34,992 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 11:25:38,282 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 11:25:44,924 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 11:25:46,868 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 11:25:50,716 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 11:26:14,058 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-18 11:27:36,732 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-18 11:27:49,354 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 11:27:52,851 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 11:30:02,274 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 11:30:04,636 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-18 11:30:07,174 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-18 11:30:16,520 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 11:30:50,644 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 11:30:57,479 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-18 11:31:01,494 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 11:31:06,172 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-18 11:31:15,016 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 11:31:19,598 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-18 11:31:25,555 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 11:31:30,781 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-18 11:31:32,005 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 11:31:35,179 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 11:31:41,960 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 11:31:52,149 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 11:31:56,009 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 11:31:59,784 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 11:32:14,200 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-18 11:34:50,688 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 11:34:51,734 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-18 11:34:52,126 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 11:34:52,633 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 11:34:53,576 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 11:34:54,397 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 11:35:00,475 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 11:35:02,349 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-18 11:35:04,314 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-18 11:35:08,677 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-18 11:35:10,219 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 11:35:10,588 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-18 11:35:11,464 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 11:35:12,663 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 11:35:13,402 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-18 11:35:13,883 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 11:35:14,034 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 11:35:14,201 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-18 11:35:14,227 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 11:35:14,240 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 11:40:19,726 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-18 11:40:19,916 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 11:40:19,931 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 11:40:19,939 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 11:40:19,945 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 11:40:19,950 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 11:40:19,959 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 11:40:19,965 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 11:40:19,973 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 11:40:19,975 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-18 11:40:19,977 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 11:40:19,980 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-18 11:40:19,982 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 11:40:19,984 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-18 11:40:19,986 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 11:40:19,988 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-18 11:40:19,990 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 11:40:19,992 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-18 11:40:19,994 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-18 11:40:19,996 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-18 11:40:19,998 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 11:54:35,945 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-18 11:54:39,083 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-18 11:54:40,194 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 11:54:41,082 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 11:54:41,108 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 11:54:41,114 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 11:54:41,117 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 11:54:41,120 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 11:54:41,289 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 11:54:41,300 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-18 11:54:41,313 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-18 11:54:41,615 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-18 11:54:41,646 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 11:54:41,657 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-18 11:54:41,667 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 11:54:41,692 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 11:54:41,699 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-18 11:54:42,225 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 11:54:42,836 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 12:03:34,262 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 12:04:42,280 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 12:04:45,776 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 12:04:47,901 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-18 12:04:48,592 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 12:04:49,392 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 12:04:49,998 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 12:04:50,726 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 12:04:53,435 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 12:04:54,719 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 12:04:57,604 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-18 12:04:58,217 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 12:04:58,871 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-18 12:04:59,447 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 12:05:00,133 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 12:05:00,960 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-18 12:05:01,637 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-18 12:05:03,308 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-18 12:05:04,679 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 12:06:16,182 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 12:06:20,274 ERROR scheduler Skipped queueing frappe.search.sqlite_search.build_index_if_not_exists because it was found in queue for test.localhost
+2026-03-18 12:06:21,832 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 12:06:22,849 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-18 12:06:23,992 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-18 12:06:25,023 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 12:06:25,619 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-18 12:06:26,476 ERROR scheduler Skipped queueing scanifyme.recovery.services.cleanup_service.expire_stale_finder_sessions because it was found in queue for test.localhost
+2026-03-18 12:06:27,472 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 12:06:28,688 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-18 12:06:28,973 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 12:06:29,397 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-18 12:06:29,442 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-18 12:06:29,450 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 12:06:29,459 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 12:06:29,469 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 12:06:29,477 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 12:06:29,485 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 12:06:29,525 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 12:06:29,882 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 12:06:30,238 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-18 12:06:30,274 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-18 12:06:30,297 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 12:11:04,102 ERROR scheduler Skipped queueing frappe.utils.telemetry.pulse.client.send_queued_events because it was found in queue for test.localhost
+2026-03-18 12:11:06,187 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-18 12:11:07,221 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-18 12:16:54,491 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 12:16:59,456 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 12:17:15,346 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-18 12:17:27,573 ERROR scheduler Skipped queueing scanifyme.recovery.services.cleanup_service.expire_stale_finder_sessions because it was found in queue for test.localhost
+2026-03-18 12:18:17,966 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-18 12:21:57,371 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-18 12:22:19,546 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 12:25:44,229 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-18 12:25:52,698 ERROR scheduler Skipped queueing frappe.search.sqlite_search.build_index_if_not_exists because it was found in queue for test.localhost
+2026-03-18 12:25:54,112 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-18 12:25:54,632 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-18 12:25:55,492 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-18 12:25:56,374 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-18 12:25:56,893 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-18 12:25:57,750 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 12:25:59,532 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-18 12:26:01,887 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 12:26:06,574 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 12:26:08,084 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-18 12:38:24,494 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-18 12:40:58,018 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-18 12:48:16,389 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-18 12:59:35,538 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-18 12:59:40,625 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-18 12:59:53,037 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-18 13:10:02,479 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-19 21:10:01,084 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-19 21:10:01,113 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-19 21:10:01,121 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-19 21:10:01,127 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-19 21:10:01,137 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-19 21:18:00,362 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-19 21:22:00,501 ERROR scheduler Skipped queueing frappe.utils.global_search.sync_global_search because it was found in queue for test.localhost
+2026-03-19 22:06:00,384 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-19 22:06:00,408 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-19 22:06:00,413 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-19 22:06:00,419 ERROR scheduler Skipped queueing frappe.deferred_insert.save_to_db because it was found in queue for test.localhost
+2026-03-19 22:06:00,424 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost
+2026-03-19 22:06:00,433 ERROR scheduler Skipped queueing frappe.automation.doctype.reminder.reminder.send_reminders because it was found in queue for test.localhost
+2026-03-19 22:06:00,441 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-19 22:06:00,448 ERROR scheduler Skipped queueing frappe.model.utils.link_count.update_link_count because it was found in queue for test.localhost
+2026-03-19 22:06:00,453 ERROR scheduler Skipped queueing scanifyme.recovery.services.cleanup_service.expire_stale_finder_sessions because it was found in queue for test.localhost
+2026-03-19 22:06:00,462 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-19 22:06:00,465 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-19 22:06:00,472 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-19 22:06:00,478 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-19 22:06:00,485 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-19 22:06:00,492 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-19 22:06:00,495 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-19 22:06:00,498 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-19 22:06:00,513 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-19 22:06:00,519 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-19 22:34:00,817 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-19 22:42:53,748 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-19 22:42:53,834 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-19 22:42:53,844 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-19 22:42:53,857 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-19 22:46:01,135 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-19 22:46:01,183 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-19 22:46:01,187 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-19 22:55:25,874 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.pull because it was found in queue for test.localhost
+2026-03-19 22:55:26,297 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-19 22:55:26,311 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-19 22:55:26,328 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-19 22:55:26,341 ERROR scheduler Skipped queueing frappe.email.queue.flush because it was found in queue for test.localhost
+2026-03-19 22:55:26,347 ERROR scheduler Skipped queueing frappe.monitor.flush because it was found in queue for test.localhost
+2026-03-19 22:58:14,013 ERROR scheduler Skipped queueing frappe.email.queue.retry_sending_emails because it was found in queue for test.localhost
+2026-03-20 10:34:00,990 ERROR scheduler Skipped queueing frappe.desk.utils.delete_old_exported_report_files because it was found in queue for test.localhost
+2026-03-20 10:34:01,007 ERROR scheduler Skipped queueing frappe.integrations.doctype.google_calendar.google_calendar.sync because it was found in queue for test.localhost
+2026-03-20 10:34:01,017 ERROR scheduler Skipped queueing frappe.core.doctype.prepared_report.prepared_report.expire_stalled_report because it was found in queue for test.localhost
+2026-03-20 10:34:01,020 ERROR scheduler Skipped queueing frappe.email.doctype.email_account.email_account.notify_unreplied because it was found in queue for test.localhost
+2026-03-20 10:34:01,026 ERROR scheduler Skipped queueing frappe.twofactor.delete_all_barcodes_for_users because it was found in queue for test.localhost
+2026-03-20 10:34:01,030 ERROR scheduler Skipped queueing scanifyme.recovery.services.cleanup_service.expire_stale_finder_sessions because it was found in queue for test.localhost
+2026-03-20 10:34:01,035 ERROR scheduler Skipped queueing frappe.oauth.delete_oauth2_data because it was found in queue for test.localhost
+2026-03-20 10:34:01,039 ERROR scheduler Skipped queueing frappe.desk.form.document_follow.send_hourly_updates because it was found in queue for test.localhost
+2026-03-20 10:34:01,046 ERROR scheduler Skipped queueing frappe.desk.page.backups.backups.delete_downloadable_backups because it was found in queue for test.localhost
+2026-03-20 10:34:01,057 ERROR scheduler Skipped queueing frappe.email.doctype.notification.notification.trigger_offset_alerts because it was found in queue for test.localhost
+2026-03-20 10:34:01,064 ERROR scheduler Skipped queueing frappe.website.doctype.web_page.web_page.check_publish_status because it was found in queue for test.localhost
+2026-03-20 10:34:01,070 ERROR scheduler Skipped queueing frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.process_data_deletion_request because it was found in queue for test.localhost
+2026-03-20 10:34:01,078 ERROR scheduler Skipped queueing frappe.model.utils.user_settings.sync_user_settings because it was found in queue for test.localhost

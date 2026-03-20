@@ -1,0 +1,20 @@
+{
+ "background_workers": 1,
+ "default_site": "test.localhost",
+ "developer_mode": 1,
+ "file_watcher_port": 6789,
+ "frappe_user": "vineelreddykamireddy",
+ "gunicorn_workers": 17,
+ "live_reload": true,
+ "rebase_on_pull": false,
+ "redis_cache": "redis://127.0.0.1:13002",
+ "redis_queue": "redis://127.0.0.1:11002",
+ "redis_socketio": "redis://127.0.0.1:13002",
+ "restart_supervisor_on_update": false,
+ "restart_systemd_on_update": false,
+ "serve_default_site": true,
+ "shallow_clone": true,
+ "socketio_port": 9002,
+ "use_redis_auth": false,
+ "webserver_port": 8002
+}
