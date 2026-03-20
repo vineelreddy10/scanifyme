@@ -304,3 +304,263 @@ export const updateRecoveryCaseRewardStatus = async (
     }
   )
 }
+
+// ===== Dashboard / Analytics Types =====
+
+export interface OwnerDashboardSummary {
+  items: {
+    total: number
+    active: number
+    lost: number
+    recovered: number
+    draft: number
+  }
+  recovery_cases: {
+    total: number
+    open: number
+    responded: number
+    return_planned: number
+    recovered: number
+    closed: number
+    active_workflow: number
+  }
+  qr_tags: {
+    activated: number
+  }
+  rewards: {
+    enabled_items: number
+  }
+  notifications: {
+    unread: number
+  }
+}
+
+export interface OwnerRecentActivity {
+  recent_cases: Array<{
+    name: string
+    case_title: string
+    status: string
+    opened_on: string | null
+    last_activity_on: string | null
+    finder_name: string | null
+    handover_status: string | null
+  }>
+  recent_notifications: Array<{
+    name: string
+    title: string | null
+    event_type: string
+    is_read: number
+    triggered_on: string
+    route: string | null
+    recovery_case: string | null
+  }>
+  recent_scans: Array<{
+    name: string
+    token: string
+    scanned_on: string | null
+    status: string
+    registered_item: string | null
+    recovery_case: string | null
+  }>
+  recent_locations: Array<{
+    name: string
+    recovery_case: string
+    latitude: number | null
+    longitude: number | null
+    shared_on: string | null
+    note: string | null
+  }>
+}
+
+export interface AdminOperationalSummary {
+  qr_batches: {
+    total: number
+    by_status: Record<string, number>
+  }
+  qr_tags: {
+    total: number
+    by_status: Record<string, number>
+  }
+  registered_items: {
+    total: number
+    by_status: Record<string, number>
+  }
+  recovery_cases: {
+    total: number
+    by_status: Record<string, number>
+    active_workflow: number
+  }
+  scans: {
+    total: number
+    valid: number
+    invalid: number
+    recovery_initiated: number
+  }
+  notifications: {
+    total: number
+    unread: number
+    by_channel: Record<string, number>
+    by_status: Record<string, number>
+  }
+  location_shares: {
+    total: number
+  }
+  handover: {
+    by_status: Record<string, number>
+  }
+  rewards: {
+    enabled_items: number
+    cases_with_rewards: number
+  }
+  owner_profiles: {
+    total: number
+  }
+  finder_sessions: {
+    active: number
+    expired: number
+  }
+}
+
+// ===== Dashboard API Functions =====
+
+export const getOwnerDashboardSummary = async (): Promise<OwnerDashboardSummary> => {
+  return await frappeCall<OwnerDashboardSummary>(
+    'scanifyme.reports.api.dashboard_api.get_owner_dashboard_summary'
+  )
+}
+
+export const getOwnerRecentActivity = async (limit: number = 10): Promise<OwnerRecentActivity> => {
+  return await frappeCall<OwnerRecentActivity>(
+    'scanifyme.reports.api.dashboard_api.get_owner_recent_activity',
+    { limit }
+  )
+}
+
+export const getAdminOperationalSummary = async (): Promise<AdminOperationalSummary> => {
+  return await frappeCall<AdminOperationalSummary>(
+    'scanifyme.reports.api.dashboard_api.get_admin_operational_summary'
+  )
+}
+// ===== Onboarding Types =====
+
+export interface OnboardingState {
+  owner_profile: string
+  account_created: boolean
+  profile_completed: boolean
+  qr_activated: boolean
+  item_registered: boolean
+  recovery_note_added: boolean
+  notifications_configured: boolean
+  reward_reviewed: boolean
+  onboarding_completed: boolean
+  completion_percent: number
+  last_updated_on: string | null
+}
+
+export interface OnboardingAction {
+  action_key: string
+  title: string
+  description: string
+  route: string
+  priority: number
+}
+
+export interface RecoveryReadiness {
+  item: string
+  item_name: string
+  is_ready: boolean
+  readiness_percent: number
+  checks: Array<{
+    check_key: string
+    label: string
+    passed: boolean
+    message: string
+  }>
+  missing: string[]
+  next_action: {
+    action_key: string
+    title: string
+    description: string
+    route: string
+  } | null
+}
+
+// ===== Onboarding API Functions =====
+
+export const getOwnerOnboardingState = async (): Promise<OnboardingState> => {
+  return await frappeCall<OnboardingState>(
+    'scanifyme.onboarding.api.onboarding_api.get_owner_onboarding_state'
+  )
+}
+
+export const recomputeOnboardingState = async (): Promise<OnboardingState> => {
+  return await frappeCall<OnboardingState>(
+    'scanifyme.onboarding.api.onboarding_api.recompute_onboarding_state'
+  )
+}
+
+export const getOwnerNextActions = async (): Promise<OnboardingAction[]> => {
+  return await frappeCall<OnboardingAction[]>(
+    'scanifyme.onboarding.api.onboarding_api.get_owner_next_actions'
+  )
+}
+
+export const getItemRecoveryReadiness = async (item: string): Promise<RecoveryReadiness> => {
+  return await frappeCall<RecoveryReadiness>(
+    'scanifyme.onboarding.api.onboarding_api.get_item_recovery_readiness',
+    { item }
+  )
+}
+
+// ===== Admin Onboarding APIs =====
+
+export interface OnboardingOverview {
+  total_owners: number
+  completed: number
+  in_progress: number
+  avg_completion_percent: number
+  breakdown: {
+    not_started: number
+    getting_started: number
+    halfway: number
+    almost_done: number
+  }
+}
+
+export interface IncompleteOwnerSummary {
+  owner_profile: string
+  completion_percent: number
+  onboarding_completed: boolean
+  missing_steps: string[]
+  last_updated_on: string | null
+}
+
+export const getOnboardingOverview = async (): Promise<OnboardingOverview> => {
+  return await frappeCall<OnboardingOverview>(
+    'scanifyme.onboarding.api.admin_onboarding_api.get_onboarding_overview'
+  )
+}
+
+export const getIncompleteOnboardingSummary = async (
+  minCompletion?: number,
+  maxCompletion?: number,
+  limit: number = 50
+): Promise<IncompleteOwnerSummary[]> => {
+  return await frappeCall<IncompleteOwnerSummary[]>(
+    'scanifyme.onboarding.api.admin_onboarding_api.get_incomplete_onboarding_summary',
+    {
+      min_completion: minCompletion ?? null,
+      max_completion: maxCompletion ?? null,
+      limit,
+    }
+  )
+}
+
+// ===== Activation Error Types =====
+
+export interface ActivationError {
+  error_code: 'INVALID_TOKEN' | 'ALREADY_ACTIVATED' | 'SUSPENDED_TAG' | 'RETIRED_TAG' | 'INVALID_STATUS' | 'UNKNOWN'
+  user_title: string
+  user_message: string
+  user_action: string
+}

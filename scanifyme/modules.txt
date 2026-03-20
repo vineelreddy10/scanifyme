@@ -1,10 +1,11 @@
-scanifyme_core
-qr_management
-ownership
+admin_ops
 items
-recovery
 messaging
 notifications
+onboarding
+ownership
 public_portal
-admin_ops
+qr_management
+recovery
 reports
+scanifyme_core

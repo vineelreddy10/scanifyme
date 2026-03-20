@@ -398,3 +398,14 @@ def require_owner_profile():
 	profile = get_owner_profile_for_user()
 	if not profile or profile == "Administrator":
 		frappe.throw("Owner profile required", frappe.PermissionError)
+
+
+def has_admin_role() -> bool:
+	"""
+	Check if the current user has admin privileges.
+
+	Returns:
+	    True if user is Administrator or has ScanifyMe Admin role.
+	"""
+	roles = frappe.get_roles()
+	return "Administrator" in roles or "ScanifyMe Admin" in roles

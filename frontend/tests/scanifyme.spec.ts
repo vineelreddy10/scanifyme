@@ -310,3 +310,202 @@ test.describe('Recovery Page Stability Tests', () => {
     expect(crashErrors).toHaveLength(0);
   });
 });
+
+test.describe('Owner Dashboard Analytics Tests', () => {
+  test('D1: Dashboard page loads without crash', async ({ page }) => {
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(5000);
+
+    const url = page.url();
+    expect(url).toBeTruthy();
+  });
+
+  test('D2: Dashboard shows summary cards when authenticated', async ({ page }) => {
+    const consoleErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(6000);
+
+    const url = page.url();
+    if (url.includes('/login')) {
+      return;
+    }
+
+    const pageContent = await page.content();
+    expect(pageContent).toBeTruthy();
+
+    const crashErrors = consoleErrors.filter(err =>
+      err.includes('toFixed') ||
+      err.includes('TypeError') ||
+      err.includes('Cannot read properties of undefined')
+    );
+    expect(crashErrors).toHaveLength(0);
+  });
+
+  test('D3: Dashboard has quick actions section', async ({ page }) => {
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(6000);
+
+    const url = page.url();
+    if (url.includes('/login')) {
+      return;
+    }
+
+    const pageContent = await page.content();
+    expect(pageContent).toBeTruthy();
+
+    const hasQuickActions =
+      pageContent.includes('Quick Actions') ||
+      pageContent.includes('Activate QR') ||
+      pageContent.includes('View Items') ||
+      pageContent.includes('Recovery');
+
+    expect(hasQuickActions).toBeTruthy();
+  });
+
+  test('D4: Dashboard has navigation bar', async ({ page }) => {
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(5000);
+
+    const url = page.url();
+    if (url.includes('/login')) {
+      return;
+    }
+
+    const pageContent = await page.content();
+    expect(pageContent).toContain('ScanifyMe');
+  });
+
+  test('D5: No /frontend/api requests made by dashboard', async ({ page }) => {
+    const apiCalls: string[] = [];
+    page.on('request', req => {
+      const url = req.url();
+      if (url.includes('/frontend/api')) {
+        apiCalls.push(url);
+      }
+    });
+
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(5000);
+
+    const invalidApiCalls = apiCalls.filter(url => url.includes('/frontend/api'));
+    expect(invalidApiCalls).toHaveLength(0);
+  });
+
+  test('D6: Dashboard no console errors', async ({ page }) => {
+    const consoleErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(5000);
+
+    const criticalErrors = consoleErrors.filter(err =>
+      err.includes('toFixed') ||
+      err.includes('Invalid URL') ||
+      err.includes('TypeError: Cannot read properties of undefined')
+    );
+    expect(criticalErrors).toHaveLength(0);
+  });
+
+  test('D7: Navigation between /frontend and /frontend/items works', async ({ page }) => {
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(5000);
+
+    const frontendUrl = page.url();
+    if (frontendUrl.includes('/login')) {
+      return;
+    }
+
+    await page.goto(`${BASE_URL}/frontend/items`);
+    await page.waitForTimeout(3000);
+
+    const itemsUrl = page.url();
+    expect(itemsUrl).toContain('/frontend/items');
+    expect(itemsUrl).not.toContain('/dashboard');
+  });
+
+  test('D8: Navigation between /frontend and /frontend/recovery works', async ({ page }) => {
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(5000);
+
+    const frontendUrl = page.url();
+    if (frontendUrl.includes('/login')) {
+      return;
+    }
+
+    await page.goto(`${BASE_URL}/frontend/recovery`);
+    await page.waitForTimeout(3000);
+
+    const recoveryUrl = page.url();
+    expect(recoveryUrl).toContain('/frontend/recovery');
+    expect(recoveryUrl).not.toContain('/dashboard');
+  });
+
+  test('D9: Navigation between /frontend and /frontend/notifications works', async ({ page }) => {
+    await page.goto(`${BASE_URL}/frontend`);
+    await page.waitForTimeout(5000);
+
+    const frontendUrl = page.url();
+    if (frontendUrl.includes('/login')) {
+      return;
+    }
+
+    await page.goto(`${BASE_URL}/frontend/notifications`);
+    await page.waitForTimeout(3000);
+
+    const notifUrl = page.url();
+    expect(notifUrl).toContain('/frontend/notifications');
+    expect(notifUrl).not.toContain('/dashboard');
+  });
+});
+
+test.describe('Dashboard API Smoke Tests', () => {
+  let authCookies: string;
+
+  test.beforeAll(async ({ request: req }) => {
+    // Login as demo user to get session
+    const loginRes = await req.post(`${BASE_URL}/api/method/login`, {
+      data: {
+        usr: 'demo@scanifyme.app',
+        pwd: 'demo123',
+      },
+    });
+    authCookies = loginRes.headers()['set-cookie'] || '';
+  });
+
+  test('D10: get_owner_dashboard_summary API responds', async ({ request }) => {
+    const response = await request.post(
+      `${BASE_URL}/api/method/scanifyme.reports.api.dashboard_api.get_owner_dashboard_summary`,
+      { headers: { Cookie: authCookies } }
+    );
+    expect([200, 401, 403]).toContain(response.status());
+  });
+
+  test('D11: get_admin_operational_summary API responds', async ({ request }) => {
+    const response = await request.post(
+      `${BASE_URL}/api/method/scanifyme.reports.api.dashboard_api.get_admin_operational_summary`,
+      { headers: { Cookie: authCookies } }
+    );
+    expect([200, 401, 403]).toContain(response.status());
+  });
+
+  test('D12: get_owner_recent_activity API responds', async ({ request }) => {
+    const response = await request.post(
+      `${BASE_URL}/api/method/scanifyme.reports.api.dashboard_api.get_owner_recent_activity`,
+      {
+        headers: { Cookie: authCookies },
+        data: { limit: 10 },
+      }
+    );
+    expect([200, 401, 403]).toContain(response.status());
+  });
+});

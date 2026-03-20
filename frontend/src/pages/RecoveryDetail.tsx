@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
 import { safeToFixed, isValidNumber } from '../utils/number'
+import { AppLayout } from '../components/ui/AppLayout'
+import { CaseStatusBadge, StatusBadge } from '../components/ui/StatusBadge'
+import { ErrorBanner } from '../components/ui/ErrorBanner'
+import { SuccessBanner } from '../components/ui/ErrorBanner'
+import { PageLoading } from '../components/ui/LoadingSpinner'
 
-// Types
 export interface RecoveryCaseDetails {
   name: string
   case_title: string
@@ -38,8 +41,8 @@ export interface RecoveryMessage {
 
 export interface LocationShare {
   name: string
-  latitude: number | null   // null when no location shared yet
-  longitude: number | null  // null when no location shared yet
+  latitude: number | null
+  longitude: number | null
   accuracy_meters: number | null
   source: string
   shared_on: string
@@ -77,11 +80,8 @@ export interface RewardStatusDetails {
   reward_last_updated_on: string | null
 }
 
-// API functions
 async function frappeCall<T>(method: string, args: Record<string, unknown> = {}): Promise<T> {
-  const baseURL = ''
-  const url = baseURL ? `${baseURL}/api/method/${method}` : `/api/method/${method}`
-  
+  const url = `/api/method/${method}`
   const csrfToken = typeof window !== 'undefined' ? (window as any).csrf_token : ''
   
   const headers: Record<string, string> = {
@@ -178,7 +178,6 @@ export const updateRecoveryCaseRewardStatus = async (
 }
 
 const RecoveryDetail = () => {
-  const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [caseDetails, setCaseDetails] = useState<RecoveryCaseDetails | null>(null)
@@ -202,11 +201,6 @@ const RecoveryDetail = () => {
   const [showRewardModal, setShowRewardModal] = useState(false)
   const [newRewardStatus, setNewRewardStatus] = useState('')
   const [rewardInternalNote, setRewardInternalNote] = useState('')
-
-  const handleLogout = async () => {
-    await logout()
-    window.location.href = '/login'
-  }
 
   useEffect(() => {
     if (id) {
@@ -258,7 +252,7 @@ const RecoveryDetail = () => {
       if (result.success) {
         setSendSuccess('Reply sent successfully!')
         setReplyMessage('')
-        loadCaseData() // Refresh messages
+        loadCaseData()
       } else {
         setSendError(result.message || 'Failed to send reply')
       }
@@ -275,7 +269,7 @@ const RecoveryDetail = () => {
     try {
       const result = await updateRecoveryCaseStatus(id!, newStatus)
       if (result.success) {
-        loadCaseData() // Refresh case details
+        loadCaseData()
         setShowStatusModal(false)
       } else {
         setSendError(result.message || 'Failed to update status')
@@ -317,45 +311,6 @@ const RecoveryDetail = () => {
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      'Open': 'bg-yellow-100 text-yellow-800',
-      'Owner Responded': 'bg-blue-100 text-blue-800',
-      'Return Planned': 'bg-purple-100 text-purple-800',
-      'Recovered': 'bg-green-100 text-green-800',
-      'Closed': 'bg-gray-100 text-gray-800',
-      'Invalid': 'bg-red-100 text-red-800',
-      'Spam': 'bg-red-100 text-red-800',
-    }
-    return styles[status] || 'bg-gray-100 text-gray-800'
-  }
-
-  const getHandoverStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      'Not Started': 'bg-gray-100 text-gray-800',
-      'Finder Contacted': 'bg-yellow-100 text-yellow-800',
-      'Location Shared': 'bg-blue-100 text-blue-800',
-      'Return Planned': 'bg-purple-100 text-purple-800',
-      'Handover Scheduled': 'bg-indigo-100 text-indigo-800',
-      'Recovered': 'bg-green-100 text-green-800',
-      'Closed': 'bg-gray-100 text-gray-800',
-      'Failed': 'bg-red-100 text-red-800',
-    }
-    return styles[status] || 'bg-gray-100 text-gray-800'
-  }
-
-  const getRewardStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      'Not Applicable': 'bg-gray-100 text-gray-800',
-      'Offered': 'bg-yellow-100 text-yellow-800',
-      'Mentioned To Finder': 'bg-blue-100 text-blue-800',
-      'Return Completed': 'bg-green-100 text-green-800',
-      'Closed Without Reward': 'bg-red-100 text-red-800',
-      'Cancelled': 'bg-gray-100 text-gray-800',
-    }
-    return styles[status] || 'bg-gray-100 text-gray-800'
-  }
-
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '-'
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -369,335 +324,292 @@ const RecoveryDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-      </div>
+      <AppLayout>
+        <PageLoading />
+      </AppLayout>
     )
   }
 
   if (error || !caseDetails) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <nav className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              <div className="flex items-center">
-                <button onClick={() => navigate('/recovery')} className="text-gray-600 hover:text-gray-900 mr-4">
-                  ← Back
-                </button>
-                <h1 className="text-xl font-bold text-gray-900">Error</h1>
-              </div>
-            </div>
-          </div>
-        </nav>
-        <div className="max-w-7xl mx-auto py-6 px-4">
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-sm text-red-800">{error || 'Case not found'}</p>
-          </div>
-        </div>
-      </div>
+      <AppLayout>
+        <ErrorBanner message={error || 'Case not found'} />
+      </AppLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-6">
-              <button onClick={() => navigate('/recovery')} className="text-gray-600 hover:text-gray-900">
-                ← Back
-              </button>
-              <h1 className="text-xl font-bold text-gray-900">Recovery Case</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">{currentUser as string}</span>
-              <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-800">
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <AppLayout>
+      <div className="mb-6">
+        <button 
+          onClick={() => navigate('/recovery')} 
+          className="text-sm text-gray-500 hover:text-gray-700 mb-4 flex items-center gap-1"
+        >
+          ← Back to Recovery
+        </button>
+      </div>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          {/* Case Info Card */}
-          <div className="bg-white shadow rounded-lg mb-6">
-            <div className="px-4 py-5 sm:px-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">
-                    {caseDetails.case_title}
-                  </h3>
-                  <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                    Item: {caseDetails.registered_item?.item_name || caseDetails.registered_item?.name}
-                  </p>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getStatusBadge(caseDetails.status)}`}>
-                    {caseDetails.status}
-                  </span>
-                  <button
-                    onClick={() => { setNewStatus(caseDetails.status); setShowStatusModal(true); }}
-                    className="mt-2 text-sm text-indigo-600 hover:text-indigo-800"
-                  >
-                    Change Status
-                  </button>
-                </div>
-              </div>
-              <div className="mt-4 border-t border-gray-200 pt-4">
-                <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-3">
-                  <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500">Finder</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{caseDetails.finder_name || 'Anonymous'}</dd>
-                  </div>
-                  <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500">Contact</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{caseDetails.finder_contact_hint || '-'}</dd>
-                  </div>
-                  <div className="sm:col-span-1">
-                    <dt className="text-sm font-medium text-gray-500">Opened</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{formatDate(caseDetails.opened_on)}</dd>
-                  </div>
-                </dl>
-              </div>
+      {/* Case Info Card */}
+      <div className="bg-white shadow rounded-lg mb-6">
+        <div className="px-4 py-5 sm:px-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                {caseDetails.case_title}
+              </h3>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                Item: {caseDetails.registered_item?.item_name || caseDetails.registered_item?.name}
+              </p>
             </div>
-          </div>
-
-          {/* Handover Status Card */}
-          {handoverDetails && (
-            <div className="bg-white shadow rounded-lg mb-6">
-              <div className="px-4 py-5 sm:px-6">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Recovery Progress</h3>
-                  <button
-                    onClick={() => { setNewHandoverStatus(handoverDetails.handover_status); setHandoverNote(handoverDetails.handover_note || ''); setShowHandoverModal(true); }}
-                    className="text-sm text-indigo-600 hover:text-indigo-800"
-                  >
-                    Update Progress
-                  </button>
-                </div>
-                <div className="mt-4">
-                  <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getHandoverStatusBadge(handoverDetails.handover_status)}`}>
-                    {handoverDetails.handover_status}
-                  </span>
-                  {handoverDetails.handover_note && (
-                    <p className="mt-2 text-sm text-gray-600">{handoverDetails.handover_note}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Reward Status Card */}
-          {rewardStatus && (
-            <div className="bg-white shadow rounded-lg mb-6">
-              <div className="px-4 py-5 sm:px-6">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Reward Status</h3>
-                  <button
-                    onClick={() => { setNewRewardStatus(rewardStatus.reward_status || 'Not Applicable'); setRewardInternalNote(rewardStatus.reward_internal_note || ''); setShowRewardModal(true); }}
-                    className="text-sm text-indigo-600 hover:text-indigo-800"
-                  >
-                    Update Reward
-                  </button>
-                </div>
-                <div className="mt-4">
-                  {rewardStatus.reward_offered ? (
-                    <>
-                      <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getRewardStatusBadge(rewardStatus.reward_status || 'Not Applicable')}`}>
-                        {rewardStatus.reward_status || 'Not Applicable'}
-                      </span>
-                      {rewardStatus.reward_display_text && (
-                        <p className="mt-2 text-sm text-gray-600">Reward: {rewardStatus.reward_display_text}</p>
-                      )}
-                      {rewardStatus.reward_internal_note && (
-                        <p className="mt-2 text-sm text-gray-500">Note: {rewardStatus.reward_internal_note}</p>
-                      )}
-                    </>
-                  ) : (
-                    <p className="text-sm text-gray-500">No reward offered for this item</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Location Card */}
-          {latestLocation && (
-            <div className="bg-white shadow rounded-lg mb-6">
-              <div className="px-4 py-5 sm:px-6">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Finder's Location</h3>
-                  {latestLocation.maps_url && (
-                    <a
-                      href={latestLocation.maps_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-indigo-600 hover:text-indigo-800"
-                    >
-                      Open in Maps →
-                    </a>
-                  )}
-                </div>
-                <div className="mt-4">
-                  <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
-                    <div className="sm:col-span-1">
-                      <dt className="text-sm font-medium text-gray-500">Coordinates</dt>
-                      <dd className="mt-1 text-sm text-gray-900 font-mono">
-                        {isValidNumber(latestLocation.latitude) && isValidNumber(latestLocation.longitude)
-                          ? `${safeToFixed(latestLocation.latitude, 6)}°, ${safeToFixed(latestLocation.longitude, 6)}°`
-                          : '—'}
-                      </dd>
-                    </div>
-                    {latestLocation.accuracy_meters && (
-                      <div className="sm:col-span-1">
-                        <dt className="text-sm font-medium text-gray-500">Accuracy</dt>
-                        <dd className="mt-1 text-sm text-gray-900">±{Math.round(latestLocation.accuracy_meters)}m</dd>
-                      </div>
-                    )}
-                    <div className="sm:col-span-1">
-                      <dt className="text-sm font-medium text-gray-500">Shared</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{formatDate(latestLocation.shared_on)}</dd>
-                    </div>
-                    <div className="sm:col-span-1">
-                      <dt className="text-sm font-medium text-gray-500">Source</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{latestLocation.source}</dd>
-                    </div>
-                  </dl>
-                  {latestLocation.note && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <dt className="text-sm font-medium text-gray-500">Note</dt>
-                      <dd className="mt-1 text-sm text-gray-900">{latestLocation.note}</dd>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Timeline Card */}
-          <div className="bg-white shadow rounded-lg mb-6">
-            <div className="px-4 py-5 sm:px-6">
+            <div className="flex flex-col items-end">
+              <CaseStatusBadge status={caseDetails.status} />
               <button
-                onClick={() => setShowTimeline(!showTimeline)}
-                className="flex justify-between items-center w-full"
+                onClick={() => { setNewStatus(caseDetails.status); setShowStatusModal(true); }}
+                className="mt-2 text-sm text-indigo-600 hover:text-indigo-800"
               >
-                <h3 className="text-lg leading-6 font-medium text-gray-900">Activity Timeline</h3>
-                <span className="text-sm text-gray-500">
-                  {showTimeline ? '▲ Hide' : `▼ Show ${timeline.length} events`}
-                </span>
+                Change Status
               </button>
-              
-              {showTimeline && timeline.length > 0 && (
-                <div className="mt-4 border-t border-gray-200 pt-4">
-                  <div className="space-y-4">
-                    {timeline.map((event) => (
-                      <div key={event.name} className="flex gap-4">
-                        <div className="flex-shrink-0">
-                          <div className="h-2 w-2 rounded-full bg-indigo-500 mt-2"></div>
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start">
-                            <p className="text-sm font-medium text-gray-900">{event.event_label || event.event_type}</p>
-                            <p className="text-xs text-gray-500">{formatDate(event.event_time)}</p>
-                          </div>
-                          <p className="text-sm text-gray-600 mt-1">{event.summary}</p>
-                          <p className="text-xs text-gray-400 mt-1">by {event.actor_type}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {showTimeline && timeline.length === 0 && (
-                <p className="mt-4 text-gray-500 text-center py-4">No timeline events yet.</p>
+            </div>
+          </div>
+          <div className="mt-4 border-t border-gray-200 pt-4">
+            <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-3">
+              <div className="sm:col-span-1">
+                <dt className="text-sm font-medium text-gray-500">Finder</dt>
+                <dd className="mt-1 text-sm text-gray-900">{caseDetails.finder_name || 'Anonymous'}</dd>
+              </div>
+              <div className="sm:col-span-1">
+                <dt className="text-sm font-medium text-gray-500">Contact</dt>
+                <dd className="mt-1 text-sm text-gray-900">{caseDetails.finder_contact_hint || '-'}</dd>
+              </div>
+              <div className="sm:col-span-1">
+                <dt className="text-sm font-medium text-gray-500">Opened</dt>
+                <dd className="mt-1 text-sm text-gray-900">{formatDate(caseDetails.opened_on)}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      {/* Handover Status Card */}
+      {handoverDetails && (
+        <div className="bg-white shadow rounded-lg mb-6">
+          <div className="px-4 py-5 sm:px-6">
+            <div className="flex justify-between items-start">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Recovery Progress</h3>
+              <button
+                onClick={() => { setNewHandoverStatus(handoverDetails.handover_status); setHandoverNote(handoverDetails.handover_note || ''); setShowHandoverModal(true); }}
+                className="text-sm text-indigo-600 hover:text-indigo-800"
+              >
+                Update Progress
+              </button>
+            </div>
+            <div className="mt-4">
+              <StatusBadge variant="info">{handoverDetails.handover_status}</StatusBadge>
+              {handoverDetails.handover_note && (
+                <p className="mt-2 text-sm text-gray-600">{handoverDetails.handover_note}</p>
               )}
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Messages */}
-          <div className="bg-white shadow rounded-lg mb-6">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Messages</h3>
-              
-              {messages.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No messages yet.</p>
+      {/* Reward Status Card */}
+      {rewardStatus && (
+        <div className="bg-white shadow rounded-lg mb-6">
+          <div className="px-4 py-5 sm:px-6">
+            <div className="flex justify-between items-start">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Reward Status</h3>
+              <button
+                onClick={() => { setNewRewardStatus(rewardStatus.reward_status || 'Not Applicable'); setRewardInternalNote(rewardStatus.reward_internal_note || ''); setShowRewardModal(true); }}
+                className="text-sm text-indigo-600 hover:text-indigo-800"
+              >
+                Update Reward
+              </button>
+            </div>
+            <div className="mt-4">
+              {rewardStatus.reward_offered ? (
+                <>
+                  <StatusBadge variant={rewardStatus.reward_status === 'Return Completed' ? 'success' : 'default'}>
+                    {rewardStatus.reward_status || 'Not Applicable'}
+                  </StatusBadge>
+                  {rewardStatus.reward_display_text && (
+                    <p className="mt-2 text-sm text-gray-600">Reward: {rewardStatus.reward_display_text}</p>
+                  )}
+                  {rewardStatus.reward_internal_note && (
+                    <p className="mt-2 text-sm text-gray-500">Note: {rewardStatus.reward_internal_note}</p>
+                  )}
+                </>
               ) : (
-                <div className="space-y-4">
-                  {messages.map((msg) => (
-                    <div
-                      key={msg.name}
-                      className={`p-4 rounded-lg ${
-                        msg.sender_type === 'Owner'
-                          ? 'bg-indigo-50 ml-8'
-                          : msg.sender_type === 'Finder'
-                          ? 'bg-gray-50 mr-8'
-                          : 'bg-yellow-50 mx-8'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {msg.sender_name || msg.sender_type}
-                            {msg.sender_type === 'Owner' && ' (You)'}
-                          </p>
-                          <p className="text-xs text-gray-500">{formatDate(msg.created_on)}</p>
-                        </div>
-                      </div>
-                      <p className="mt-2 text-sm text-gray-800 whitespace-pre-wrap">{msg.message}</p>
-                    </div>
-                  ))}
+                <p className="text-sm text-gray-500">No reward offered for this item</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Location Card */}
+      {latestLocation && (
+        <div className="bg-white shadow rounded-lg mb-6">
+          <div className="px-4 py-5 sm:px-6">
+            <div className="flex justify-between items-start">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Finder's Location</h3>
+              {latestLocation.maps_url && (
+                <a
+                  href={latestLocation.maps_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-indigo-600 hover:text-indigo-800"
+                >
+                  Open in Maps →
+                </a>
+              )}
+            </div>
+            <div className="mt-4">
+              <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                <div className="sm:col-span-1">
+                  <dt className="text-sm font-medium text-gray-500">Coordinates</dt>
+                  <dd className="mt-1 text-sm text-gray-900 font-mono">
+                    {isValidNumber(latestLocation.latitude) && isValidNumber(latestLocation.longitude)
+                      ? `${safeToFixed(latestLocation.latitude, 6)}°, ${safeToFixed(latestLocation.longitude, 6)}°`
+                      : '—'}
+                  </dd>
+                </div>
+                {latestLocation.accuracy_meters && (
+                  <div className="sm:col-span-1">
+                    <dt className="text-sm font-medium text-gray-500">Accuracy</dt>
+                    <dd className="mt-1 text-sm text-gray-900">±{Math.round(latestLocation.accuracy_meters)}m</dd>
+                  </div>
+                )}
+                <div className="sm:col-span-1">
+                  <dt className="text-sm font-medium text-gray-500">Shared</dt>
+                  <dd className="mt-1 text-sm text-gray-900">{formatDate(latestLocation.shared_on)}</dd>
+                </div>
+                <div className="sm:col-span-1">
+                  <dt className="text-sm font-medium text-gray-500">Source</dt>
+                  <dd className="mt-1 text-sm text-gray-900">{latestLocation.source}</dd>
+                </div>
+              </dl>
+              {latestLocation.note && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <dt className="text-sm font-medium text-gray-500">Note</dt>
+                  <dd className="mt-1 text-sm text-gray-900">{latestLocation.note}</dd>
                 </div>
               )}
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Reply Box */}
-          {caseDetails.status !== 'Closed' && caseDetails.status !== 'Recovered' && (
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Send a Reply</h3>
-                
-                {sendError && (
-                  <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-2">
-                    <p className="text-sm text-red-800">{sendError}</p>
+      {/* Timeline Card */}
+      <div className="bg-white shadow rounded-lg mb-6">
+        <div className="px-4 py-5 sm:px-6">
+          <button
+            onClick={() => setShowTimeline(!showTimeline)}
+            className="flex justify-between items-center w-full"
+          >
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Activity Timeline</h3>
+            <span className="text-sm text-gray-500">
+              {showTimeline ? '▲ Hide' : `▼ Show ${timeline.length} events`}
+            </span>
+          </button>
+          
+          {showTimeline && timeline.length > 0 && (
+            <div className="mt-4 border-t border-gray-200 pt-4">
+              <div className="space-y-4">
+                {timeline.map((event) => (
+                  <div key={event.name} className="flex gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="h-2 w-2 rounded-full bg-indigo-500 mt-2"></div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <p className="text-sm font-medium text-gray-900">{event.event_label || event.event_type}</p>
+                        <p className="text-xs text-gray-500">{formatDate(event.event_time)}</p>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">{event.summary}</p>
+                      <p className="text-xs text-gray-400 mt-1">by {event.actor_type}</p>
+                    </div>
                   </div>
-                )}
-                
-                {sendSuccess && (
-                  <div className="mb-4 bg-green-50 border border-green-200 rounded-md p-2">
-                    <p className="text-sm text-green-800">{sendSuccess}</p>
-                  </div>
-                )}
-                
-                <textarea
-                  rows={4}
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
-                  placeholder="Type your message to the finder..."
-                  value={replyMessage}
-                  onChange={(e) => setReplyMessage(e.target.value)}
-                />
-                <div className="mt-3 flex justify-end">
-                  <button
-                    onClick={handleSendReply}
-                    disabled={isSending || !replyMessage.trim()}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSending ? 'Sending...' : 'Send Reply'}
-                  </button>
-                </div>
+                ))}
               </div>
             </div>
           )}
+          
+          {showTimeline && timeline.length === 0 && (
+            <p className="mt-4 text-gray-500 text-center py-4">No timeline events yet.</p>
+          )}
         </div>
-      </main>
+      </div>
+
+      {/* Messages */}
+      <div className="bg-white shadow rounded-lg mb-6">
+        <div className="px-4 py-5 sm:px-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Messages</h3>
+          
+          {messages.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No messages yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {messages.map((msg) => (
+                <div
+                  key={msg.name}
+                  className={`p-4 rounded-lg ${
+                    msg.sender_type === 'Owner'
+                      ? 'bg-indigo-50 ml-8'
+                      : msg.sender_type === 'Finder'
+                      ? 'bg-gray-50 mr-8'
+                      : 'bg-yellow-50 mx-8'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {msg.sender_name || msg.sender_type}
+                        {msg.sender_type === 'Owner' && ' (You)'}
+                      </p>
+                      <p className="text-xs text-gray-500">{formatDate(msg.created_on)}</p>
+                    </div>
+                  </div>
+                  <p className="mt-2 text-sm text-gray-800 whitespace-pre-wrap">{msg.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Reply Box */}
+      {caseDetails.status !== 'Closed' && caseDetails.status !== 'Recovered' && (
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Send a Reply</h3>
+            
+            {sendError && <ErrorBanner message={sendError} />}
+            {sendSuccess && <SuccessBanner message={sendSuccess} />}
+            
+            <textarea
+              rows={4}
+              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+              placeholder="Type your message to the finder..."
+              value={replyMessage}
+              onChange={(e) => setReplyMessage(e.target.value)}
+            />
+            <div className="mt-3 flex justify-end">
+              <button
+                onClick={handleSendReply}
+                disabled={isSending || !replyMessage.trim()}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSending ? 'Sending...' : 'Send Reply'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Status Update Modal */}
       {showStatusModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Update Case Status</h3>
             <select
@@ -733,7 +645,7 @@ const RecoveryDetail = () => {
 
       {/* Handover Status Update Modal */}
       {showHandoverModal && handoverDetails && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Update Recovery Progress</h3>
             <select
@@ -775,7 +687,7 @@ const RecoveryDetail = () => {
 
       {/* Reward Status Update Modal */}
       {showRewardModal && rewardStatus && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Update Reward Status</h3>
             <select
@@ -817,7 +729,7 @@ const RecoveryDetail = () => {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   )
 }
 

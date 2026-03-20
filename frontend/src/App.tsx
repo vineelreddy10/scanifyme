@@ -10,6 +10,9 @@ import Recovery from './pages/Recovery'
 import RecoveryDetail from './pages/RecoveryDetail'
 import NotificationSettings from './pages/NotificationSettings'
 import NotificationsPage from './pages/Notifications'
+import GenericList from './pages/GenericList'
+import GenericDoc from './pages/GenericDoc'
+import MastersPage from './pages/Masters'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth()
@@ -112,6 +115,38 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <NotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/masters"
+        element={
+          <ProtectedRoute>
+            <MastersPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/list/:doctype"
+        element={
+          <ProtectedRoute>
+            <GenericList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/m/:doctype/:name"
+        element={
+          <ProtectedRoute>
+            <GenericDoc />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/m/:doctype"
+        element={
+          <ProtectedRoute>
+            <GenericDoc />
           </ProtectedRoute>
         }
       />

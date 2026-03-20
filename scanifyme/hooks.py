@@ -258,5 +258,5 @@ scheduler_events = {
 
 website_route_rules = [
 	{"from_route": "/frontend/<path:app_path>", "to_route": "frontend"},
-	{"from_route": "/s/<path:token>", "to_route": "public_portal/scan"},
+	{"from_route": "/s/<path:token>", "to_route": "scan_page"},
 ]

@@ -49,7 +49,17 @@ const ActivateQR = () => {
         setTimeout(() => navigate(`/items/${result.linked_item}`), 2000)
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to activate QR code')
+      // Map error messages to user-friendly versions
+      const errorMsg = err?.message || ''
+      if (errorMsg.includes('Invalid QR token') || errorMsg.includes('not found')) {
+        setError('This token is not recognized. Please check the token on your QR tag.')
+      } else if (errorMsg.includes('already activated') || errorMsg.includes('already linked')) {
+        setError('This QR code has already been activated.')
+      } else if (errorMsg.includes('cannot be activated') || errorMsg.includes('Suspended') || errorMsg.includes('Retired')) {
+        setError('This QR code cannot be activated. It may be suspended or retired. Please contact support.')
+      } else {
+        setError(errorMsg || 'Failed to activate QR code. Please try again.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -117,7 +127,7 @@ const ActivateQR = () => {
                 </button>
                 <button
                   onClick={() => navigate('/activate-qr')}
-                  className="text-indigo-600 hover:text-indigo-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-indigo-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Activate QR
                 </button>
@@ -165,6 +175,19 @@ const ActivateQR = () => {
                     </h1>
                     <p className="mt-2 text-sm text-gray-500">
                       Enter the QR code token to associate it with an item
+                    </p>
+                  </div>
+
+                  {/* Activation Help Card */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl mb-6 p-4">
+                    <h3 className="text-sm font-semibold text-blue-900 mb-2">How QR Activation Works</h3>
+                    <div className="text-xs text-blue-700 space-y-1">
+                      <p>1. Find the token on your QR tag or in the QR packaging</p>
+                      <p>2. Enter the token above and click "Activate QR Code"</p>
+                      <p>3. Fill in your item details to complete registration</p>
+                    </div>
+                    <p className="text-xs text-blue-600 mt-2">
+                      Tokens are typically 8-10 characters (e.g., "DNEEYP5TLQ")
                     </p>
                   </div>
 

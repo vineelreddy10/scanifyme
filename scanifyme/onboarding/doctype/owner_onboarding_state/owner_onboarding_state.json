@@ -1,0 +1,27 @@
+{
+  "doctype": "DocType",
+  "name": "Owner Onboarding State",
+  "module": "Onboarding",
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "track_changes": 1,
+  "fields": [
+    {"fieldname": "owner_profile", "fieldtype": "Link", "options": "Owner Profile", "label": "Owner Profile", "reqd": 1, "unique": 1},
+    {"fieldname": "account_created", "fieldtype": "Check", "label": "Account Created"},
+    {"fieldname": "profile_completed", "fieldtype": "Check", "label": "Profile Completed"},
+    {"fieldname": "qr_activated", "fieldtype": "Check", "label": "QR Activated"},
+    {"fieldname": "item_registered", "fieldtype": "Check", "label": "Item Registered"},
+    {"fieldname": "recovery_note_added", "fieldtype": "Check", "label": "Recovery Note Added"},
+    {"fieldname": "notifications_configured", "fieldtype": "Check", "label": "Notifications Configured"},
+    {"fieldname": "reward_reviewed", "fieldtype": "Check", "label": "Reward Reviewed"},
+    {"fieldname": "onboarding_completed", "fieldtype": "Check", "label": "Onboarding Completed"},
+    {"fieldname": "completion_percent", "fieldtype": "Percent", "label": "Completion Percent", "precision": 0},
+    {"fieldname": "last_updated_on", "fieldtype": "Datetime", "label": "Last Updated On", "read_only": 1}
+  ],
+  "permissions": [
+    {"role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "ScanifyMe Admin", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "ScanifyMe Operations", "read": 1, "write": 1}
+  ],
+  "autoname": "field:owner_profile"
+}
