@@ -1,0 +1,187 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { FrappeProvider } from 'frappe-react-sdk'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import Dashboard from './pages/Dashboard'
+import Settings from './pages/Settings'
+import Items from './pages/Items'
+import ItemDetail from './pages/ItemDetail'
+import ActivateQR from './pages/ActivateQR'
+import Recovery from './pages/Recovery'
+import RecoveryDetail from './pages/RecoveryDetail'
+import NotificationSettings from './pages/NotificationSettings'
+import NotificationsPage from './pages/Notifications'
+import GenericList from './pages/GenericList'
+import GenericDoc from './pages/GenericDoc'
+import MastersPage from './pages/Masters'
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading } = useAuth()
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+    )
+  }
+  
+  if (!isAuthenticated) {
+    window.location.href = '/login'
+    return null
+  }
+  
+  return <>{children}</>
+}
+
+const AppRoutes = () => {
+  const { isLoading } = useAuth()
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+    )
+  }
+  
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/items"
+        element={
+          <ProtectedRoute>
+            <Items />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/items/:id"
+        element={
+          <ProtectedRoute>
+            <ItemDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/activate-qr"
+        element={
+          <ProtectedRoute>
+            <ActivateQR />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recovery"
+        element={
+          <ProtectedRoute>
+            <Recovery />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recovery/:id"
+        element={
+          <ProtectedRoute>
+            <RecoveryDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings/notifications"
+        element={
+          <ProtectedRoute>
+            <NotificationSettings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <NotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/masters"
+        element={
+          <ProtectedRoute>
+            <MastersPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/list/:doctype"
+        element={
+          <ProtectedRoute>
+            <GenericList />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/m/:doctype/:name"
+        element={
+          <ProtectedRoute>
+            <GenericDoc />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/m/:doctype"
+        element={
+          <ProtectedRoute>
+            <GenericDoc />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
+}
+
+// Realtime configuration - controlled via environment variable
+// Set VITE_USE_REALTIME=false to disable socket.io connection entirely
+// Default: disabled for safety - enable only when socket server is available
+const USE_REALTIME = import.meta.env.VITE_USE_REALTIME === 'true'
+const SOCKET_PORT = USE_REALTIME ? (import.meta.env.VITE_SOCKET_PORT || '9000') : undefined
+
+function App() {
+  // Use empty string for same-origin requests (FrappeProvider defaults to current origin)
+  // Only use VITE_FRAPPE_URL if it's a valid non-empty absolute URL
+  const frappeUrl = (typeof import.meta.env.VITE_FRAPPE_URL === 'string' && 
+                     import.meta.env.VITE_FRAPPE_URL && 
+                     import.meta.env.VITE_FRAPPE_URL !== '/')
+    ? import.meta.env.VITE_FRAPPE_URL 
+    : ''
+  
+  return (
+    <FrappeProvider
+      url={frappeUrl}
+      socketPort={SOCKET_PORT}
+    >
+      <AuthProvider>
+        <BrowserRouter basename="/frontend">
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </FrappeProvider>
+  )
+}
+
+export default App

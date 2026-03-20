@@ -1,0 +1,1 @@
+# QR Management API

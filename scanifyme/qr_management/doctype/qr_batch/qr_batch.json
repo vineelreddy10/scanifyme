@@ -1,0 +1,105 @@
+{
+  "name": "QR Batch",
+  "module": "QR Management",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "naming_series",
+    "batch_name",
+    "batch_prefix",
+    "batch_size",
+    "status",
+    "column_break_5",
+    "created_by",
+    "created_on"
+  ],
+  "fields": [
+    {
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Naming Series",
+      "options": "QRB-.YYYY.-\nQRB-.MM.-",
+      "default": "QRB-.YYYY.-",
+      "in_list_view": 0,
+      "no_copy": 1,
+      "set_only_once": 1
+    },
+    {
+      "fieldname": "batch_name",
+      "fieldtype": "Data",
+      "label": "Batch Name",
+      "reqd": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_prefix",
+      "fieldtype": "Data",
+      "label": "Batch Prefix",
+      "description": "Optional prefix for QR UID (e.g., SIM-, QR-)",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch_size",
+      "fieldtype": "Int",
+      "label": "Batch Size",
+      "reqd": 1,
+      "default": "100",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "\nDraft\nGenerated\nPrinted\nDistributed\nClosed",
+      "default": "Draft",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "column_break_5",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "created_by",
+      "fieldtype": "Link",
+      "label": "Created By",
+      "options": "User",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "created_on",
+      "fieldtype": "Datetime",
+      "label": "Created On",
+      "read_only": 1,
+      "in_list_view": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Admin",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Operations",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ],
+  "autoname": "naming_series:",
+  "naming_rule": "By \"Naming Series\" field",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "batch_name"
+}

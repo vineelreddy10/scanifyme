@@ -1,0 +1,178 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-03-17 10:54:55.068115",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+  "field_order": [
+   "title",
+   "event_type",
+   "owner_profile",
+   "recovery_case",
+   "registered_item",
+   "qr_code_tag",
+   "message_summary",
+   "channel",
+   "status",
+   "priority",
+   "is_read",
+   "read_on",
+   "triggered_on",
+   "delivered_on",
+   "error_message",
+   "reference_doctype",
+   "reference_name",
+   "route"
+  ],
+  "fields": [
+   {
+    "fieldname": "title",
+    "fieldtype": "Data",
+    "label": "Title"
+   },
+   {
+    "fieldname": "event_type",
+    "fieldtype": "Select",
+    "in_list_view": 1,
+    "label": "Event Type",
+    "options": "Finder Message Received\nRecovery Case Opened\nOwner Reply Sent\nItem Marked Recovered\nCase Status Updated",
+    "reqd": 1
+   },
+  {
+   "fieldname": "owner_profile",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Owner Profile",
+   "options": "Owner Profile",
+   "reqd": 1
+  },
+  {
+   "fieldname": "recovery_case",
+   "fieldtype": "Link",
+   "label": "Recovery Case",
+   "options": "Recovery Case"
+  },
+  {
+   "fieldname": "registered_item",
+   "fieldtype": "Link",
+   "label": "Registered Item",
+   "options": "Registered Item"
+  },
+  {
+   "fieldname": "qr_code_tag",
+   "fieldtype": "Link",
+   "label": "QR Code Tag",
+   "options": "QR Code Tag"
+  },
+  {
+   "fieldname": "message_summary",
+   "fieldtype": "Data",
+   "label": "Message Summary"
+  },
+  {
+   "default": "In App",
+   "fieldname": "channel",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Channel",
+   "options": "In App\nEmail\nSystem",
+   "reqd": 1
+  },
+   {
+    "default": "Queued",
+    "fieldname": "status",
+    "fieldtype": "Select",
+    "in_list_view": 1,
+    "label": "Status",
+    "options": "Queued\nSent\nFailed\nSkipped",
+    "reqd": 1
+   },
+   {
+    "default": "Normal",
+    "fieldname": "priority",
+    "fieldtype": "Select",
+    "label": "Priority",
+    "options": "Low\nNormal\nHigh"
+   },
+   {
+    "default": "0",
+    "fieldname": "is_read",
+    "fieldtype": "Check",
+    "label": "Is Read"
+   },
+   {
+    "fieldname": "read_on",
+    "fieldtype": "Datetime",
+    "label": "Read On"
+   },
+   {
+    "default": "Now",
+    "fieldname": "triggered_on",
+    "fieldtype": "Datetime",
+    "label": "Triggered On",
+    "reqd": 1
+   },
+  {
+   "fieldname": "delivered_on",
+   "fieldtype": "Datetime",
+   "label": "Delivered On"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Small Text",
+   "label": "Error Message"
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Data",
+   "label": "Reference DocType"
+  },
+   {
+    "fieldname": "reference_name",
+    "fieldtype": "Data",
+    "label": "Reference Name"
+   },
+   {
+    "fieldname": "route",
+    "fieldtype": "Data",
+    "label": "Route"
+   },
+   {
+    "fieldname": "dedupe_key",
+    "fieldtype": "Data",
+    "label": "Dedupe Key"
+   },
+   {
+    "fieldname": "retry_count",
+    "fieldtype": "Int",
+    "label": "Retry Count",
+    "default": "0"
+   },
+   {
+    "fieldname": "last_retry_on",
+    "fieldtype": "Datetime",
+    "label": "Last Retry On"
+   },
+   {
+    "fieldname": "processing_note",
+    "fieldtype": "Small Text",
+    "label": "Processing Note"
+   }
+  ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-17 10:54:55.068115",
+ "modified_by": "Administrator",
+ "module": "Notifications",
+ "name": "Notification Event Log",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

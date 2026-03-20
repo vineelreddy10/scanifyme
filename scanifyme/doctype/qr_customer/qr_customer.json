@@ -1,0 +1,32 @@
+{
+  "name": "QR Customer",
+  "module": "Scanifyme",
+  "doctype": "DocType",
+  "custom": 1,
+  "engine": "InnoDB",
+  "field_order": ["qr", "customer_name"],
+  "fields": [
+    {
+      "fieldname": "qr",
+      "fieldtype": "Data",
+      "label": "QR"
+    },
+    {
+      "fieldname": "customer_name",
+      "fieldtype": "Data",
+      "label": "Customer Name"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "customer_name"
+}
