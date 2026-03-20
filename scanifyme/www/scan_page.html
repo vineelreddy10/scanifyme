@@ -1,203 +1,428 @@
 {% extends "templates/web.html" %}
 
 {% block page_content %}
-<div class="scan-portal-container" style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<style>
+    .scan-portal-container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     
+    /* Brand header - consistent blue gradient */
+    .brand-header { 
+        background: linear-gradient(135deg, #1e40af, #3b82f6); 
+        padding: 20px 24px; 
+        color: white; 
+        text-align: center; 
+        border-radius: 12px 12px 0 0; 
+    }
+    
+    .card-shadow { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+    
+    /* Privacy strip - green for safe/trust */
+    .privacy-strip { padding: 14px 20px; background: #f0fdf4; border-bottom: 1px solid #bbf7d0; }
+    .privacy-strip-v2 { padding: 12px 20px; background: #eff6ff; border-bottom: 1px solid #bfdbfe; }
+    
+    /* Buttons */
+    .btn-primary { 
+        background: #3b82f6; color: white; border: none; padding: 14px 24px; 
+        border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; 
+        transition: background 0.2s; display: flex; align-items: center; 
+        justify-content: center; gap: 8px; width: 100%; 
+    }
+    .btn-primary:hover { background: #2563eb; }
+    
+    .btn-secondary { 
+        background: #10b981; color: white; border: none; padding: 12px 20px; 
+        border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; 
+        transition: background 0.2s; display: flex; align-items: center; 
+        justify-content: center; gap: 8px; width: 100%; 
+    }
+    .btn-secondary:hover { background: #059669; }
+    .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    /* Cards */
+    .success-card { text-align: center; padding: 24px; background: #f0fdf4; border-radius: 8px; margin-top: 16px; }
+    .error-card { text-align: center; padding: 24px; background: #fef2f2; border-radius: 8px; margin-top: 16px; }
+    .reward-card { padding: 20px; background: #f0fdf4; border-bottom: 1px solid #bbf7d0; }
+    .info-card { padding: 16px; border-radius: 8px; margin-top: 16px; }
+    
+    /* Labels and badges */
+    .label-uppercase { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .badge-optional { background: #fef3c7; color: #92400e; }
+    .badge-protected { background: #dbeafe; color: #1e40af; }
+    .section-title { font-size: 16px; color: #1f2937; font-weight: 600; margin: 0 0 12px; }
+    
+    /* Form elements */
+    .form-input { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    .form-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+    
+    /* Footer */
+    .footer-text { text-align: center; margin-top: 20px; color: #9ca3af; font-size: 13px; }
+    .footer-text a { color: #6b7280; text-decoration: none; }
+    .status-badge { display: inline-block; padding: 5px 14px; background: #dbeafe; color: #1d4ed8; border-radius: 16px; font-size: 13px; font-weight: 500; }
+    
+    /* Location section */
+    .location-section { padding: 20px; border-top: 1px solid #e5e7eb; }
+    .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    
+    /* Trust indicators */
+    .trust-indicator { 
+        display: inline-flex; align-items: center; gap: 6px; 
+        padding: 6px 12px; background: rgba(255,255,255,0.15); 
+        border-radius: 20px; font-size: 13px; 
+    }
+    
+    /* Step indicator */
+    .step-indicator {
+        display: flex; align-items: center; gap: 8px;
+        padding: 12px 16px; background: #f8fafc;
+        border-radius: 8px; margin-bottom: 16px;
+    }
+    .step-number {
+        width: 28px; height: 28px; border-radius: 50%;
+        background: #3b82f6; color: white;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; font-weight: 600;
+    }
+    .step-text { font-size: 14px; color: #374151; line-height: 1.5; }
+    
+    /* CTA highlight */
+    .cta-highlight {
+        background: linear-gradient(135deg, #dbeafe, #eff6ff);
+        border: 2px solid #3b82f6;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="scan-portal-container">
+
     {% if err_msg or not item %}
     <!-- Error State -->
-    <div style="text-align: center; padding: 40px 20px;">
-        <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-        </div>
-        <h2 style="color: #1f2937; margin-bottom: 10px;">{{ err_msg or "This QR code is not valid or has expired." }}</h2>
-        <p style="color: #6b7280;">This QR code may have been deactivated or does not exist.</p>
-    </div>
-    
-    {% else %}
-    <!-- Valid Item State -->
-    <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;">
-        
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 24px; color: white; text-align: center;">
-            <h1 style="margin: 0; font-size: 24px; font-weight: 600;">{{ item.public_label }}</h1>
-            <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Found Item</p>
-        </div>
-        
-        <!-- Recovery Note -->
-        {% if item.recovery_note %}
-        <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
-            <h3 style="margin: 0 0 8px; font-size: 14px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Owner's Message</h3>
-            <p style="margin: 0; color: #1f2937; line-height: 1.6;">{{ item.recovery_note }}</p>
-        </div>
-        {% endif %}
-        
-        <!-- Reward Section - New Reward Structure -->
-        {% set reward = item.get('reward') %}
-        {% if reward and reward.has_reward %}
-        <div style="padding: 20px; background: #f0fdf4; border-bottom: 1px solid #bbf7d0;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="8" r="7"></circle>
-                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                </svg>
-                {% if reward.is_public %}
-                <span style="color: #16a34a; font-weight: 600;">Reward Offered!</span>
-                {% else %}
-                <span style="color: #16a34a; font-weight: 600;">Reward Available (Contact Owner)</span>
-                {% endif %}
-            </div>
-            {% if reward.is_public and reward.amount_text %}
-            <p style="margin: 8px 0 0; color: #166534; line-height: 1.6; font-size: 18px; font-weight: 600;">{{ reward.amount_text }}</p>
-            {% endif %}
-            {% if reward.is_public and reward.note %}
-            <p style="margin: 8px 0 0; color: #166534; line-height: 1.6;">{{ reward.note }}</p>
-            {% endif %}
-            {% if not reward.is_public %}
-            <p style="margin: 8px 0 0; color: #166534; line-height: 1.6;">Contact the owner to learn more about the reward.</p>
-            {% endif %}
-        </div>
-        {% endif %}
-        
-        <!-- Status Badge -->
-        <div style="padding: 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
-            <span style="display: inline-block; padding: 6px 16px; background: #dbeafe; color: #1d4ed8; border-radius: 20px; font-size: 14px; font-weight: 500;">
-                {{ item.status }}
-            </span>
-        </div>
-        
-        <!-- Message Form -->
-        <div style="padding: 20px;">
-            <h3 style="margin: 0 0 16px; font-size: 18px; color: #1f2937;">Contact the Owner</h3>
-            
-            <form id="finder-message-form" style="display: flex; flex-direction: column; gap: 16px;">
-                <input type="hidden" name="token" value="{{ token }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                
-                <div>
-                    <label for="finder_name" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Your Name (optional)</label>
-                    <input type="text" id="finder_name" name="finder_name" 
-                        style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box;"
-                        placeholder="Enter your name">
-                </div>
-                
-                <div>
-                    <label for="contact_hint" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Contact Info (optional)</label>
-                    <input type="text" id="contact_hint" name="contact_hint" 
-                        style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box;"
-                        placeholder="Phone number or email (so owner can reach you)">
-                </div>
-                
-                <div>
-                    <label for="message" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Message *</label>
-                    <textarea id="message" name="message" rows="4" required
-                        style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box; resize: vertical;"
-                        placeholder="Tell the owner where you found this item..."></textarea>
-                </div>
-                
-                <button type="submit" 
-                    style="background: #3b82f6; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s;"
-                    onmouseover="this.style.background='#2563eb'"
-                    onmouseout="this.style.background='#3b82f6'">
-                    Send Message
-                </button>
-            </form>
-            
-            <!-- Success Message (hidden by default) -->
-            <div id="success-message" style="display: none; text-align: center; padding: 20px; background: #f0fdf4; border-radius: 8px; margin-top: 16px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <h3 style="margin: 0 0 8px; color: #16a34a;">Message Sent!</h3>
-                <p style="margin: 0; color: #166534;">The owner has been notified. They will contact you soon.</p>
-            </div>
-            
-            <!-- Error Message (hidden by default) -->
-            <div id="error-message" style="display: none; text-align: center; padding: 20px; background: #fef2f2; border-radius: 8px; margin-top: 16px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;">
+    <div class="card-shadow">
+        <div style="background: linear-gradient(135deg, #1e3a5f, #2563eb); padding: 24px; border-radius: 12px 12px 0 0; text-align: center;">
+            <div style="margin-bottom: 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="8" x2="12" y2="12"></line>
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <h3 style="margin: 0 0 8px; color: #dc2626;">Something went wrong</h3>
-                <p id="error-text" style="margin: 0; color: #991b1b;">Please try again later.</p>
+            </div>
+            <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: white;">QR Code Unavailable</h1>
+        </div>
+        <div style="padding: 32px 24px; text-align: center;">
+            <h2 style="color: #1f2937; margin-bottom: 10px; font-size: 18px;">{{ err_msg or "This QR code cannot be reached right now." }}</h2>
+            <p style="color: #6b7280; margin: 0 0 20px; font-size: 15px; line-height: 1.6;">
+                This QR code may have been deactivated, expired, or the item status has changed.
+            </p>
+            
+            <div style="padding: 20px; background: #eff6ff; border-radius: 12px; display: inline-block; max-width: 400px; text-align: left;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <div>
+                        <p style="margin: 0 0 8px; color: #1e40af; font-size: 14px; font-weight: 500;">
+                            <strong>If you found this tag on an item:</strong>
+                        </p>
+                        <p style="margin: 0; color: #1e40af; font-size: 13px; line-height: 1.6;">
+                            The owner may have updated their preferences or the item status. Contact the person who gave you this QR code for more information.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 24px; padding: 16px; background: #f0fdf4; border-radius: 8px; display: inline-block;">
+                <p style="margin: 0; color: #166534; font-size: 13px;">
+                    💡 <strong>Still need help?</strong> Visit <strong>ScanifyMe</strong> to learn how item recovery works.
+                </p>
             </div>
         </div>
-        
-        <!-- Location Sharing Section -->
-        <div style="padding: 20px; border-top: 1px solid #e5e7eb;">
-            <h3 style="margin: 0 0 16px; font-size: 18px; color: #1f2937;">Share Your Location</h3>
-            <p style="margin: 0 0 16px; color: #6b7280; font-size: 14px;">Help the owner find you by sharing your current location.</p>
-            
-            <button type="button" id="share-location-btn" 
-                style="background: #10b981; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;"
-                onmouseover="this.style.background='#059669'"
-                onmouseout="this.style.background='#10b981'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    </div>
+    <p class="footer-text">Secured by <strong>ScanifyMe</strong></p>
+
+    {% else %}
+    <!-- Valid Item State -->
+    <div class="card-shadow">
+
+        <!-- Brand Header -->
+        <div class="brand-header">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <span style="font-size: 18px; font-weight: 700;">ScanifyMe</span>
+                <span class="badge badge-protected">Protected</span>
+            </div>
+            <p style="margin: 0; opacity: 0.92; font-size: 14px; line-height: 1.5;">
+                You found an item with ScanifyMe protection
+            </p>
+        </div>
+
+        <!-- What Happens Next - Clear CTA -->
+        <div style="padding: 16px 20px; background: #f8fafc; border-bottom: 1px solid #e5e7eb;">
+            <div class="step-indicator" style="margin-bottom: 12px;">
+                <div class="step-number">1</div>
+                <div class="step-text">Send a secure message to the owner</div>
+            </div>
+            <div class="step-indicator" style="margin-bottom: 0;">
+                <div class="step-number">2</div>
+                <div class="step-text">Owner replies without seeing your contact info</div>
+            </div>
+        </div>
+
+        <!-- Item Header -->
+        <div style="padding: 24px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+            <h1 style="margin: 0 0 6px; font-size: 24px; font-weight: 700; color: #1f2937;">{{ item.public_label }}</h1>
+            {% if item.item_category %}
+            <p style="margin: 0 0 4px; color: #6b7280; font-size: 14px;">{{ item.item_category }}</p>
+            {% endif %}
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">Item marked as Lost</p>
+        </div>
+
+        <!-- Recovery Note -->
+        {% if item.recovery_note %}
+        <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <p class="label-uppercase" style="margin: 0;">Owner's Recovery Instructions</p>
+            </div>
+            <p style="margin: 0; color: #1f2937; line-height: 1.7; font-size: 15px;">{{ item.recovery_note }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Reward Section -->
+        {% set reward = item.get('reward') %}
+        {% if reward and reward.has_reward %}
+        <div class="reward-card">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+                <span style="color: #16a34a; font-weight: 700; font-size: 16px;">
+                    {% if reward.is_public %}🎁 Reward for Safe Return!{% else %}🎁 Reward Available{% endif %}
+                </span>
+            </div>
+            {% if reward.is_public and reward.amount_text %}
+            <p style="margin: 0 0 4px; color: #166534; font-size: 24px; font-weight: 700;">{{ reward.amount_text }}</p>
+            {% endif %}
+            {% if reward.is_public and reward.note %}
+            <p style="margin: 0; color: #166534; line-height: 1.6; font-size: 14px;">{{ reward.note }}</p>
+            {% endif %}
+            {% if not reward.is_public %}
+            <p style="margin: 4px 0 0; color: #166534; line-height: 1.6; font-size: 14px;">
+                A reward has been offered. Contact the owner to claim it!
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Trust: Your Privacy is Protected -->
+        <div class="privacy-strip">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+                <div>
+                    <p style="margin: 0 0 4px; color: #166534; font-size: 14px; font-weight: 600;">
+                        Your Privacy is Protected
+                    </p>
+                    <p style="margin: 0; color: #166534; font-size: 13px; line-height: 1.6;">
+                        The owner <strong>cannot see your email, phone, or exact location</strong> unless you choose to share it in your message.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Form - Primary CTA -->
+        <div style="padding: 20px;">
+            <div class="cta-highlight">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e40af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <h3 class="section-title" style="margin: 0; color: #1e40af;">Send a Secure Message</h3>
+                </div>
+                <p style="margin: 0; color: #3b82f6; font-size: 13px; line-height: 1.5;">
+                    The owner will receive your message and can reply. Your contact details stay hidden.
+                </p>
+            </div>
+
+            <form id="finder-message-form" style="display: flex; flex-direction: column; gap: 16px;">
+                <input type="hidden" name="token" value="{{ token }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div>
+                    <label for="finder_name" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">
+                        Your Name <span style="color: #9ca3af; font-weight: 400;">(optional)</span>
+                    </label>
+                    <input type="text" id="finder_name" name="finder_name"
+                        class="form-input"
+                        placeholder="Enter your name so the owner knows who found their item">
+                </div>
+
+                <div>
+                    <label for="contact_hint" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">
+                        How to Reach You <span style="color: #9ca3af; font-weight: 400;">(optional)</span>
+                    </label>
+                    <input type="text" id="contact_hint" name="contact_hint"
+                        class="form-input"
+                        placeholder="Phone number or email (only shared if you include it)">
+                    <p style="margin: 6px 0 0; color: #9ca3af; font-size: 12px;">
+                        Only include contact info if you want the owner to reach you directly.
+                    </p>
+                </div>
+
+                <div>
+                    <label for="message" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">
+                        Your Message <span style="color: #dc2626;">*</span>
+                    </label>
+                    <textarea id="message" name="message" rows="4" required
+                        class="form-input"
+                        placeholder="Tell the owner where you found this item and any helpful details..."></textarea>
+                    <p style="margin: 6px 0 0; color: #9ca3af; font-size: 12px;">
+                        Include: where you found it, its current condition, and how to arrange a return.
+                    </p>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    Send Secure Message
+                </button>
+            </form>
+
+            <!-- Success Message -->
+            <div id="success-message" style="display: none;" class="success-card">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 12px;">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <h3 style="margin: 0 0 8px; color: #16a34a; font-size: 18px; font-weight: 700;">Message Sent!</h3>
+                <p style="margin: 0 0 8px; color: #166534; font-size: 14px; line-height: 1.6;">
+                    The owner has been notified and will reply soon.
+                </p>
+                <p style="margin: 0; color: #166534; font-size: 13px; line-height: 1.6;">
+                    Your contact details remain hidden unless you shared them in your message.
+                </p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="error-message" style="display: none;" class="error-card">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 12px;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <h3 style="margin: 0 0 8px; color: #dc2626; font-size: 18px; font-weight: 700;">Something went wrong</h3>
+                <p id="error-text" style="margin: 0; color: #991b1b; font-size: 14px;">Please try again.</p>
+            </div>
+        </div>
+
+        <!-- Location Sharing Section - Secondary Action -->
+        <div class="location-section">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <h3 class="section-title" style="margin: 0;">Optional: Share Location</h3>
+                <span class="badge badge-optional">Optional</span>
+            </div>
+            <p style="margin: 0 0 14px; color: #6b7280; font-size: 14px; line-height: 1.6;">
+                Help the owner find you faster by sharing your approximate location. Your exact address is never shared.
+            </p>
+
+            <button type="button" id="share-location-btn" class="btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>
                 </svg>
                 Share Current Location
             </button>
-            
-            <!-- Location Success Message -->
-            <div id="location-success" style="display: none; text-align: center; padding: 20px; background: #f0fdf4; border-radius: 8px; margin-top: 16px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;">
+
+            <!-- Location Success -->
+            <div id="location-success" style="display: none;" class="success-card">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 10px;">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
-                <h3 style="margin: 0 0 8px; color: #16a34a;">Location Shared!</h3>
-                <p style="margin: 0; color: #166534;">Your location has been shared with the owner.</p>
+                <h3 style="margin: 0 0 6px; color: #16a34a; font-size: 16px; font-weight: 700;">Location Shared!</h3>
+                <p style="margin: 0; color: #166534; font-size: 13px;">The owner can now see approximately where you are.</p>
             </div>
-            
-            <!-- Location Error Message -->
-            <div id="location-error" style="display: none; text-align: center; padding: 20px; background: #fef2f2; border-radius: 8px; margin-top: 16px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px;">
+
+            <!-- Location Error -->
+            <div id="location-error" style="display: none;" class="error-card">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 10px;">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="8" x2="12" y2="12"></line>
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <h3 style="margin: 0 0 8px; color: #dc2626;">Location Not Available</h3>
-                <p id="location-error-text" style="margin: 0; color: #991b1b;">Please enable location access or enter your location manually.</p>
+                <h3 style="margin: 0 0 6px; color: #dc2626; font-size: 16px; font-weight: 700;">Location Not Available</h3>
+                <p id="location-error-text" style="margin: 0 0 10px; color: #991b1b; font-size: 13px;">Please try again or enter location manually.</p>
             </div>
-            
-            <!-- Manual Location Input (shown if geolocation fails) -->
+
+            <!-- Manual Location Input -->
             <div id="manual-location" style="display: none; margin-top: 16px;">
-                <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px;">Or enter your location manually:</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <p style="margin: 0 0 12px; color: #6b7280; font-size: 13px;">Or enter your location manually:</p>
+                <div class="location-grid">
                     <div>
-                        <label for="latitude" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Latitude *</label>
-                        <input type="number" id="latitude" step="any" required
-                            style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                        <label for="latitude" style="display: block; margin-bottom: 4px; font-size: 13px; color: #374151; font-weight: 500;">Latitude</label>
+                        <input type="number" id="latitude" step="any" required class="form-input">
                     </div>
                     <div>
-                        <label for="longitude" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Longitude *</label>
-                        <input type="number" id="longitude" step="any" required
-                            style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                        <label for="longitude" style="display: block; margin-bottom: 4px; font-size: 13px; color: #374151; font-weight: 500;">Longitude</label>
+                        <input type="number" id="longitude" step="any" required class="form-input">
                     </div>
                 </div>
-                <div style="margin-top: 12px;">
-                    <label for="location_note" style="display: block; margin-bottom: 6px; font-size: 14px; color: #374151; font-weight: 500;">Note (optional)</label>
-                    <input type="text" id="location_note" 
-                        style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 16px; box-sizing: border-box;"
+                <div style="margin-top: 10px;">
+                    <label for="location_note" style="display: block; margin-bottom: 4px; font-size: 13px; color: #374151; font-weight: 500;">Note <span style="color: #9ca3af; font-weight: 400;">(optional)</span></label>
+                    <input type="text" id="location_note" class="form-input"
                         placeholder="e.g., Found at the coffee shop on Main Street">
                 </div>
-                <button type="button" id="submit-manual-location" 
-                    style="background: #10b981; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 12px; width: 100%;"
-                    onmouseover="this.style.background='#059669'"
-                    onmouseout="this.style.background='#10b981'">
+                <button type="button" id="submit-manual-location" class="btn-secondary" style="margin-top: 12px;">
                     Share Location
                 </button>
             </div>
         </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top: 20px; padding: 16px; background: #f8fafc; border-radius: 8px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px; color: #6b7280; font-size: 13px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Secure Platform
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; color: #6b7280; font-size: 13px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Private Messaging
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; color: #6b7280; font-size: 13px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Verified Recovery
+            </div>
+        </div>
     </div>
     
-    <p style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 12px;">
-        Powered by ScanifyMe
+    <p class="footer-text">
+        Powered by <strong>ScanifyMe</strong> — Helping lost items find their way home
     </p>
     {% endif %}
 </div>
@@ -208,15 +433,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const successDiv = document.getElementById('success-message');
     const errorDiv = document.getElementById('error-message');
     const errorText = document.getElementById('error-text');
-    
+
     if (form) {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            // Hide any previous messages
+
             successDiv.style.display = 'none';
             errorDiv.style.display = 'none';
-            
+
             const formData = new FormData(form);
             const data = {
                 token: formData.get('token'),
@@ -225,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 message: formData.get('message'),
                 csrf_token: formData.get('csrf_token')
             };
-            
+
             try {
                 const response = await fetch('/api/method/scanifyme.messaging.api.message_api.submit_finder_message', {
                     method: 'POST',
@@ -236,13 +460,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify(data),
                     credentials: 'include'
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.exc) {
                     throw new Error('Server error');
                 }
-                
+
                 if (result.message && result.message.success) {
                     form.style.display = 'none';
                     successDiv.style.display = 'block';
@@ -250,13 +474,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(result.message && result.message.error || 'Failed to send message');
                 }
             } catch (err) {
-                errorText.textContent = err.message || 'Please try again later.';
+                errorText.textContent = err.message || 'Please try again.';
                 errorDiv.style.display = 'block';
             }
         });
     }
-    
-    // Location sharing functionality
+
+    // Location sharing
     const shareLocationBtn = document.getElementById('share-location-btn');
     const locationSuccess = document.getElementById('location-success');
     const locationError = document.getElementById('location-error');
@@ -265,28 +489,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitManualLocation = document.getElementById('submit-manual-location');
     const token = {{ token | tojson if token is defined else 'null' }};
     const csrfToken = {{ csrf_token | tojson if csrf_token is defined else 'null' }};
-    
+
     if (shareLocationBtn) {
         shareLocationBtn.addEventListener('click', function() {
             if (!navigator.geolocation) {
-                locationErrorText.textContent = 'Geolocation is not supported by your browser. Please enter your location manually.';
+                locationErrorText.textContent = 'Geolocation is not supported. Please enter your location manually.';
                 locationError.style.display = 'block';
                 manualLocation.style.display = 'block';
                 return;
             }
-            
+
             shareLocationBtn.disabled = true;
             shareLocationBtn.textContent = 'Getting location...';
-            
+
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    // Success - submit location
                     submitLocation(position.coords.latitude, position.coords.longitude, position.coords.accuracy, null);
                     shareLocationBtn.disabled = false;
-                    shareLocationBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Share Current Location';
+                    shareLocationBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Share Current Location';
                 },
                 function(error) {
-                    // Error - show manual input
                     let errorMessage = 'Unable to get your location. ';
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
@@ -305,7 +527,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     locationError.style.display = 'block';
                     manualLocation.style.display = 'block';
                     shareLocationBtn.disabled = false;
-                    shareLocationBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Share Current Location';
+                    shareLocationBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Share Current Location';
                 },
                 {
                     enableHighAccuracy: true,
@@ -315,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
             );
         });
     }
-    
+
     async function submitLocation(lat, lng, accuracy, note) {
         try {
             const response = await fetch('/api/method/scanifyme.public_portal.api.location_api.submit_finder_location', {
@@ -329,18 +551,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     latitude: lat,
                     longitude: lng,
                     accuracy_meters: accuracy,
-                    note: note || document.getElementById('location_note')?.value,
+                    note: note || document.getElementById('location_note') && document.getElementById('location_note').value || null,
                     source: 'Browser Geolocation'
                 }),
                 credentials: 'include'
             });
-            
+
             const result = await response.json();
-            
+
             if (result.exc) {
                 throw new Error('Server error');
             }
-            
+
             if (result.message && result.message.success) {
                 locationSuccess.style.display = 'block';
                 locationError.style.display = 'none';
@@ -350,32 +572,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(result.message && result.message.error || 'Failed to share location');
             }
         } catch (err) {
-            locationErrorText.textContent = err.message || 'Failed to share location. Please try again.';
+            locationErrorText.textContent = err.message || 'Failed to share location.';
             locationError.style.display = 'block';
         }
     }
-    
+
     if (submitManualLocation) {
         submitManualLocation.addEventListener('click', function() {
             const lat = parseFloat(document.getElementById('latitude').value);
             const lng = parseFloat(document.getElementById('longitude').value);
-            const note = document.getElementById('location_note').value;
-            
+            const note = document.getElementById('location_note') && document.getElementById('location_note').value || '';
+
             if (isNaN(lat) || isNaN(lng)) {
-                locationErrorText.textContent = 'Please enter valid latitude and longitude values.';
+                locationErrorText.textContent = 'Please enter valid latitude and longitude.';
                 locationError.style.display = 'block';
                 return;
             }
-            
+
             if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-                locationErrorText.textContent = 'Please enter valid coordinates (lat: -90 to 90, lng: -180 to 180).';
+                locationErrorText.textContent = 'Please enter valid coordinates.';
                 locationError.style.display = 'block';
                 return;
             }
-            
+
             submitManualLocation.disabled = true;
             submitManualLocation.textContent = 'Sharing...';
-            
+
             submitLocation(lat, lng, null, note).finally(function() {
                 submitManualLocation.disabled = false;
                 submitManualLocation.textContent = 'Share Location';
