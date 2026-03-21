@@ -3,6 +3,16 @@
  * 
  * This component uses the safe_list_api backend which normalizes all values
  * into safe renderable strings, preventing React runtime crashes.
+ * 
+ * Features:
+ * - Server-driven rendering
+ * - Search with debounce
+ * - Sort by column
+ * - Pagination
+ * - Row selection (multiselect)
+ * - Bulk actions
+ * - Create new document button
+ * - Refresh
  */
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
@@ -39,6 +49,9 @@ export function GenericListPage({
   const [showSortMenu, setShowSortMenu] = useState(false)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
+  // Selection state
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set())
+  
   const {
     schema,
     rows,
@@ -59,6 +72,9 @@ export function GenericListPage({
   })
 
   const pageTitle = title || schema?.title || doctype
+  
+  // Check permissions
+  const canCreate = schema?.permissions?.can_create ?? false
 
   useEffect(() => {
     if (searchTimeoutRef.current) {
@@ -74,6 +90,19 @@ export function GenericListPage({
       }
     }
   }, [searchInput])
+
+  // Clear selection when rows change
+  useEffect(() => {
+    setSelectedRows(prev => {
+      const newSet = new Set<string>()
+      prev.forEach(id => {
+        if (rows.some(r => r.name === id)) {
+          newSet.add(id)
+        }
+      })
+      return newSet
+    })
+  }, [rows])
 
   const handleSort = useCallback((field: string) => {
     if (sortField === field) {
@@ -115,6 +144,36 @@ export function GenericListPage({
     }
   }
 
+  // Selection handlers
+  const handleSelectAll = () => {
+    if (selectedRows.size === sortedRows.length) {
+      setSelectedRows(new Set())
+    } else {
+      setSelectedRows(new Set(sortedRows.map(r => r.name)))
+    }
+  }
+
+  const handleSelectRow = (rowName: string) => {
+    setSelectedRows(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(rowName)) {
+        newSet.delete(rowName)
+      } else {
+        newSet.add(rowName)
+      }
+      return newSet
+    })
+  }
+
+  const handleClearSelection = () => {
+    setSelectedRows(new Set())
+  }
+
+  // Create new document
+  const handleCreate = () => {
+    navigate(`/m/${encodeURIComponent(doctype)}/new`)
+  }
+
   if (isPermissionError) {
     return (
       <AppLayout>
@@ -143,17 +202,39 @@ export function GenericListPage({
         title={pageTitle}
         description={schema?.title ? `Manage your ${schema.title.toLowerCase()} records` : undefined}
         actions={
-          <button
-            onClick={refresh}
-            className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            <RefreshIcon />
-            Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            {canCreate && (
+              <button
+                onClick={handleCreate}
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+              >
+                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                New
+              </button>
+            )}
+            <button
+              onClick={refresh}
+              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              <RefreshIcon />
+              Refresh
+            </button>
+          </div>
         }
       />
       <Content>
         <div className="space-y-4">
+          {/* Bulk action bar */}
+          {selectedRows.size > 0 && (
+            <BulkActionBar
+              selectedCount={selectedRows.size}
+              onClearSelection={handleClearSelection}
+              onRefresh={refresh}
+            />
+          )}
+          
           <ListToolbar
             searchQuery={searchInput}
             onSearchChange={handleSearchChange}
@@ -166,12 +247,15 @@ export function GenericListPage({
             onToggleSortMenu={() => setShowSortMenu(!showSortMenu)}
             totalCount={totalCount}
             isLoading={isLoading}
+            allSelected={selectedRows.size === sortedRows.length && sortedRows.length > 0}
+            onSelectAll={handleSelectAll}
+            hasRows={sortedRows.length > 0}
           />
           
           {isLoading ? (
             <ListTableSkeleton columns={columns} />
           ) : sortedRows.length === 0 ? (
-            <EmptyState title={pageTitle} hasSearch={!!searchQuery} />
+            <EmptyState title={pageTitle} hasSearch={!!searchInput} onCreate={canCreate ? handleCreate : undefined} />
           ) : (
             <SafeListTable
               columns={columns}
@@ -180,6 +264,10 @@ export function GenericListPage({
               sortField={sortField}
               sortOrder={sortOrder}
               onSort={handleSort}
+              selectedRows={selectedRows}
+              onSelectRow={handleSelectRow}
+              allSelected={selectedRows.size === sortedRows.length}
+              onSelectAll={handleSelectAll}
             />
           )}
           
@@ -199,6 +287,44 @@ export function GenericListPage({
   )
 }
 
+// Bulk Action Bar Component
+function BulkActionBar({
+  selectedCount,
+  onClearSelection,
+  onRefresh
+}: {
+  selectedCount: number
+  onClearSelection: () => void
+  onRefresh: () => void
+}) {
+  return (
+    <div className="bg-indigo-50 border border-indigo-200 rounded-lg px-4 py-3 flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <span className="text-sm font-medium text-indigo-700">
+          {selectedCount} {selectedCount === 1 ? 'item' : 'items'} selected
+        </span>
+        <button
+          onClick={onClearSelection}
+          className="text-sm text-indigo-600 hover:text-indigo-800 underline"
+        >
+          Clear selection
+        </button>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onRefresh}
+          className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function ListToolbar({
   searchQuery,
   onSearchChange,
@@ -210,7 +336,10 @@ function ListToolbar({
   showSortMenu,
   onToggleSortMenu,
   totalCount,
-  isLoading
+  isLoading,
+  allSelected,
+  onSelectAll,
+  hasRows
 }: {
   searchQuery: string
   onSearchChange: (value: string) => void
@@ -223,14 +352,30 @@ function ListToolbar({
   onToggleSortMenu: () => void
   totalCount: number
   isLoading: boolean
+  allSelected: boolean
+  onSelectAll: () => void
+  hasRows: boolean
 }) {
   const sortableColumns = columns.filter(c => c.fieldtype !== 'Check')
 
   return (
     <div className="bg-white rounded-lg border px-4 py-3">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex-1 max-w-md">
-          <div className="relative">
+        <div className="flex items-center gap-4">
+          {/* Select all checkbox */}
+          {hasRows && (
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={onSelectAll}
+                className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+              />
+            </div>
+          )}
+          
+          {/* Search */}
+          <div className="relative w-64">
             {isDebouncing ? <LoadingSpinner /> : <SearchIcon />}
             <input
               type="text"
@@ -297,7 +442,11 @@ function SafeListTable({
   onRowClick,
   sortField,
   sortOrder,
-  onSort
+  onSort,
+  selectedRows,
+  onSelectRow,
+  allSelected,
+  onSelectAll
 }: {
   columns: SafeListColumn[]
   rows: SafeListRow[]
@@ -305,6 +454,10 @@ function SafeListTable({
   sortField: string | null
   sortOrder: 'asc' | 'desc'
   onSort: (field: string) => void
+  selectedRows: Set<string>
+  onSelectRow: (rowName: string) => void
+  allSelected: boolean
+  onSelectAll: () => void
 }) {
   if (columns.length === 0) {
     return (
@@ -318,6 +471,15 @@ function SafeListTable({
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+              {/* Checkbox column */}
+              <th className="w-12 px-6 py-3">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={onSelectAll}
+                  className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                />
+              </th>
               {columns.map((col) => (
                 <th
                   key={col.fieldname}
@@ -342,9 +504,18 @@ function SafeListTable({
             {rows.map((row) => (
               <tr
                 key={row.name}
-                className={`hover:bg-gray-50 transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+                className={`hover:bg-gray-50 transition-colors ${onRowClick ? 'cursor-pointer' : ''} ${selectedRows.has(row.name) ? 'bg-indigo-50' : ''}`}
                 onClick={() => onRowClick?.(row)}
               >
+                {/* Checkbox */}
+                <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.has(row.name)}
+                    onChange={() => onSelectRow(row.name)}
+                    className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  />
+                </td>
                 {columns.map((col) => {
                   const displayValue = row.display_values[col.fieldname] ?? '-'
                   const rawValue = row.values[col.fieldname]
@@ -385,6 +556,9 @@ function ListTableSkeleton({ columns }: { columns: SafeListColumn[] }) {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
+            <th className="w-12 px-6 py-3">
+              <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+            </th>
             {columns.map((col) => (
               <th key={col.fieldname} className="px-6 py-3">
                 <div className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
@@ -395,6 +569,9 @@ function ListTableSkeleton({ columns }: { columns: SafeListColumn[] }) {
         <tbody className="divide-y divide-gray-200">
           {[...Array(5)].map((_, i) => (
             <tr key={i}>
+              <td className="px-6 py-4">
+                <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+              </td>
               {columns.map((col) => (
                 <td key={col.fieldname} className="px-6 py-4">
                   <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
@@ -408,7 +585,7 @@ function ListTableSkeleton({ columns }: { columns: SafeListColumn[] }) {
   )
 }
 
-function EmptyState({ title, hasSearch }: { title: string; hasSearch?: boolean }) {
+function EmptyState({ title, hasSearch, onCreate }: { title: string; hasSearch?: boolean; onCreate?: () => void }) {
   return (
     <div className="bg-white rounded-lg border p-12 text-center">
       <div className="mx-auto h-12 w-12 text-gray-400">
@@ -422,8 +599,23 @@ function EmptyState({ title, hasSearch }: { title: string; hasSearch?: boolean }
       <p className="mt-2 text-sm text-gray-500">
         {hasSearch 
           ? 'Try adjusting your search criteria.'
-          : 'Get started by creating a new record.'}
+          : onCreate 
+            ? 'Get started by creating a new record.' 
+            : 'No records found.'}
       </p>
+      {onCreate && !hasSearch && (
+        <div className="mt-6">
+          <button
+            onClick={onCreate}
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+          >
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Create New
+          </button>
+        </div>
+      )}
     </div>
   )
 }

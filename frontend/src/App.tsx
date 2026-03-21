@@ -12,6 +12,7 @@ import NotificationSettings from './pages/NotificationSettings'
 import NotificationsPage from './pages/Notifications'
 import GenericList from './pages/GenericList'
 import GenericDoc from './pages/GenericDoc'
+import GenericCreate from './pages/GenericCreate'
 import MastersPage from './pages/Masters'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -147,6 +148,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <GenericDoc />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/m/:doctype/new"
+        element={
+          <ProtectedRoute>
+            <GenericCreate />
           </ProtectedRoute>
         }
       />

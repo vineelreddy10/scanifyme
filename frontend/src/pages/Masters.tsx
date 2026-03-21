@@ -13,8 +13,8 @@ import {
   MasterDefinition, 
   MastersSection,
   getMastersByCategory,
-  getUserRoleFromUserType,
 } from '../config/masters'
+import { getUserRole } from '../types/roles'
 
 interface MastersPageProps {
   /** Optional header content */
@@ -25,11 +25,8 @@ export default function MastersPage({ headerContent }: MastersPageProps) {
   const navigate = useNavigate()
   const { currentUser } = useAuth()
 
-  // Determine user role based on current user
-  // In production, this would be fetched from the API
-  const userRole = currentUser?.includes('Administrator') 
-    ? 'admin' as const 
-    : 'owner' as const
+  // Determine user role from current user type
+  const userRole = getUserRole(currentUser)
 
   // Get masters accessible to this role
   const sections = getMastersByCategory(userRole)

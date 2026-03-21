@@ -61,19 +61,19 @@ const Items = () => {
     }
 
     if (items.length === 0) {
-      return (
-        <EmptyState
-          icon="box"
-          title="No items yet"
-          description="Get started by registering your first item"
-          action={{
-            label: 'Register First Item',
-            onClick: () => navigate('/activate-qr'),
-            variant: 'primary',
-          }}
-        />
-      )
-    }
+        return (
+          <EmptyState
+            icon="box"
+            title="No items yet"
+            description="Get started by registering your first item. Once registered, you can track recovery cases and control what information is shared publicly."
+            action={{
+              label: 'Register First Item',
+              onClick: () => navigate('/activate-qr'),
+              variant: 'primary',
+            }}
+          />
+        );
+      }
 
     return (
       <>

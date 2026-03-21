@@ -109,20 +109,20 @@ const RecoveryList = () => {
       )
     }
 
-    if (cases.length === 0) {
-      return (
-        <EmptyState
-          icon="inbox"
-          title="No recovery cases yet"
-          description="Recovery cases appear here when someone scans your QR tags and contacts you about a lost item."
-          action={{
-            label: 'Register an Item',
-            onClick: () => navigate('/activate-qr'),
-            variant: 'primary',
-          }}
-        />
-      )
-    }
+     if (cases.length === 0) {
+       return (
+         <EmptyState
+           icon="inbox"
+           title="No recovery cases yet"
+           description="Recovery cases appear here when someone scans your QR tags and contacts you about a lost item. You'll see what information finders can access, maintain control over your privacy, and can reply through secure messages."
+           action={{
+             label: 'Register an Item',
+             onClick: () => navigate('/activate-qr'),
+             variant: 'primary',
+           }}
+         />
+       );
+     }
 
     return (
       <div className="bg-white shadow overflow-hidden sm:rounded-md">

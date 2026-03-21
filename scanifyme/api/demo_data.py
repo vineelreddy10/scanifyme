@@ -254,6 +254,57 @@ def create_demo_data():
 			{"name": item2.name, "item_name": item2.item_name, "status": item2.status, "qr_token": None}
 		)
 
+		# Item 3: Private reward (mention on contact)
+		item3 = frappe.get_doc(
+			{
+				"doctype": "Registered Item",
+				"item_name": "Leather Wallet",
+				"owner_profile": owner_profile_name,
+				"item_category": "Wallet",
+				"public_label": "Brown Leather Wallet",
+				"recovery_note": "Lost wallet with ID and cards. Please contact me!",
+				"reward_enabled": 1,
+				"reward_amount_text": "₹200",
+				"reward_note": "Thanks for finding it!",
+				"reward_visibility": "Private Mention On Contact",
+				"status": "Active",
+			}
+		)
+		item3.insert(ignore_permissions=True)
+		created_items.append(
+			{
+				"name": item3.name,
+				"item_name": item3.item_name,
+				"status": item3.status,
+				"qr_token": None,
+				"reward_visibility": "Private Mention On Contact",
+			}
+		)
+
+		# Item 4: No reward
+		item4 = frappe.get_doc(
+			{
+				"doctype": "Registered Item",
+				"item_name": "Backpack",
+				"owner_profile": owner_profile_name,
+				"item_category": "Bag",
+				"public_label": "Blue Backpack",
+				"recovery_note": "Lost my backpack with books. Please return!",
+				"reward_enabled": 0,
+				"status": "Active",
+			}
+		)
+		item4.insert(ignore_permissions=True)
+		created_items.append(
+			{
+				"name": item4.name,
+				"item_name": item4.item_name,
+				"status": item4.status,
+				"qr_token": None,
+				"reward_visibility": "Disabled",
+			}
+		)
+
 		created_data["registered_items"] = created_items
 
 	# Now handle recovery data (if it doesn't exist)
@@ -922,6 +973,23 @@ def get_demo_tokens():
 			limit=10,
 		)
 
+	# Get items with different reward visibility settings
+	reward_visibility_items = {}
+	if owner_profile:
+		items_with_visibility = frappe.get_list(
+			"Registered Item",
+			filters={"owner_profile": owner_profile, "status": "Active"},
+			fields=["name", "item_name", "reward_enabled", "reward_visibility"],
+			limit=10,
+		)
+		for item in items_with_visibility:
+			if item.reward_visibility == "Public" and item.reward_enabled:
+				reward_visibility_items["public_reward"] = {"name": item.name, "item_name": item.item_name}
+			elif item.reward_visibility == "Private Mention On Contact" and item.reward_enabled:
+				reward_visibility_items["private_reward"] = {"name": item.name, "item_name": item.item_name}
+			elif not item.reward_enabled:
+				reward_visibility_items["no_reward"] = {"name": item.name, "item_name": item.item_name}
+
 	return {
 		"batch": demo_batch,
 		"tags": qr_tags,
@@ -937,6 +1005,11 @@ def get_demo_tokens():
 			"latitude": 37.7749,
 			"longitude": -122.4194,
 			"description": "San Francisco, CA (coffee shop location)",
+		},
+		"reward_visibility_items": reward_visibility_items,
+		"visibility_scenarios": {
+			"public_reward_token": qr_tags[3]["qr_token"] if len(qr_tags) > 3 else None,
+			"description": "Item with public reward - reward amount and note shown to finders",
 		},
 		"owner_b_email": owner_b_email,
 		"owner_b_profile": owner_b_profile,
@@ -2217,10 +2290,10 @@ def create_onboarding_demo_data():
 	# In Stock: for Owner B (partial, unused) and Owner D (needs QR), Owner E
 	# Activated: for Owner A (complete), Owner C (QR only, NOT linked to item)
 	qr_tag_statuses = [
-		"In Stock",   # idx 0 - available for Owner B/D/E
-		"In Stock",   # idx 1 - available for Owner B/D/E
-		"In Stock",   # idx 2 - available
-		"In Stock",   # idx 3 - available
+		"In Stock",  # idx 0 - available for Owner B/D/E
+		"In Stock",  # idx 1 - available for Owner B/D/E
+		"In Stock",  # idx 2 - available
+		"In Stock",  # idx 3 - available
 		"Activated",  # idx 4 - Owner A (complete)
 		"Activated",  # idx 5 - Owner C (QR only, NOT linked to item)
 		"Activated",  # idx 6 - Owner D (item, no recovery note)
@@ -2651,17 +2724,13 @@ def get_onboarding_demo_summary():
 		)
 
 		# Check notification preference
-		notif_pref_name = frappe.db.get_value(
-			"Notification Preference", {"owner_profile": profile}, "name"
-		)
+		notif_pref_name = frappe.db.get_value("Notification Preference", {"owner_profile": profile}, "name")
 		has_notif_pref = bool(notif_pref_name)
 
 		# Determine onboarding state
 		item_count = len(items)
 		has_qr_linked = item_count > 0 and any(i.get("qr_code_tag") for i in items)
-		has_recovery_note = any(
-			i.get("recovery_note") for i in items if i.get("recovery_note")
-		)
+		has_recovery_note = any(i.get("recovery_note") for i in items if i.get("recovery_note"))
 
 		if has_qr_linked and has_recovery_note and has_notif_pref:
 			onboarding_state = "complete"
@@ -2677,11 +2746,7 @@ def get_onboarding_demo_summary():
 			onboarding_state = "partial"
 
 		# Count items with empty/null recovery_note
-		items_missing_recovery_note = [
-			i["name"]
-			for i in items
-			if not i.get("recovery_note")
-		]
+		items_missing_recovery_note = [i["name"] for i in items if not i.get("recovery_note")]
 
 		summary[email] = {
 			"profile": profile,
@@ -2721,3 +2786,273 @@ def get_onboarding_demo_summary():
 	}
 
 	return {"success": True, "summary": summary}
+
+
+@frappe.whitelist()
+def get_operational_demo_summary():
+	"""
+	Get comprehensive operational demo data summary for validation and testing.
+
+	This returns all demo data references needed for operational testing:
+	- Actor logins (admin, owners)
+	- Sample case IDs
+	- Sample notification IDs
+	- Operational report filters
+	- Validation commands
+
+	Returns:
+	    Dict with comprehensive demo data references
+	"""
+	if not has_admin_role():
+		frappe.throw("Permission denied. Admin role required.", frappe.PermissionError)
+
+	from scanifyme.support.services.diagnostics_service import (
+		get_stale_cases_report,
+		get_queue_failure_report,
+	)
+
+	result = {
+		"success": True,
+		"timestamp": str(frappe.utils.now_datetime()),
+	}
+
+	# ===== ACTOR LOGINS =====
+	result["actors"] = {
+		"admin": {
+			"login": "Administrator",
+			"roles": ["Administrator", "System Manager"],
+			"description": "Full system access for diagnostics and maintenance",
+		},
+		"owner_a": {
+			"login": "owner_a@scanifyme.app",
+			"roles": ["ScanifyMe User"],
+			"description": "Fully onboarded owner - all steps complete",
+		},
+		"owner_b": {
+			"login": "owner_b_partial@scanifyme.app",
+			"roles": ["ScanifyMe User"],
+			"description": "Partial onboarding - profile only",
+		},
+		"owner_c": {
+			"login": "owner_c_qr_only@scanifyme.app",
+			"roles": ["ScanifyMe User"],
+			"description": "QR activated but no item registered",
+		},
+		"owner_d": {
+			"login": "owner_d_no_recovery@scanifyme.app",
+			"roles": ["ScanifyMe User"],
+			"description": "Item registered but no recovery note",
+		},
+		"owner_e": {
+			"login": "owner_e_no_notif@scanifyme.app",
+			"roles": ["ScanifyMe User"],
+			"description": "Item + note but no notification preferences",
+		},
+		"demo": {
+			"login": "demo@scanifyme.app",
+			"roles": ["ScanifyMe User"],
+			"description": "Primary demo user with full recovery workflow",
+		},
+	}
+
+	# ===== DEMO TOKEN =====
+	demo_token = frappe.db.get_value(
+		"QR Code Tag",
+		{"registered_item": ["is", "set"], "status": "Activated"},
+		"qr_token",
+		order_by="modified desc",
+	)
+	result["demo_token"] = demo_token
+
+	# ===== SAMPLE CASE IDS =====
+	open_cases = frappe.get_list(
+		"Recovery Case",
+		filters={"status": ["in", ["Open", "Owner Responded"]]},
+		fields=["name", "case_title", "status"],
+		limit=5,
+	)
+	result["sample_cases"] = {
+		"open": [{"name": c.name, "title": c.case_title} for c in open_cases[:3]],
+		"total_open": len(open_cases),
+	}
+
+	closed_cases = frappe.get_list(
+		"Recovery Case",
+		filters={"status": ["in", ["Recovered", "Closed"]]},
+		fields=["name", "case_title", "status"],
+		limit=3,
+	)
+	result["sample_cases"]["closed"] = [{"name": c.name, "title": c.case_title} for c in closed_cases[:3]]
+
+	# ===== SAMPLE NOTIFICATION IDS =====
+	failed_notifs = frappe.get_list(
+		"Notification Event Log",
+		filters={"status": "Failed"},
+		fields=["name", "event_type", "triggered_on"],
+		order_by="triggered_on desc",
+		limit=5,
+	)
+	result["sample_notifications"] = {
+		"failed": [{"id": n.name, "event_type": n.event_type} for n in failed_notifs[:3]],
+		"total_failed": frappe.db.count("Notification Event Log", {"status": "Failed"}),
+	}
+
+	queued_notifs = frappe.get_list(
+		"Notification Event Log",
+		filters={"status": "Queued"},
+		fields=["name", "event_type", "triggered_on"],
+		order_by="triggered_on desc",
+		limit=3,
+	)
+	result["sample_notifications"]["queued"] = [
+		{"id": n.name, "event_type": n.event_type} for n in queued_notifs[:3]
+	]
+	result["sample_notifications"]["total_queued"] = frappe.db.count(
+		"Notification Event Log", {"status": "Queued"}
+	)
+
+	# ===== OPERATIONAL REPORTS =====
+	stale_report = get_stale_cases_report(days_threshold=7)
+	result["operational_reports"] = {
+		"stale_cases": {
+			"days_threshold": 7,
+			"count": stale_report.get("stale_count", 0),
+			"report_function": "get_stale_cases_report(days_threshold=7)",
+		},
+		"queue_failures": {
+			"report_function": "get_queue_failure_report()",
+			"total_failed_notifications": result["sample_notifications"]["total_failed"],
+		},
+	}
+
+	# ===== KEY DESK ROUTES =====
+	result["desk_routes"] = {
+		"notification_event_log": "/app/notification-event-log",
+		"recovery_case_list": "/app/recovery-case",
+		"finder_session_list": "/app/finder-session",
+		"scan_event_list": "/app/scan-event",
+		"email_queue": "/app/email-queue",
+		"error_log": "/app/error-log",
+		"scanifyme_settings": "/app/scanifyme-settings",
+		"notification_preference": "/app/notification-preference",
+		"recovery_timeline": "/app/recovery-timeline-event",
+	}
+
+	# ===== KEY FRONTEND ROUTES =====
+	result["frontend_routes"] = {
+		"dashboard": "/frontend",
+		"items": "/frontend/items",
+		"recovery": "/frontend/recovery",
+		"notifications": "/frontend/notifications",
+		"settings": "/frontend/settings",
+		"notification_settings": "/frontend/settings/notifications",
+		"masters": "/frontend/masters",
+	}
+
+	# ===== SAMPLE VALIDATION COMMANDS =====
+	result["validation_commands"] = {
+		"environment_health": {
+			"command": "bench --site test.localhost execute scanifyme.support.api.support_api.get_environment_health_summary",
+			"description": "Check Redis, database, scheduler, email readiness",
+		},
+		"operational_health": {
+			"command": "bench --site test.localhost execute scanifyme.support.api.support_api.get_operational_health_summary",
+			"description": "Check notification backlog, recovery case stats",
+		},
+		"setup_validation": {
+			"command": "bench --site test.localhost execute scanifyme.support.api.support_api.validate_scanifyme_setup",
+			"description": "Full setup validation",
+		},
+		"queue_status": {
+			"command": "bench --site test.localhost execute scanifyme.support.api.support_api.get_notification_queue_status",
+			"description": "Get notification queue statistics",
+		},
+		"stale_cases": {
+			"command": "bench --site test.localhost execute scanifyme.support.api.support_api.get_stale_cases_report",
+			"description": "Get stale open recovery cases",
+		},
+		"queue_failures": {
+			"command": "bench --site test.localhost execute scanifyme.support.api.support_api.get_queue_failure_report",
+			"description": "Get queue/notification failure report",
+		},
+		"system_snapshot": {
+			"command": "bench --site test.localhost execute scanifyme.support.api.support_api.get_system_state_snapshot",
+			"description": "Get 24-hour system state snapshot",
+		},
+		"case_diagnostic": {
+			"command": "bench --site test.localhost execute scanifyme.support.api.support_api.get_case_diagnostic_bundle --args \"'CASE_NAME'\"",
+			"description": "Get diagnostic bundle for a specific case",
+		},
+	}
+
+	# ===== SMOKE TEST API COMMANDS =====
+	result["smoke_test_commands"] = {
+		"public_scan_valid_token": {
+			"command": 'curl -X POST http://test.localhost/api/method/scanifyme.public_portal.api.public_api.get_public_item_context -d \'{"token": "<DEMO_TOKEN>"}\'',
+			"description": "Test public scan with valid token",
+			"requires_auth": False,
+		},
+		"public_scan_invalid_token": {
+			"command": 'curl -X POST http://test.localhost/api/method/scanifyme.public_portal.api.public_api.get_public_item_context -d \'{"token": "INVALID"}\'',
+			"description": "Test public scan with invalid token (should return safe error)",
+			"requires_auth": False,
+		},
+		"health_check": {
+			"command": "curl http://test.localhost/api/method/ping",
+			"description": "Basic ping/health check",
+			"requires_auth": False,
+		},
+		"auth_check": {
+			"command": "curl -X POST http://test.localhost/api/method/frappe.auth.get_logged_user",
+			"description": "Get current logged in user",
+			"requires_auth": True,
+		},
+	}
+
+	# ===== RBAC TEST MATRIX =====
+	result["rbac_matrix"] = {
+		"admin_can_access": [
+			"get_environment_health_summary",
+			"get_operational_health_summary",
+			"validate_scanifyme_setup",
+			"get_case_diagnostic_bundle",
+			"get_notification_diagnostic_info",
+			"get_system_state_snapshot",
+			"get_stale_cases_report",
+			"get_queue_failure_report",
+			"get_maintenance_actions",
+			"run_safe_maintenance_action",
+			"recompute_case_metadata",
+			"repair_notification",
+			"get_notification_queue_status",
+			"get_notification_queue_status",
+			"run_maintenance_job",
+			"get_operational_health_summary",
+			"get_failed_notification_events",
+		],
+		"owner_cannot_access": [
+			"get_environment_health_summary",
+			"get_operational_health_summary",
+			"validate_scanifyme_setup",
+			"get_case_diagnostic_bundle",
+			"run_safe_maintenance_action",
+			"run_maintenance_job",
+			"repair_notification",
+			"recompute_case_metadata",
+		],
+		"owner_can_access": [
+			"get_user_items",
+			"get_owner_recovery_cases",
+			"get_owner_notifications",
+			"get_notification_preferences",
+			"activate_qr",
+			"create_item",
+		],
+		"guest_can_access": [
+			"get_public_item_context",
+			"submit_finder_message",
+			"get_item_categories",
+		],
+	}
+
+	return result

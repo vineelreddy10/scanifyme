@@ -152,32 +152,12 @@ export function getMasterIcon(icon: MasterDefinition['icon']): string {
   return icons[icon] || icons['document']
 }
 
-/**
- * Get the user's role based on their user type.
- * This should be fetched from the auth context or API.
- */
-export type UserRole = 'admin' | 'owner' | 'operations' | 'guest'
+// Re-export role types from canonical source
+export type { UserRole } from '../types/roles'
+import { UserRole, getUserRole } from '../types/roles'
 
 /**
- * Map Frappe user types to application roles.
- * This is a simplified mapping - in production, you'd fetch this from the API.
+ * Alias for backward compatibility.
+ * @deprecated Use getUserRole from '../types/roles' instead
  */
-export function getUserRoleFromUserType(userType: string | null): UserRole {
-  if (!userType) return 'guest'
-  
-  const userTypeLower = userType.toLowerCase()
-  
-  if (userTypeLower.includes('admin') || userTypeLower.includes('system')) {
-    return 'admin'
-  }
-  
-  if (userTypeLower.includes('operations')) {
-    return 'operations'
-  }
-  
-  if (userTypeLower.includes('owner')) {
-    return 'owner'
-  }
-  
-  return 'owner' // Default for authenticated users
-}
+export const getUserRoleFromUserType = getUserRole

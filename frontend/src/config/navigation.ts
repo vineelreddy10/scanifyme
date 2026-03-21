@@ -5,7 +5,10 @@
  * Supports role-based visibility filtering.
  */
 
-export type UserRole = 'admin' | 'owner' | 'operations' | 'guest'
+// Re-export role types from canonical source
+export type { UserRole } from '../types/roles'
+import { UserRole, getUserRole } from '../types/roles'
+export { getUserRole }
 
 export interface NavItem {
   label: string
@@ -23,25 +26,6 @@ export interface NavGroup {
 
 export interface NavigationConfig {
   groups: NavGroup[]
-}
-
-/**
- * Get the user's role based on their user type.
- */
-export function getUserRole(userType: string | null | undefined): UserRole {
-  if (!userType) return 'guest'
-  
-  const userTypeLower = userType.toLowerCase()
-  
-  if (userTypeLower.includes('admin') || userTypeLower.includes('system manager')) {
-    return 'admin'
-  }
-  
-  if (userTypeLower.includes('operations') || userTypeLower.includes('support')) {
-    return 'operations'
-  }
-  
-  return 'owner'
 }
 
 /**

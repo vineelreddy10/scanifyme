@@ -475,3 +475,162 @@ def get_safe_detail_doc(doctype: str, name: str) -> dict:
 			"can_write": frappe.has_permission(doctype, "write", doc=name),
 		},
 	}
+
+
+@frappe.whitelist()
+def create_safe_doc(doctype: str, values: str = None) -> dict:
+	"""
+	Create a new document with safe validation.
+
+	Args:
+	    doctype: The DocType name
+	    values: JSON string of field values to set
+
+	Returns:
+	    {
+	        "success": bool,
+	        "data": {
+	            "name": str,
+	            "doctype": str
+	        },
+	        "error": str | None
+	    }
+	"""
+	if not doctype:
+		return {"success": False, "error": "DocType name is required"}
+
+	try:
+		meta = frappe.get_meta(doctype)
+	except frappe.DoesNotExistError:
+		return {"success": False, "error": f"DocType '{doctype}' does not exist"}
+
+	if not frappe.has_permission(doctype, "create"):
+		return {"success": False, "error": "Permission denied: You cannot create this document"}
+
+	# Parse values from JSON
+	doc_values = {}
+	if values:
+		try:
+			doc_values = frappe.parse_json(values)
+		except Exception:
+			return {"success": False, "error": "Invalid values format"}
+
+	# Validate required fields
+	for field in meta.get("fields"):
+		if field.reqd and field.fieldname not in doc_values:
+			if not doc_values.get(field.fieldname):
+				return {"success": False, "error": f"Required field '{field.label}' is missing"}
+
+		try:
+			doc = frappe.get_doc({"doctype": doctype})
+			for key, value in doc_values.items():
+				doc.set(key, value)
+			doc.insert(ignore_permissions=True)
+			return {"success": True, "data": {"name": doc.name, "doctype": doctype}}
+		except frappe.ValidationError as e:
+			return {"success": False, "error": str(e)}
+		except Exception as e:
+			frappe.log_error(f"Error creating {doctype}: {str(e)}")
+			return {"success": False, "error": "Failed to create document"}
+
+
+@frappe.whitelist()
+def update_safe_doc(doctype: str, name: str, values: str = None) -> dict:
+	"""
+	Update an existing document with safe validation.
+
+	Args:
+	    doctype: The DocType name
+	    name: The document name
+	    values: JSON string of field values to update
+
+	Returns:
+	    {
+	        "success": bool,
+	        "data": {
+	            "name": str,
+	            "doctype": str
+	        },
+	        "error": str | None
+	    }
+	"""
+	if not doctype:
+		return {"success": False, "error": "DocType name is required"}
+
+	if not name:
+		return {"success": False, "error": "Document name is required"}
+
+	try:
+		meta = frappe.get_meta(doctype)
+	except frappe.DoesNotExistError:
+		return {"success": False, "error": f"DocType '{doctype}' does not exist"}
+
+	if not frappe.has_permission(doctype, "write", doc=name):
+		return {"success": False, "error": "Permission denied: You cannot edit this document"}
+
+	try:
+		doc = frappe.get_doc(doctype, name)
+	except frappe.DoesNotExistError:
+		return {"success": False, "error": f"Document '{name}' not found in {doctype}"}
+
+	# Parse values from JSON
+	doc_values = {}
+	if values:
+		try:
+			doc_values = frappe.parse_json(values)
+		except Exception:
+			return {"success": False, "error": "Invalid values format"}
+
+	# Update fields (only allowed ones)
+	for key, value in doc_values.items():
+		if key not in ("doctype", "name", "owner", "creation", "modified", "modified_by"):
+			doc.set(key, value)
+
+	try:
+		doc.save(ignore_permissions=True)
+		return {"success": True, "data": {"name": doc.name, "doctype": doctype}}
+	except frappe.ValidationError as e:
+		return {"success": False, "error": str(e)}
+	except Exception as e:
+		frappe.log_error(f"Error updating {doctype}/{name}: {str(e)}")
+		return {"success": False, "error": "Failed to update document"}
+
+
+@frappe.whitelist()
+def delete_safe_doc(doctype: str, name: str) -> dict:
+	"""
+	Delete an existing document with permission check.
+
+	Args:
+	    doctype: The DocType name
+	    name: The document name
+
+	Returns:
+	    {
+	        "success": bool,
+	        "error": str | None
+	    }
+	"""
+	if not doctype:
+		return {"success": False, "error": "DocType name is required"}
+
+	if not name:
+		return {"success": False, "error": "Document name is required"}
+
+	try:
+		meta = frappe.get_meta(doctype)
+	except frappe.DoesNotExistError:
+		return {"success": False, "error": f"DocType '{doctype}' does not exist"}
+
+	if not frappe.has_permission(doctype, "delete", doc=name):
+		return {"success": False, "error": "Permission denied: You cannot delete this document"}
+
+	try:
+		doc = frappe.get_doc(doctype, name)
+		frappe.delete_doc(doctype, name, ignore_permissions=True)
+		return {"success": True}
+	except frappe.DoesNotExistError:
+		return {"success": False, "error": f"Document '{name}' not found in {doctype}"}
+	except Exception as e:
+		frappe.log_error(f"Error deleting {doctype}/{name}: {str(e)}")
+		return {"success": False, "error": "Failed to delete document"}

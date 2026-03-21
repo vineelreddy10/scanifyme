@@ -341,12 +341,28 @@ const RecoveryDetail = () => {
   return (
     <AppLayout>
       <div className="mb-6">
-        <button 
-          onClick={() => navigate('/recovery')} 
+        <button
+          onClick={() => navigate('/recovery')}
           className="text-sm text-gray-500 hover:text-gray-700 mb-4 flex items-center gap-1"
         >
           ← Back to Recovery
         </button>
+      </div>
+
+      <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0 mt-0.5">
+            <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-blue-900">Recovery in Progress</h4>
+            <p className="text-xs text-blue-700 mt-0.5">
+              The finder's contact details are protected. You can reply through this platform and choose what information to share.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Case Info Card */}
@@ -376,10 +392,14 @@ const RecoveryDetail = () => {
               <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Finder</dt>
                 <dd className="mt-1 text-sm text-gray-900">{caseDetails.finder_name || 'Anonymous'}</dd>
+                {caseDetails.finder_name && (
+                  <p className="text-xs text-gray-400 mt-0.5">Contact details protected</p>
+                )}
               </div>
               <div className="sm:col-span-1">
-                <dt className="text-sm font-medium text-gray-500">Contact</dt>
+                <dt className="text-sm font-medium text-gray-500">Contact Hint</dt>
                 <dd className="mt-1 text-sm text-gray-900">{caseDetails.finder_contact_hint || '-'}</dd>
+                <p className="text-xs text-gray-400 mt-0.5">Shared by finder — not verified</p>
               </div>
               <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">Opened</dt>
@@ -544,7 +564,8 @@ const RecoveryDetail = () => {
       {/* Messages */}
       <div className="bg-white shadow rounded-lg mb-6">
         <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Messages</h3>
+          <h3 className="text-lg leading-6 font-medium text-gray-900">Conversation</h3>
+          <p className="text-xs text-gray-500 mt-1 mb-4">Messages are private between you and the finder</p>
           
           {messages.length === 0 ? (
             <p className="text-gray-500 text-center py-4">No messages yet.</p>
@@ -582,7 +603,10 @@ const RecoveryDetail = () => {
       {caseDetails.status !== 'Closed' && caseDetails.status !== 'Recovered' && (
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:px-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Send a Reply</h3>
+            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-3">Reply to Finder</h3>
+            <p className="text-xs text-gray-500 mb-3">
+              Your message will be shared securely with the finder. Only the information you include will be visible.
+            </p>
             
             {sendError && <ErrorBanner message={sendError} />}
             {sendSuccess && <SuccessBanner message={sendSuccess} />}
@@ -590,7 +614,7 @@ const RecoveryDetail = () => {
             <textarea
               rows={4}
               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
-              placeholder="Type your message to the finder..."
+              placeholder="Type your message to the finder... You control what contact info to share."
               value={replyMessage}
               onChange={(e) => setReplyMessage(e.target.value)}
             />
@@ -606,6 +630,27 @@ const RecoveryDetail = () => {
           </div>
         </div>
       )}
+
+      <details className="group bg-gray-50 border border-gray-200 rounded-lg mb-6">
+        <summary className="flex items-center justify-between cursor-pointer list-none p-4">
+          <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            What does each status mean?
+          </span>
+          <svg className="h-4 w-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+        <div className="px-4 pb-4 space-y-2 text-xs text-gray-600">
+          <div><span className="font-medium">Open:</span> Waiting for your response</div>
+          <div><span className="font-medium">Owner Responded:</span> You have sent a reply</div>
+          <div><span className="font-medium">Return Planned:</span> Arrangements are being made</div>
+          <div><span className="font-medium">Recovered:</span> Item has been returned</div>
+          <div><span className="font-medium">Closed:</span> Case closed without recovery</div>
+        </div>
+      </details>
 
       {/* Status Update Modal */}
       {showStatusModal && (

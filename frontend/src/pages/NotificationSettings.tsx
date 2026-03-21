@@ -1,6 +1,13 @@
+/**
+ * NotificationSettings - User notification preferences page.
+ * 
+ * Allows users to configure their notification preferences for
+ * in-app and email notifications.
+ */
+
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { AppLayout, PageHeader, Content, Card, ErrorBanner, SuccessBanner, PageLoading } from '../components/ui'
 
 // Types
 export interface NotificationPreferences {
@@ -16,8 +23,7 @@ export interface NotificationPreferences {
 
 // API functions
 async function frappeCall<T>(method: string, args: Record<string, unknown> = {}): Promise<T> {
-  const baseURL = ''
-  const url = baseURL ? `${baseURL}/api/method/${method}` : `/api/method/${method}`
+  const url = `/api/method/${method}`
   
   const csrfToken = typeof window !== 'undefined' ? (window as any).csrf_token : ''
   
@@ -65,8 +71,7 @@ export const saveNotificationPreferences = async (
 }
 
 const NotificationSettings = () => {
-  const { currentUser, logout } = useAuth()
-  const navigate = useNavigate()
+  const { currentUser } = useAuth()
   const [preferences, setPreferences] = useState<NotificationPreferences | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -79,11 +84,6 @@ const NotificationSettings = () => {
   const [notifyOnNewFinderMessage, setNotifyOnNewFinderMessage] = useState(true)
   const [notifyOnCaseOpened, setNotifyOnCaseOpened] = useState(true)
   const [notifyOnCaseStatusChange, setNotifyOnCaseStatusChange] = useState(true)
-
-  const handleLogout = async () => {
-    await logout()
-    window.location.href = '/login'
-  }
 
   useEffect(() => {
     loadPreferences()
@@ -135,157 +135,144 @@ const NotificationSettings = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-      </div>
+      <AppLayout>
+        <PageLoading />
+      </AppLayout>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-6">
-              <button onClick={() => navigate('/')} className="text-gray-600 hover:text-gray-900">
-                ← Back to Dashboard
-              </button>
-              <h1 className="text-xl font-bold text-gray-900">Notification Settings</h1>
+    <AppLayout>
+      <PageHeader
+        title="Notification Settings"
+        description="Configure how you want to receive notifications about your recovery cases"
+      />
+      <Content>
+        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">{currentUser as string}</span>
-              <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-800">
-                Logout
-              </button>
+            <div>
+              <h4 className="text-sm font-medium text-blue-900">Your privacy is protected</h4>
+              <p className="text-xs text-blue-700 mt-0.5">
+                Notification emails are sent from ScanifyMe on your behalf. Your personal email is never exposed to finders.
+              </p>
             </div>
           </div>
         </div>
-      </nav>
+        <Card>
+          <div className="p-6">
+            {message && (
+              <SuccessBanner message={message} />
+            )}
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white shadow rounded-lg">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                Notification Preferences
-              </h2>
-              <p className="text-sm text-gray-500 mb-6">
-                Configure how you want to receive notifications about your recovery cases.
-              </p>
+            {error && (
+              <ErrorBanner message={error} />
+            )}
 
-              {message && (
-                <div className="mb-4 p-3 rounded bg-green-100 text-green-700">
-                  {message}
-                </div>
-              )}
+            <div className="space-y-6">
+              {/* Notification Channels */}
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Notification Channels</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="enableInApp"
+                      checked={enableInApp}
+                      onChange={(e) => setEnableInApp(e.target.checked)}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <label htmlFor="enableInApp" className="ml-2 block text-sm text-gray-900">
+                      In-App Notifications
+                    </label>
+                    <span className="ml-2 text-xs text-gray-500">(Receive notifications within the app)</span>
+                  </div>
 
-              {error && (
-                <div className="mb-4 p-3 rounded bg-red-100 text-red-700">
-                  {error}
-                </div>
-              )}
-
-              <div className="space-y-6">
-                {/* Notification Channels */}
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Notification Channels</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="enableInApp"
-                        checked={enableInApp}
-                        onChange={(e) => setEnableInApp(e.target.checked)}
-                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                      />
-                      <label htmlFor="enableInApp" className="ml-2 block text-sm text-gray-900">
-                        In-App Notifications
-                      </label>
-                      <span className="ml-2 text-xs text-gray-500">(Receive notifications within the app)</span>
-                    </div>
-
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="enableEmail"
-                        checked={enableEmail}
-                        onChange={(e) => setEnableEmail(e.target.checked)}
-                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                      />
-                      <label htmlFor="enableEmail" className="ml-2 block text-sm text-gray-900">
-                        Email Notifications
-                      </label>
-                      <span className="ml-2 text-xs text-gray-500">(Receive notifications via email)</span>
-                    </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="enableEmail"
+                      checked={enableEmail}
+                      onChange={(e) => setEnableEmail(e.target.checked)}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <label htmlFor="enableEmail" className="ml-2 block text-sm text-gray-900">
+                      Email Notifications
+                    </label>
+                    <span className="ml-2 text-xs text-gray-500">(Receive notifications via email)</span>
                   </div>
                 </div>
+              </div>
 
-                {/* Event Notifications */}
-                <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Event Notifications</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="notifyOnNewFinderMessage"
-                        checked={notifyOnNewFinderMessage}
-                        onChange={(e) => setNotifyOnNewFinderMessage(e.target.checked)}
-                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                        disabled={!enableInApp && !enableEmail}
-                      />
-                      <label htmlFor="notifyOnNewFinderMessage" className="ml-2 block text-sm text-gray-900">
-                        New Finder Message
-                      </label>
-                      <span className="ml-2 text-xs text-gray-500">(Get notified when a finder sends you a message)</span>
-                    </div>
+              {/* Event Notifications */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Event Notifications</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="notifyOnNewFinderMessage"
+                      checked={notifyOnNewFinderMessage}
+                      onChange={(e) => setNotifyOnNewFinderMessage(e.target.checked)}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                      disabled={!enableInApp && !enableEmail}
+                    />
+                    <label htmlFor="notifyOnNewFinderMessage" className="ml-2 block text-sm text-gray-900">
+                      New Finder Message
+                    </label>
+                    <span className="ml-2 text-xs text-gray-500">(Get notified when a finder sends you a message)</span>
+                  </div>
 
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="notifyOnCaseOpened"
-                        checked={notifyOnCaseOpened}
-                        onChange={(e) => setNotifyOnCaseOpened(e.target.checked)}
-                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                        disabled={!enableInApp && !enableEmail}
-                      />
-                      <label htmlFor="notifyOnCaseOpened" className="ml-2 block text-sm text-gray-900">
-                        Case Opened
-                      </label>
-                      <span className="ml-2 text-xs text-gray-500">(Get notified when a new recovery case is opened)</span>
-                    </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="notifyOnCaseOpened"
+                      checked={notifyOnCaseOpened}
+                      onChange={(e) => setNotifyOnCaseOpened(e.target.checked)}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                      disabled={!enableInApp && !enableEmail}
+                    />
+                    <label htmlFor="notifyOnCaseOpened" className="ml-2 block text-sm text-gray-900">
+                      Case Opened
+                    </label>
+                    <span className="ml-2 text-xs text-gray-500">(Get notified when a new recovery case is opened)</span>
+                  </div>
 
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="notifyOnCaseStatusChange"
-                        checked={notifyOnCaseStatusChange}
-                        onChange={(e) => setNotifyOnCaseStatusChange(e.target.checked)}
-                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                        disabled={!enableInApp && !enableEmail}
-                      />
-                      <label htmlFor="notifyOnCaseStatusChange" className="ml-2 block text-sm text-gray-900">
-                        Case Status Changes
-                      </label>
-                      <span className="ml-2 text-xs text-gray-500">(Get notified when a case status is updated)</span>
-                    </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="notifyOnCaseStatusChange"
+                      checked={notifyOnCaseStatusChange}
+                      onChange={(e) => setNotifyOnCaseStatusChange(e.target.checked)}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                      disabled={!enableInApp && !enableEmail}
+                    />
+                    <label htmlFor="notifyOnCaseStatusChange" className="ml-2 block text-sm text-gray-900">
+                      Case Status Changes
+                    </label>
+                    <span className="ml-2 text-xs text-gray-500">(Get notified when a case status is updated)</span>
                   </div>
                 </div>
+              </div>
 
-                <div className="border-t border-gray-200 pt-6">
-                  <button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
-                  >
-                    {isSaving ? 'Saving...' : 'Save Preferences'}
-                  </button>
-                </div>
+              <div className="border-t border-gray-200 pt-6">
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  {isSaving ? 'Saving...' : 'Save Preferences'}
+                </button>
               </div>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </Card>
+      </Content>
+    </AppLayout>
   )
 }
 
