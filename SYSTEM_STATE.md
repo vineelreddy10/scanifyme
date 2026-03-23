@@ -1,6 +1,6 @@
 # ScanifyMe System State
 
-**Last Updated**: 2026-03-22
+**Last Updated**: 2026-03-24
 
 ---
 
@@ -136,6 +136,382 @@ ssh root@91.107.206.65 "df -h / && docker system df"
 ```
 
 Verify disk usage is stable and no unexpected growth.
+
+---
+
+# Production Operations Hardening (2026-03-24)
+
+## Overview
+
+Production operations hardened with automated scripts for backup, health monitoring, diagnostics, and maintenance. All scripts are designed for the low-resource VPS (2 vCPU, 4GB RAM, 40GB disk).
+
+## Quick Reference
+
+### SSH Access
+```bash
+ssh root@91.107.206.65
+cd /opt/scanifyme
+```
+
+### Operational Scripts
+
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `deploy/backup.sh` | Create and manage backups | `./deploy/backup.sh create` |
+| `deploy/healthcheck.sh` | Comprehensive health check | `./deploy/healthcheck.sh` |
+| `deploy/diagnostics.sh` | Full system diagnostics | `./deploy/diagnostics.sh` |
+| `deploy/cleanup.sh` | Safe disk cleanup | `./deploy/cleanup.sh safe` |
+| `deploy/status.sh` | Quick status summary | `./deploy/status.sh` |
+| `deploy/deploy.sh` | Main deployment | `./deploy/deploy.sh` |
+| `deploy/rollback.sh` | Rollback helper | `./deploy/rollback.sh status` |
+
+## Backup Strategy
+
+### Automated Backup
+```bash
+# Create backup (database + config)
+./deploy/backup.sh create
+
+# List backups
+./deploy/backup.sh list
+
+# Clean old backups (>7 days)
+./deploy/backup.sh cleanup
+
+# Show backup info
+./deploy/backup.sh info
+```
+
+### Backup Contents
+- `database.sql` - MariaDB database dump (site: scanifyme.app)
+- `site_config.json` - Site configuration
+- `env.backup` - Environment variables
+- `apps.json` - App configuration
+- `manifest.txt` - Backup metadata
+
+### Backup Location
+```
+/opt/scanifyme/backups/
+├── scanifyme_backup_YYYYMMDD_HHMMSS.tar.gz
+└── ...
+```
+
+### Retention Policy
+- **Retention**: 7 days
+- **Max backups**: 10
+- **Auto-cleanup**: Removes backups older than retention or exceeding max count
+
+### Backup Schedule (Recommended)
+```bash
+# Daily backup via cron (add to crontab)
+0 2 * * * /opt/scanifyme/deploy/backup.sh create >> /var/log/scanifyme-backup.log 2>&1
+```
+
+## Health Monitoring
+
+### Quick Health Check
+```bash
+./deploy/healthcheck.sh
+```
+
+**Checks:**
+- Container status (9 containers)
+- Disk usage (threshold: 5GB minimum)
+- Memory usage (threshold: 500MB minimum)
+- API health (/api/method/ping)
+- Frontend health (/frontend)
+- Database connectivity
+- Redis connectivity
+- Docker resources
+
+**Exit Codes:**
+- `0` - Healthy
+- `1` - Warning
+- `2` - Critical
+
+### Status Summary
+```bash
+./deploy/status.sh
+```
+
+Shows quick overview of:
+- System resources (disk, memory, load)
+- Container status
+- Service health (API, frontend)
+- Database status
+- Backup status
+- Docker resources
+- Recent deployment activity
+
+## Diagnostics
+
+### Full Diagnostics Report
+```bash
+./deploy/diagnostics.sh
+```
+
+**Includes:**
+- System resources
+- Docker status and resource usage
+- Container logs (last 50 lines)
+- Application health checks
+- Database status and size
+- Redis status
+- Deployment files verification
+- Network connectivity
+- Backup status
+- Common issues detection
+
+### When to Use Diagnostics
+- After failed deployment
+- During service outages
+- For performance troubleshooting
+- Before rollback decisions
+- During maintenance windows
+
+## Disk Maintenance
+
+### Safe Cleanup
+```bash
+# Safe cleanup (no volume prune)
+./deploy/cleanup.sh safe
+
+# Full cleanup (includes old backups)
+./deploy/cleanup.sh full
+
+# Docker-only cleanup
+./deploy/cleanup.sh docker
+
+# Logs-only cleanup
+./deploy/cleanup.sh logs
+```
+
+### What Gets Cleaned
+- **Docker images**: Dangling and unused images
+- **Containers**: Stopped containers
+- **Networks**: Unused networks
+- **Build cache**: Docker build cache
+- **Logs**: Old deployment logs (>7 days)
+- **Temp files**: Temporary scanifyme files
+
+### What Never Gets Cleaned
+- ❌ Docker volumes (would delete database)
+- ❌ Running containers
+- ❌ Active images
+
+### Disk Thresholds
+
+| Status | Available Disk | Action |
+|--------|----------------|--------|
+| ✅ Safe | >15GB | Normal operations |
+| ⚠️ Warning | 10-15GB | Run cleanup |
+| 🚨 Critical | <10GB | Immediate cleanup required |
+
+## Restore Procedures
+
+### Full Restore Guide
+See `deploy/RESTORE_GUIDE.md` for detailed restore procedures.
+
+### Quick Restore (Broken Deploy)
+```bash
+# 1. Restore apps.json
+cd /opt/scanifyme
+cp apps.json.backup.* apps.json
+
+# 2. Redeploy
+./deploy/deploy.sh
+```
+
+### Database Restore
+```bash
+# Extract backup
+cd /opt/scanifyme/backups
+tar -xzf scanifyme_backup_YYYYMMDD_HHMMSS.tar.gz
+
+# Restore database
+docker exec -i scanifyme-db-1 mariadb -u root -pScanifyMe2026SecureDB _af4aa012b6d4faf1 < scanifyme_backup_YYYYMMDD_HHMMSS/database.sql
+```
+
+### Restore Order
+1. Database (always first)
+2. Site config (if corrupted)
+3. Environment (if .env lost)
+4. apps.json (if changed incorrectly)
+5. Services restart
+
+## Operational Checklists
+
+### Daily Operations
+- [ ] Check container status: `docker ps | grep scanifyme`
+- [ ] Check disk usage: `df -h /`
+- [ ] Check API health: `curl http://localhost:8080/api/method/ping`
+- [ ] Review logs for errors: `docker logs scanifyme-backend-1 --tail 50`
+
+### Weekly Operations
+- [ ] Run full healthcheck: `./deploy/healthcheck.sh`
+- [ ] Create backup: `./deploy/backup.sh create`
+- [ ] Clean old backups: `./deploy/backup.sh cleanup`
+- [ ] Run cleanup: `./deploy/cleanup.sh safe`
+- [ ] Check disk trends: `df -h /`
+
+### Pre-Deployment
+- [ ] Check disk space: `df -h /` (>15GB required)
+- [ ] Check memory: `free -h` (>500MB available)
+- [ ] Create backup: `./deploy/backup.sh create`
+- [ ] Verify containers: `docker ps | grep scanifyme`
+
+### Post-Deployment
+- [ ] Run healthcheck: `./deploy/healthcheck.sh`
+- [ ] Test API: `curl http://localhost:8080/api/method/ping`
+- [ ] Test frontend: `curl http://localhost:8080/frontend`
+- [ ] Check logs: `docker logs scanifyme-backend-1 --tail 20`
+- [ ] Verify containers: `docker ps | grep scanifyme`
+
+## Failure Triage Guide
+
+### API Not Responding
+```bash
+# Check backend logs
+docker logs scanifyme-backend-1 --tail 100
+
+# Check container status
+docker ps | grep backend
+
+# Restart backend
+docker restart scanifyme-backend-1
+
+# If still failing, redeploy
+./deploy/deploy.sh
+```
+
+### Frontend Not Loading
+```bash
+# Check frontend logs
+docker logs scanifyme-frontend-1 --tail 100
+
+# Check if assets exist
+docker exec scanifyme-frontend-1 ls /home/frappe/frappe-bench/sites/assets/frappe/dist/css/
+
+# Sync assets manually
+docker cp scanifyme-backend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/css/. /tmp/css_backend/
+docker cp /tmp/css_backend/. scanifyme-frontend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/css/
+```
+
+### Database Issues
+```bash
+# Check database container
+docker logs scanifyme-db-1 --tail 100
+
+# Check database connectivity
+docker exec scanifyme-db-1 mariadb-admin ping -u root -pScanifyMe2026SecureDB --silent
+
+# If corrupted, restore from backup
+./deploy/backup.sh list
+# Then follow restore procedures
+```
+
+### Container Restart Loops
+```bash
+# Check for restart loops
+docker ps -a | grep scanifyme
+
+# Check container logs
+docker logs <container-name> --tail 100
+
+# Check resource usage
+docker stats --no-stream
+
+# If disk full, cleanup
+./deploy/cleanup.sh safe
+```
+
+### Disk Full
+```bash
+# Check disk usage
+df -h /
+docker system df
+
+# Run cleanup
+./deploy/cleanup.sh full
+
+# Check what's using space
+du -sh /opt/scanifyme/*
+du -sh /var/lib/docker/*
+```
+
+## Emergency Rollback Checklist
+
+### When to Rollback
+- Deployment failed
+- API returning 500 errors
+- Frontend not loading
+- Database migration failed
+- Container restart loops
+
+### Rollback Steps
+1. [ ] SSH to VPS: `ssh root@91.107.206.65`
+2. [ ] Check status: `./deploy/rollback.sh status`
+3. [ ] Run diagnostics: `./deploy/rollback.sh diagnose`
+4. [ ] Restore apps.json: `cp apps.json.backup.* apps.json`
+5. [ ] Redeploy: `./deploy/deploy.sh`
+6. [ ] Verify: `./deploy/healthcheck.sh`
+7. [ ] Test API: `curl http://localhost:8080/api/method/ping`
+
+### If Rollback Fails
+1. Restore database from backup
+2. Check container logs
+3. Review deployment logs: `ls -la /tmp/scanifyme-deploy-*.log`
+4. Manual intervention may be required
+
+## Maintenance Scripts Summary
+
+### Backup Management
+- `backup.sh create` - Create new backup
+- `backup.sh list` - List available backups
+- `backup.sh cleanup` - Remove old backups
+- `backup.sh info` - Show backup configuration
+
+### Health & Diagnostics
+- `healthcheck.sh` - Comprehensive health check
+- `status.sh` - Quick status summary
+- `diagnostics.sh` - Full diagnostics report
+
+### Maintenance
+- `cleanup.sh safe` - Safe disk cleanup
+- `cleanup.sh full` - Full cleanup
+- `deploy.sh` - Main deployment
+- `rollback.sh` - Rollback helper
+
+## Cron Jobs (Recommended)
+
+```bash
+# Daily backup at 2 AM
+0 2 * * * /opt/scanifyme/deploy/backup.sh create >> /var/log/scanifyme-backup.log 2>&1
+
+# Weekly cleanup on Sunday at 3 AM
+0 3 * * 0 /opt/scanifyme/deploy/cleanup.sh safe >> /var/log/scanifyme-cleanup.log 2>&1
+
+# Daily health check at 6 AM
+0 6 * * * /opt/scanifyme/deploy/healthcheck.sh >> /var/log/scanifyme-health.log 2>&1
+```
+
+## Log Locations
+
+| Service | Command | Location |
+|---------|---------|----------|
+| Backend | `docker logs scanifyme-backend-1` | Docker logs |
+| Frontend | `docker logs scanifyme-frontend-1` | Docker logs |
+| Database | `docker logs scanifyme-db-1` | Docker logs |
+| Deployment | `ls /tmp/scanifyme-deploy-*.log` | /tmp/ |
+| Backup | `/var/log/scanifyme-backup.log` | File |
+
+## Key Contacts & Resources
+
+- **VPS**: `ssh root@91.107.206.65`
+- **Deploy directory**: `/opt/scanifyme`
+- **Backup directory**: `/opt/scanifyme/backups`
+- **GitHub**: https://github.com/vineelreddy10/scanifyme
+- **Site**: scanifyme.app
 
 ---
 
