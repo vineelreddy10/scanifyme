@@ -1,0 +1,11 @@
+admin_ops
+items
+messaging
+notifications
+onboarding
+ownership
+public_portal
+qr_management
+recovery
+reports
+scanifyme_core

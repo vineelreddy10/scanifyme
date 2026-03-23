@@ -1,0 +1,103 @@
+{
+  "name": "Item Category",
+  "module": "Items",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "is_submittable": 0,
+  "editable_grid": 1,
+  "field_order": [
+    "category_name",
+    "category_code",
+    "description",
+    "icon",
+    "column_break_4",
+    "is_active",
+    "item_count",
+    "parent_category"
+  ],
+  "fields": [
+    {
+      "fieldname": "category_name",
+      "fieldtype": "Data",
+      "label": "Category Name",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "category_code",
+      "fieldtype": "Data",
+      "label": "Category Code",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "description",
+      "fieldtype": "Text",
+      "label": "Description",
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "icon",
+      "fieldtype": "Data",
+      "label": "Icon",
+      "in_list_view": 0,
+      "description": "Icon name from a standard icon set"
+    },
+    {
+      "fieldname": "column_break_4",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "label": "Active",
+      "in_list_view": 1,
+      "default": "1"
+    },
+    {
+      "fieldname": "item_count",
+      "fieldtype": "Int",
+      "label": "Item Count",
+      "read_only": 1,
+      "default": "0"
+    },
+    {
+      "fieldname": "parent_category",
+      "fieldtype": "Link",
+      "label": "Parent Category",
+      "options": "Item Category",
+      "in_list_view": 0
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Admin",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Operations",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    },
+    {
+      "role": "ScanifyMe User",
+      "read": 1
+    }
+  ],
+  "autoname": "field:category_code",
+  "naming_rule": "Field",
+  "sort_field": "category_name",
+  "sort_order": "ASC"
+}

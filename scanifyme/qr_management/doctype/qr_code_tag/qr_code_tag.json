@@ -1,0 +1,155 @@
+{
+  "name": "QR Code Tag",
+  "module": "QR Management",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "qr_uid",
+    "qr_token",
+    "qr_url",
+    "qr_image",
+    "batch",
+    "status",
+    "column_break_6",
+    "print_job",
+    "distribution_record",
+    "assigned_on",
+    "assigned_to_user",
+    "stock_location",
+    "registered_item",
+    "created_on"
+  ],
+  "fields": [
+    {
+      "fieldname": "qr_uid",
+      "fieldtype": "Data",
+      "label": "QR UID",
+      "unique": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "qr_token",
+      "fieldtype": "Data",
+      "label": "QR Token",
+      "unique": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "qr_url",
+      "fieldtype": "Data",
+      "label": "QR URL",
+      "read_only": 1,
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "qr_image",
+      "fieldtype": "Attach Image",
+      "label": "QR Image",
+      "read_only": 1,
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "batch",
+      "fieldtype": "Link",
+      "label": "Batch",
+      "options": "QR Batch",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "\nGenerated\nPrinted\nIn Stock\nAssigned\nActivated\nSuspended\nRetired",
+      "default": "Generated",
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "column_break_6",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "print_job",
+      "fieldtype": "Link",
+      "label": "Print Job",
+      "options": "QR Print Job",
+      "in_list_view": 0,
+      "in_standard_filter": 0
+    },
+    {
+      "fieldname": "distribution_record",
+      "fieldtype": "Link",
+      "label": "Distribution Record",
+      "options": "QR Distribution Record",
+      "in_list_view": 0,
+      "in_standard_filter": 0
+    },
+    {
+      "fieldname": "assigned_on",
+      "fieldtype": "Datetime",
+      "label": "Assigned On",
+      "read_only": 1,
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "assigned_to_user",
+      "fieldtype": "Link",
+      "label": "Assigned To User",
+      "options": "User",
+      "read_only": 1,
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "stock_location",
+      "fieldtype": "Data",
+      "label": "Stock Location",
+      "description": "Physical location of the tag (e.g., Warehouse A, Shelf B)",
+      "in_list_view": 0
+    },
+    {
+      "fieldname": "registered_item",
+      "fieldtype": "Link",
+      "label": "Registered Item",
+      "options": "Registered Item",
+      "in_list_view": 0,
+      "read_only": 1
+    },
+    {
+      "fieldname": "created_on",
+      "fieldtype": "Datetime",
+      "label": "Created On",
+      "read_only": 1,
+      "in_list_view": 1
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Admin",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    },
+    {
+      "role": "ScanifyMe Operations",
+      "read": 1,
+      "write": 1,
+      "create": 1
+    }
+  ],
+  "autoname": "hash",
+  "naming_rule": "Random",
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "qr_uid"
+}

@@ -1,0 +1,255 @@
+name: Deploy ScanifyMe to VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip smoke tests (not recommended)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+env:
+  VPS_HOST: ${{ secrets.VPS_HOST }}
+  VPS_USER: ${{ secrets.VPS_USER }}
+  DEPLOY_DIR: /opt/scanifyme
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Validate workflow inputs
+        run: |
+          echo "Deploying to VPS..."
+          echo "Skip tests: ${{ github.event.inputs.skip_tests || 'false' }}"
+      
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+      
+      - name: Verify VPS connectivity
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo 'SSH connection successful'"
+      
+      - name: Check VPS resources
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            echo '=== Disk Space ==='
+            df -h /
+            echo '=== Docker Status ==='
+            docker ps
+            echo '=== Memory ==='
+            free -h
+          "
+      
+      - name: Run preflight checks on VPS
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            cd ${{ env.DEPLOY_DIR }}
+            # Check minimum disk space (10GB)
+            available=\$(df -BG / | tail -1 | awk '{print \$4}' | sed 's/G//')
+            if [ \"\$available\" -lt 10 ]; then
+              echo 'ERROR: Insufficient disk space. Available: '\${available}'GB, Required: 10GB'
+              exit 1
+            fi
+            echo 'Disk space OK: '\${available}'GB available'
+            
+            # Check Docker is running
+            if ! docker info > /dev/null 2>&1; then
+              echo 'ERROR: Docker daemon is not running'
+              exit 1
+            fi
+            echo 'Docker is running'
+            
+            # Check required files
+            if [ ! -f compose.prod.yaml ]; then
+              echo 'ERROR: compose.prod.yaml not found'
+              exit 1
+            fi
+            echo 'Required files present'
+          "
+      
+      - name: Clean Docker resources (low-resource VPS)
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            echo 'Cleaning Docker resources...'
+            docker image prune -f
+            docker container prune -f
+            docker network prune -f
+            docker builder prune -a -f
+            echo 'Cleanup complete'
+            df -h /
+          "
+      
+      - name: Build and deploy application
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            cd ${{ env.DEPLOY_DIR }}
+            
+            echo '=== Building Docker image ==='
+            docker build \
+              --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
+              --build-arg=FRAPPE_BRANCH=version-16 \
+              --build-arg=APPS_JSON_BASE64=\$(base64 -w 0 apps.json) \
+              --tag=scanifyme:v16 \
+              --file=images/custom/Containerfile . \
+              --load
+            
+            echo '=== Restarting services ==='
+            docker compose --env-file .env -f compose.prod.yaml up -d
+            
+            echo 'Waiting for services to start...'
+            sleep 15
+          "
+      
+      - name: Run migrations
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            echo 'Running migrations...'
+            docker exec scanifyme-backend-1 bench --site scanifyme.app migrate
+          "
+      
+      - name: Build and sync assets
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            echo 'Building assets...'
+            docker exec scanifyme-backend-1 bench --site scanifyme.app build
+            
+            echo 'Syncing assets to frontend container...'
+            docker cp scanifyme-backend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/css/. /tmp/css_backend/
+            docker cp /tmp/css_backend/. scanifyme-frontend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/css/
+            
+            docker cp scanifyme-backend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/js/. /tmp/js_backend/
+            docker cp /tmp/js_backend/. scanifyme-frontend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/js/
+            
+            echo 'Clearing caches...'
+            docker exec scanifyme-backend-1 bench --site scanifyme.app clear-cache
+            docker exec scanifyme-backend-1 bench --site scanifyme.app clear-website-cache
+          "
+      
+      - name: Run smoke tests
+        if: ${{ github.event.inputs.skip_tests != 'true' }}
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            echo '=== Running Smoke Tests ==='
+            failed=0
+            
+            # Test 1: API Ping
+            echo 'Test 1: API Ping...'
+            if curl -s http://localhost:8080/api/method/ping | grep -q 'pong'; then
+              echo '✓ API Ping: PASS'
+            else
+              echo '✗ API Ping: FAIL'
+              failed=1
+            fi
+            
+            # Test 2: Frontend loads
+            echo 'Test 2: Frontend loads...'
+            if curl -s http://localhost:8080/frontend | grep -q 'doctype html'; then
+              echo '✓ Frontend load: PASS'
+            else
+              echo '✗ Frontend load: FAIL'
+              failed=1
+            fi
+            
+            # Test 3: Login works
+            echo 'Test 3: Login works...'
+            login_response=\$(curl -s -c /tmp/gh_cookies.txt -X POST http://localhost:8080/api/method/login \
+              -H 'Content-Type: application/json' \
+              -d '{\"usr\":\"Administrator\",\"pwd\":\"admin@123\"}')
+            if echo \"\$login_response\" | grep -q 'Logged In'; then
+              echo '✓ Login: PASS'
+            else
+              echo '✗ Login: FAIL'
+              failed=1
+            fi
+            
+            # Test 4: QR Batch list API
+            echo 'Test 4: QR Batch list API...'
+            batch_response=\$(curl -s -b /tmp/gh_cookies.txt -X POST \
+              http://localhost:8080/api/method/scanifyme.api.safe_list_api.get_safe_list_rows \
+              -H 'Content-Type: application/json' \
+              -d '{\"doctype\":\"QR Batch\"}')
+            if echo \"\$batch_response\" | grep -q 'rows'; then
+              echo '✓ QR Batch list: PASS'
+            else
+              echo '✗ QR Batch list: FAIL'
+              failed=1
+            fi
+            
+            # Test 5: Filtered QR Code Tag list
+            echo 'Test 5: Filtered QR Code Tag list...'
+            tags_response=\$(curl -s -b /tmp/gh_cookies.txt -X POST \
+              http://localhost:8080/api/method/scanifyme.api.safe_list_api.get_safe_list_rows \
+              -H 'Content-Type: application/json' \
+              -d '{\"doctype\":\"QR Code Tag\",\"filters\":{\"batch\":\"QRB-2026-00001\"}}')
+            if echo \"\$tags_response\" | grep -q 'rows'; then
+              echo '✓ Filtered QR list: PASS'
+            else
+              echo '✗ Filtered QR list: FAIL'
+              failed=1
+            fi
+            
+            # Test 6: Container health
+            echo 'Test 6: Container health...'
+            unhealthy=\$(docker ps --filter 'health=unhealthy' -q | wc -l)
+            if [ \"\$unhealthy\" -eq 0 ]; then
+              echo '✓ Container health: PASS'
+            else
+              echo '✗ Container health: FAIL'
+              failed=1
+            fi
+            
+            rm -f /tmp/gh_cookies.txt
+            
+            if [ \$failed -eq 1 ]; then
+              echo 'SOME TESTS FAILED'
+              exit 1
+            fi
+            echo 'ALL TESTS PASSED'
+          "
+      
+      - name: Post-deploy cleanup
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            echo 'Post-deploy cleanup...'
+            docker builder prune -f
+            docker image prune -f
+            echo 'Disk after deploy:'
+            df -h /
+          "
+      
+      - name: Deployment success
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "VPS: ${{ secrets.VPS_HOST }}"
+          echo "Site: http://${{ secrets.VPS_HOST }}:8080/frontend"
+      
+      - name: Deployment failure - provide rollback guidance
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo ""
+          echo "=== ROLLBACK GUIDANCE ==="
+          echo "1. SSH into VPS: ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
+          echo "2. Check logs: docker logs scanifyme-backend-1 --tail 100"
+          echo "3. Restart services: cd /opt/scanifyme && docker compose --env-file .env -f compose.prod.yaml restart"
+          echo "4. If needed, rebuild from previous commit"
+          echo ""
+          echo "See SYSTEM_STATE.md for detailed rollback procedures"
