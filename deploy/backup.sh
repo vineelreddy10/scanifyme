@@ -1,26 +1,19 @@
 #!/bin/bash
-set -euo pipefail
+set -uo pipefail
 
-# ============================================================
-# ScanifyMe Backup Script
-# Safe, low-resource aware backup for 40GB VPS
-# ============================================================
-
-# Configuration
 DEPLOY_DIR="/opt/scanifyme"
 SITE_NAME="scanifyme.app"
 BACKUP_DIR="/opt/scanifyme/backups"
 RETENTION_DAYS=7
 MAX_BACKUPS=10
 MIN_DISK_GB=5
+DB_NAME="_af4aa012b6d4faf1"
 
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Logging functions
 log() {
     echo -e "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
@@ -37,38 +30,29 @@ log_error() {
     echo -e "${RED}[✗]${NC} $1"
 }
 
-# ============================================================
-# PREFLIGHT CHECKS
-# ============================================================
-
 preflight_checks() {
-    log "========== PREFLIGHT CHECKS =========="
+    log "Running preflight checks..."
     
-    # Check if running as root
     if [ "$EUID" -ne 0 ]; then 
         log_error "Please run as root or with sudo"
         return 1
     fi
     
-    # Check deployment directory exists
     if [ ! -d "$DEPLOY_DIR" ]; then
         log_error "Deployment directory $DEPLOY_DIR does not exist"
         return 1
     fi
     
-    # Check Docker is running
     if ! docker ps &> /dev/null; then
         log_error "Docker is not running"
         return 1
     fi
     
-    # Check database container is running
     if ! docker ps | grep -q "scanifyme-db-1"; then
         log_error "Database container is not running"
         return 1
     fi
     
-    # Check disk space
     local available_disk=$(df -BG / | tail -1 | awk '{print $4}' | sed 's/G//')
     if [ "$available_disk" -lt "$MIN_DISK_GB" ]; then
         log_error "Insufficient disk space: ${available_disk}GB available, ${MIN_DISK_GB}GB required"
@@ -76,19 +60,14 @@ preflight_checks() {
     fi
     log_success "Disk space OK: ${available_disk}GB available"
     
-    # Create backup directory if it doesn't exist
     mkdir -p "$BACKUP_DIR"
     
     log_success "Preflight checks passed"
     return 0
 }
 
-# ============================================================
-# CREATE BACKUP
-# ============================================================
-
 create_backup() {
-    log "========== CREATING BACKUP =========="
+    log "Creating backup..."
     
     local timestamp=$(date +%Y%m%d_%H%M%S)
     local backup_name="scanifyme_backup_${timestamp}"
@@ -96,42 +75,40 @@ create_backup() {
     
     mkdir -p "$backup_path"
     
-    # 1. Database backup
     log "Creating database backup..."
-    docker exec scanifyme-db-1 mariadb-dump -u root -pScanifyMe2026SecureDB scanifyme > "${backup_path}/database.sql" 2>/dev/null
-    
-    if [ -f "${backup_path}/database.sql" ] && [ -s "${backup_path}/database.sql" ]; then
-        log_success "Database backup created: $(du -h ${backup_path}/database.sql | cut -f1)"
+    if docker exec scanifyme-db-1 mariadb-dump -u root -pScanifyMe2026SecureDB "$DB_NAME" > "${backup_path}/database.sql" 2>/dev/null; then
+        if [ -f "${backup_path}/database.sql" ] && [ -s "${backup_path}/database.sql" ]; then
+            log_success "Database backup created: $(du -h ${backup_path}/database.sql | cut -f1)"
+        else
+            log_error "Database backup file is empty"
+            rm -rf "$backup_path"
+            return 1
+        fi
     else
         log_error "Database backup failed"
+        rm -rf "$backup_path"
         return 1
     fi
     
-    # 2. Site config backup
     log "Creating site config backup..."
-    docker cp scanifyme-backend-1:/home/frappe/frappe-bench/sites/scanifyme.app/site_config.json "${backup_path}/site_config.json" 2>/dev/null
-    
-    if [ -f "${backup_path}/site_config.json" ]; then
+    if docker cp scanifyme-backend-1:/home/frappe/frappe-bench/sites/scanifyme.app/site_config.json "${backup_path}/site_config.json" 2>/dev/null; then
         log_success "Site config backup created"
     else
         log_warning "Site config backup failed (non-critical)"
     fi
     
-    # 3. Environment file backup
     log "Creating environment backup..."
     if [ -f "${DEPLOY_DIR}/.env" ]; then
         cp "${DEPLOY_DIR}/.env" "${backup_path}/env.backup"
         log_success "Environment file backed up"
     fi
     
-    # 4. apps.json backup
     log "Creating apps.json backup..."
     if [ -f "${DEPLOY_DIR}/apps.json" ]; then
         cp "${DEPLOY_DIR}/apps.json" "${backup_path}/apps.json"
         log_success "apps.json backed up"
     fi
     
-    # 5. Create backup manifest
     log "Creating backup manifest..."
     cat > "${backup_path}/manifest.txt" << EOF
 Backup Created: $(date)
@@ -144,12 +121,9 @@ Backup Contents:
 - apps.json (app configuration)
 EOF
     
-    # 6. Compress backup
     log "Compressing backup..."
     cd "$BACKUP_DIR"
-    tar -czf "${backup_name}.tar.gz" "$backup_name"
-    
-    if [ -f "${backup_name}.tar.gz" ]; then
+    if tar -czf "${backup_name}.tar.gz" "$backup_name"; then
         rm -rf "$backup_name"
         log_success "Backup compressed: ${backup_name}.tar.gz ($(du -h ${backup_name}.tar.gz | cut -f1))"
     else
@@ -161,12 +135,8 @@ EOF
     return 0
 }
 
-# ============================================================
-# LIST BACKUPS
-# ============================================================
-
 list_backups() {
-    log "========== AVAILABLE BACKUPS =========="
+    log "Available backups:"
     
     if [ ! -d "$BACKUP_DIR" ]; then
         log_warning "No backup directory found"
@@ -187,12 +157,11 @@ list_backups() {
     echo "Available Backups:"
     echo "----------------------------------------"
     
-    find "$BACKUP_DIR" -name "*.tar.gz" -type f -printf "%T@ %Tc %p\n" | sort -rn | while read line; do
-        local timestamp=$(echo "$line" | awk '{print $1}')
-        local date=$(echo "$line" | awk '{print $2, $3, $4, $5, $6}')
-        local filepath=$(echo "$line" | awk '{print $7}')
+    find "$BACKUP_DIR" -name "*.tar.gz" -type f -printf "%T@ %p\n" | sort -rn | while read line; do
+        local filepath=$(echo "$line" | awk '{print $2}')
         local filename=$(basename "$filepath")
         local size=$(du -h "$filepath" | cut -f1)
+        local date=$(stat -c "%y" "$filepath" | cut -d'.' -f1)
         echo "  $filename ($size) - $date"
     done
     
@@ -200,27 +169,16 @@ list_backups() {
     return 0
 }
 
-# ============================================================
-# CLEANUP OLD BACKUPS
-# ============================================================
-
 cleanup_old_backups() {
-    log "========== CLEANING OLD BACKUPS =========="
+    log "Cleaning old backups..."
     
     if [ ! -d "$BACKUP_DIR" ]; then
         log_warning "No backup directory found"
         return 0
     fi
     
-    # Remove backups older than retention period
-    local deleted_count=0
-    find "$BACKUP_DIR" -name "*.tar.gz" -type f -mtime +${RETENTION_DAYS} -print0 | while IFS= read -r -d '' file; do
-        log "Removing old backup: $(basename $file)"
-        rm -f "$file"
-        ((deleted_count++)) || true
-    done
+    find "$BACKUP_DIR" -name "*.tar.gz" -type f -mtime +${RETENTION_DAYS} -delete 2>/dev/null || true
     
-    # Keep only MAX_BACKUPS most recent backups
     local backup_count=$(find "$BACKUP_DIR" -name "*.tar.gz" -type f | wc -l)
     
     if [ "$backup_count" -gt "$MAX_BACKUPS" ]; then
@@ -234,19 +192,14 @@ cleanup_old_backups() {
         done
     fi
     
-    # Show remaining backups
     local remaining=$(find "$BACKUP_DIR" -name "*.tar.gz" -type f | wc -l)
     log_success "Cleanup complete. $remaining backups remaining"
     
     return 0
 }
 
-# ============================================================
-# SHOW BACKUP INFO
-# ============================================================
-
 show_backup_info() {
-    log "========== BACKUP INFORMATION =========="
+    log "Backup information:"
     
     echo ""
     echo "Backup Configuration:"
@@ -282,10 +235,6 @@ show_backup_info() {
     echo ""
     return 0
 }
-
-# ============================================================
-# MAIN
-# ============================================================
 
 main() {
     local command="${1:-help}"
