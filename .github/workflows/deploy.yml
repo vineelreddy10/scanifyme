@@ -81,7 +81,28 @@ jobs:
       - name: Verify VPS connectivity
         run: |
           echo "Testing SSH connection..."
-          ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "echo 'SSH connection successful' && uname -a"
+          echo "Host: $VPS_USER@$VPS_HOST"
+          
+          # Check if host is reachable
+          echo "Checking if host is reachable..."
+          if ! ping -c 2 -W 5 $VPS_HOST &>/dev/null; then
+            echo "WARNING: Host not reachable via ICMP, trying SSH anyway..."
+          fi
+          
+          # Try SSH with verbose output
+          ssh -v -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "echo 'SSH connection successful' && uname -a" 2>&1 | tail -20
+          SSH_EXIT=$?
+          
+          if [ $SSH_EXIT -ne 0 ]; then
+            echo "ERROR: SSH connection failed with exit code $SSH_EXIT"
+            # Check key format
+            echo "=== Checking SSH key ==="
+            head -1 ~/.ssh/deploy_key
+            echo "=== Key file size ==="
+            ls -la ~/.ssh/deploy_key
+            exit 1
+          fi
+          
           echo "SSH connection verified"
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
