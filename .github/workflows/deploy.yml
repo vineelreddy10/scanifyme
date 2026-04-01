@@ -16,8 +16,6 @@ on:
           - 'true'
 
 env:
-  VPS_HOST: ${{ secrets.VPS_HOST }}
-  VPS_USER: ${{ secrets.VPS_USER }}
   DEPLOY_DIR: /opt/scanifyme
 
 jobs:
@@ -39,21 +37,21 @@ jobs:
       - name: Setup SSH key
         run: |
           echo "=== Debug: Checking secrets ==="
-          echo "VPS_HOST set: ${{ secrets.VPS_HOST != '' }}"
-          echo "VPS_USER set: ${{ secrets.VPS_USER != '' }}"
-          echo "VPS_SSH_KEY set: ${{ secrets.VPS_SSH_KEY != '' }}"
+          echo "VPS_HOST set: ${VPS_HOST:+yes}"
+          echo "VPS_USER set: ${VPS_USER:+yes}"
+          echo "VPS_SSH_KEY set: ${VPS_SSH_KEY:+yes}"
           
-          if [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
+          if [ -z "$VPS_SSH_KEY" ]; then
             echo "ERROR: VPS_SSH_KEY secret is empty or not set!"
             exit 1
           fi
           
-          if [ -z "${{ secrets.VPS_HOST }}" ]; then
+          if [ -z "$VPS_HOST" ]; then
             echo "ERROR: VPS_HOST secret is empty or not set!"
             exit 1
           fi
           
-          if [ -z "${{ secrets.VPS_USER }}" ]; then
+          if [ -z "$VPS_USER" ]; then
             echo "ERROR: VPS_USER secret is empty or not set!"
             exit 1
           fi
@@ -62,7 +60,7 @@ jobs:
           mkdir -p ~/.ssh
           
           echo "Writing SSH key..."
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          echo "$VPS_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           
           # Verify key was written
@@ -72,19 +70,27 @@ jobs:
           fi
           
           echo "Adding host key..."
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts 2>/dev/null || true
           
           echo "SSH key setup complete"
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Verify VPS connectivity
         run: |
           echo "Testing SSH connection..."
-          ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo 'SSH connection successful' && uname -a"
+          ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "echo 'SSH connection successful' && uname -a"
           echo "SSH connection verified"
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Check VPS resources
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "
             echo '=== Disk Space ==='
             df -h /
             echo '=== Docker Status ==='
@@ -92,11 +98,15 @@ jobs:
             echo '=== Memory ==='
             free -h
           "
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Run preflight checks on VPS
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
-            cd ${{ env.DEPLOY_DIR }}
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "
+            cd $DEPLOY_DIR
             # Check minimum disk space (10GB)
             available=\$(df -BG / | tail -1 | awk '{print \$4}' | sed 's/G//')
             if [ \"\$available\" -lt 10 ]; then
@@ -119,10 +129,15 @@ jobs:
             fi
             echo 'Required files present'
           "
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          DEPLOY_DIR: /opt/scanifyme
       
       - name: Clean Docker resources (low-resource VPS)
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "
             echo 'Cleaning Docker resources...'
             docker image prune -f
             docker container prune -f
@@ -131,11 +146,15 @@ jobs:
             echo 'Cleanup complete'
             df -h /
           "
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Build and deploy application
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
-            cd ${{ env.DEPLOY_DIR }}
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "
+            cd $DEPLOY_DIR
             
             echo '=== Building Docker image ==='
             docker build \
@@ -152,17 +171,26 @@ jobs:
             echo 'Waiting for services to start...'
             sleep 15
           "
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          DEPLOY_DIR: /opt/scanifyme
       
       - name: Run migrations
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "
             echo 'Running migrations...'
             docker exec scanifyme-backend-1 bench --site scanifyme.app migrate
           "
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Build and sync assets
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "
             echo 'Building assets...'
             docker exec scanifyme-backend-1 bench --site scanifyme.app build
             
@@ -177,11 +205,15 @@ jobs:
             docker exec scanifyme-backend-1 bench --site scanifyme.app clear-cache
             docker exec scanifyme-backend-1 bench --site scanifyme.app clear-website-cache
           "
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Run smoke tests
         if: ${{ github.event.inputs.skip_tests != 'true' }}
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "
             echo '=== Running Smoke Tests ==='
             failed=0
             
@@ -259,22 +291,34 @@ jobs:
             fi
             echo 'ALL TESTS PASSED'
           "
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Post-deploy cleanup
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST "
             echo 'Post-deploy cleanup...'
             docker builder prune -f
             docker image prune -f
             echo 'Disk after deploy:'
             df -h /
           "
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Deployment success
         run: |
           echo "✅ Deployment completed successfully!"
-          echo "VPS: ${{ secrets.VPS_HOST }}"
-          echo "Site: http://${{ secrets.VPS_HOST }}:8080/frontend"
+          echo "VPS: $VPS_HOST"
+          echo "Site: http://$VPS_HOST:8080/frontend"
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
       
       - name: Deployment failure - provide rollback guidance
         if: failure()
@@ -282,9 +326,13 @@ jobs:
           echo "❌ Deployment failed!"
           echo ""
           echo "=== ROLLBACK GUIDANCE ==="
-          echo "1. SSH into VPS: ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
+          echo "1. SSH into VPS: ssh $VPS_USER@$VPS_HOST"
           echo "2. Check logs: docker logs scanifyme-backend-1 --tail 100"
           echo "3. Restart services: cd /opt/scanifyme && docker compose --env-file .env -f compose.prod.yaml restart"
           echo "4. If needed, rebuild from previous commit"
           echo ""
           echo "See SYSTEM_STATE.md for detailed rollback procedures"
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
