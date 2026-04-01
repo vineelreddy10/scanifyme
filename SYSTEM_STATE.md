@@ -8029,3 +8029,117 @@ python3 -c "import tomllib; f=open('pyproject.toml','rb'); d=tomllib.load(f); pr
 
 *Document generated: 2026-04-01*
 *For full context, see SYSTEM_STATE.md sections on Phase 15 (Desk Navigation Fix)*
+
+---
+
+# Phase 17: CI/CD Deployment Fix (2026-04-01)
+
+## Problem Summary
+
+GitHub Actions deployment was failing with:
+1. **Shell syntax error**: `syntax error: '(' unexpected` - caused by `/bin/sh` vs bash incompatibility
+2. **Broken pipe during SSH** - caused by complex inline shell commands
+3. **Unnecessary runtime operations** - `bench build` and `docker cp` at runtime are anti-patterns
+
+## Root Cause Analysis
+
+### Issue 1: Shell Compatibility
+The workflow used complex bash syntax with escaped quotes that failed on `/bin/sh`:
+```bash
+ssh host "complex_command_with_escaped_quotes"
+```
+
+### Issue 2: Wrong Asset Build Approach
+The deployment was:
+1. Running `bench build` inside the container at runtime
+2. Using `docker cp` to sync assets between containers
+
+This is **WRONG** in Frappe Docker:
+- Assets should be built during **Docker image build**, not runtime
+- `docker cp` between containers is an anti-pattern
+- The proper approach is to use **shared volumes**
+
+### Issue 3: Redundant Operations
+Since the assets are already built during image build:
+- The frappe_docker Containerfile runs `bench build` during image build
+- Assets are baked into the Docker image
+- No runtime build is needed
+
+## What Was Removed
+
+1. **`build_assets()` function** - No longer runs `bench build` at runtime
+2. **`sync_assets()` function** - No longer uses `docker cp` to sync assets
+3. **"Build and sync assets" step** - Removed from GitHub Actions workflow
+4. **Complex inline SSH commands** - Simplified to call deploy.sh directly
+
+## What Was Fixed
+
+1. **GitHub Actions workflow** - Simplified to call deploy.sh script
+2. **deploy.sh** - Removed unnecessary asset build/sync functions
+3. **Shell compatibility** - Uses simple script execution instead of complex inline commands
+
+## Correct Deployment Flow
+
+```
+GitHub Push to main
+    ↓
+GitHub Actions Workflow
+    ↓
+SSH to VPS → Execute deploy/deploy.sh
+    ↓
+Preflight Checks
+    ↓
+Docker Cleanup (low-resource safety)
+    ↓
+Build Image (includes bench build - assets baked in)
+    ↓
+Restart Services
+    ↓
+Run Migrations
+    ↓
+Clear Caches
+    ↓
+Smoke Tests
+    ↓
+Post-deploy Cleanup
+```
+
+## Why New Approach Is Correct
+
+1. **Assets built during image build** - frappe_docker Containerfile runs `bench build` during image build
+2. **Assets baked into image** - No runtime build needed
+3. **Shared volumes** - Backend and frontend containers share the same assets via Docker volumes
+4. **No docker cp** - Eliminates fragile asset syncing
+5. **Simple execution** - deploy.sh handles all logic, workflow just calls it
+
+## Rollback Instructions
+
+If deployment fails:
+
+```bash
+# SSH to VPS
+ssh root@91.107.206.65
+
+# Check logs
+docker logs scanifyme-backend-1 --tail 100
+
+# Restart services
+cd /opt/scanifyme
+docker compose --env-file .env -f compose.prod.yaml restart
+
+# If needed, run deploy script again
+bash deploy/deploy.sh
+```
+
+## Files Changed
+
+| File | Change |
+|------|--------|
+| `.github/workflows/deploy.yml` | Simplified to call deploy.sh |
+| `deploy/deploy.sh` | Removed build_assets and sync_assets functions |
+| `SYSTEM_STATE.md` | Added Phase 17 documentation |
+
+---
+
+*Document generated: 2026-04-01*
+*For full context, see SYSTEM_STATE.md sections on Phase 15 (Desk Navigation Fix) and Phase 16 (Python Dependencies)*
