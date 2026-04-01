@@ -38,14 +38,49 @@ jobs:
       
       - name: Setup SSH key
         run: |
+          echo "=== Debug: Checking secrets ==="
+          echo "VPS_HOST set: ${{ secrets.VPS_HOST != '' }}"
+          echo "VPS_USER set: ${{ secrets.VPS_USER != '' }}"
+          echo "VPS_SSH_KEY set: ${{ secrets.VPS_SSH_KEY != '' }}"
+          
+          if [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
+            echo "ERROR: VPS_SSH_KEY secret is empty or not set!"
+            exit 1
+          fi
+          
+          if [ -z "${{ secrets.VPS_HOST }}" ]; then
+            echo "ERROR: VPS_HOST secret is empty or not set!"
+            exit 1
+          fi
+          
+          if [ -z "${{ secrets.VPS_USER }}" ]; then
+            echo "ERROR: VPS_USER secret is empty or not set!"
+            exit 1
+          fi
+          
+          echo "Creating SSH directory..."
           mkdir -p ~/.ssh
+          
+          echo "Writing SSH key..."
           echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          
+          # Verify key was written
+          if [ ! -s ~/.ssh/deploy_key ]; then
+            echo "ERROR: SSH key file is empty!"
+            exit 1
+          fi
+          
+          echo "Adding host key..."
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+          
+          echo "SSH key setup complete"
       
       - name: Verify VPS connectivity
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo 'SSH connection successful'"
+          echo "Testing SSH connection..."
+          ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo 'SSH connection successful' && uname -a"
+          echo "SSH connection verified"
       
       - name: Check VPS resources
         run: |
