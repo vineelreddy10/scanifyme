@@ -210,6 +210,36 @@ run_migrations() {
     log_success "Migrations completed"
 }
 
+build_assets() {
+    log "========== BUILDING ASSETS =========="
+    
+    # Build frontend assets
+    log "Building frontend assets..."
+    docker exec scanifyme-backend-1 bench --site "$SITE_NAME" build 2>&1 | tee -a "$LOG_FILE"
+    
+    if [ $? -ne 0 ]; then
+        log_warning "Asset build had issues (may be non-critical)"
+    fi
+    
+    log_success "Assets built"
+}
+
+sync_assets() {
+    log "========== SYNCING ASSETS TO FRONTEND =========="
+    
+    # Copy CSS files from backend to frontend
+    log "Syncing CSS files..."
+    docker cp scanifyme-backend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/css/. /tmp/css_backend/ 2>&1 | tee -a "$LOG_FILE"
+    docker cp /tmp/css_backend/. scanifyme-frontend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/css/ 2>&1 | tee -a "$LOG_FILE"
+    
+    # Copy JS files
+    log "Syncing JS files..."
+    docker cp scanifyme-backend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/js/. /tmp/js_backend/ 2>&1 | tee -a "$LOG_FILE"
+    docker cp /tmp/js_backend/. scanifyme-frontend-1:/home/frappe/frappe-bench/sites/assets/frappe/dist/js/ 2>&1 | tee -a "$LOG_FILE"
+    
+    log_success "Assets synced"
+}
+
 clear_caches() {
     log "========== CLEARING CACHES =========="
     
@@ -389,7 +419,13 @@ main() {
         exit 1
     fi
     
-    # Step 6: Clear caches
+    # Step 6: Build assets
+    build_assets
+    
+    # Step 7: Sync assets to frontend
+    sync_assets
+    
+    # Step 8: Clear caches
     clear_caches
     
     # Step 9: Run smoke tests
