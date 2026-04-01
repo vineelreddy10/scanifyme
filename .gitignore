@@ -19,8 +19,7 @@ sdist/
 var/
 wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+.installed.cfg*
 MANIFEST
 
 # Virtual environments
@@ -71,3 +70,10 @@ test-results/
 
 # Debug
 *debug.log
+
+# Aider AI Chat
+.aider*
+
+# Frappe-generated workspace files (created by bench)
+scanifyme/*/workspace/
+scanifyme/workspace_sidebar/

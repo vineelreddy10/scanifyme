@@ -1,6 +1,117 @@
 # ScanifyMe System State
 
-**Last Updated**: 2026-03-24
+**Last Updated**: 2026-04-01
+
+---
+
+# Phase 15: Desk Navigation Fix (2026-03-31)
+
+## Goal
+
+Fix ScanifyMe Desk navigation issues where:
+1. Clicking the ScanifyMe desktop icon gives popup error: "Icon is not correctly configured please check the workspace sidebar"
+2. Masters workspace has sidebar loading problems
+3. Module-wise workspaces are not properly configured
+
+## Root Cause
+
+The "Icon is not correctly configured" error occurs when a Desktop Icon with `link_type: "Workspace Sidebar"` has no valid sidebar entry in `frappe.boot.workspace_sidebar_item` - either because no sidebar exists or it has no Link-type items.
+
+## Solution: Python-Based Workspace Creation
+
+Instead of using fixtures (which had validation issues), created a Python-based setup module that programmatically creates Workspaces and Workspace Sidebars.
+
+### Files Created
+
+**`scanifyme/utils/desk_setup.py`** - Main setup module containing:
+
+1. **`get_or_create_doc(doctype, name, **kwargs)`** - Handles doctype-specific naming:
+   - Workspace uses `label` field for autoname
+   - Workspace Sidebar uses `title` field for autoname
+
+2. **`setup_workspaces()`** - Creates 6 workspaces:
+   - ScanifyMe (main workspace)
+   - QR Management
+   - Items
+   - Recovery
+   - Notifications
+   - Masters
+
+3. **`setup_workspace_sidebars()`** - Creates sidebar items for each workspace
+
+4. **`after_install()`** - Hook function for post-installation
+
+### Files Modified
+
+**`scanifyme/hooks.py`** - Added `after_install` hook:
+```python
+after_install = "scanifyme.utils.desk_setup.after_install"
+```
+
+### Key Implementation Details
+
+1. **Workspace fields set correctly**:
+   - `doc.app = "scanifyme"` - Required for boot data to include workspace
+   - `doc.public = 1` - Makes workspace visible to all users
+   - `doc.is_public = 1` - Alternative public flag
+   - `doc.type = "Workspace"` - Required for workspace type
+   - `doc.for_user = ""` - Empty for global workspaces
+
+2. **Links table**: Uses `doc.links` with child docs of type `Workspace Link`
+   - Each link has: `type`, `label`, `icon`, `link_type`, `link_to`, `link_count`
+
+3. **Shortcuts table**: Uses `doc.shortcuts` with child docs of type `Workspace Shortcut`
+   - Each shortcut has: `type`, `link_to`, `label`
+
+4. **Sidebar items table**: Uses `doc.items` with child docs of type `Workspace Sidebar Item`
+   - Each item has: `label`, `type`, `link_type`, `link_to`, `icon`
+
+### Execution Results
+
+```
+{"workspaces": {"created": [], "updated": ["ScanifyMe", "QR Management", "Items", "Recovery", "Notifications", "Masters"], "errors": []}, "sidebars": {"created": [], "updated": ["ScanifyMe", "QR Management", "Items", "Recovery", "Notifications", "Masters"], "errors": []}}
+```
+
+### How It Works
+
+1. **After app install**, the `after_install` hook runs
+2. Creates/updates all 6 Workspaces with proper links and shortcuts
+3. Creates/updates all 6 Workspace Sidebars with proper items
+4. Clears cache so changes take effect in Desk
+
+### Validation Commands
+
+```bash
+# Run the setup manually
+bench --site test.localhost execute scanifyme.utils.desk_setup.setup_desk
+
+# Clear cache
+bench --site test.localhost clear-cache
+```
+
+### Why Fixtures Failed
+
+The fixtures approach failed because:
+1. Missing `"doctype": "Workspace"` in each array item
+2. Missing `"content": "[]"` (must be valid JSON list string)
+3. Missing `"label"` field (mandatory - used for autoname)
+4. Module names must match exact Module Def records exactly
+5. Local bench didn't have matching Module Def for "ScanifyMe Core"
+
+The Python-based approach bypasses these validation issues by:
+1. Using `frappe.new_doc()` to create properly initialized documents
+2. Setting all required fields explicitly
+3. Using table field access (`doc.links`, `doc.items`) instead of JSON
+
+### Validation Steps
+
+To validate in browser:
+1. Go to `http://test.localhost:8000/app`
+2. Check if ScanifyMe icon appears in the sidebar/app launcher
+3. Click the icon - should NOT show "Icon is not correctly configured" error
+4. Verify sidebar loads with the menu items
+5. Navigate to QR Management, Items, Masters workspaces
+>>>>>>> 863916f (chore(packaging): add required Python dependencies for QR and Redis)
 
 ---
 
@@ -7818,3 +7929,103 @@ COMPLETE: Site available at http://91.107.206.65:8080
 *For full context, see SYSTEM_STATE.md sections on "Deployment Constraints", "Docker Cleanup Strategy", "Post-Deploy Operational Validation"*
 
 
+
+---
+
+# Phase 16: Python Package Dependency Audit (2026-04-01)
+
+## Goal
+
+Audit and declare all required Python packages in app-level `pyproject.toml` to ensure proper dependency management during app installation.
+
+## Audit Process
+
+### Step 1: Inspect Python Imports
+
+Analyzed all Python files in `scanifyme/` to identify third-party imports:
+
+```bash
+grep -r "^import |^from .* import" scanifyme/
+```
+
+### Step 2: Identify App-Specific Dependencies
+
+| Package | Where Used | Status |
+|---------|------------|--------|
+| `qrcode` | `scanifyme/qr_management/services/qr_service.py` - QR image generation | **ADDED** |
+| `redis` | `scanifyme/support/services/health_service.py` - Health checks | **ADDED** |
+
+All other imports are:
+- Standard library: `random`, `string`, `json`, `hashlib`, `logging`, `secrets`, `uuid`, `datetime`, `typing`, `socket`, `io`, `base64`, `urllib`
+- Frappe framework: `frappe`, `frappe.utils`, `frappe.model.document`
+
+### Step 3: Update pyproject.toml
+
+**File**: `pyproject.toml`
+
+```toml
+[project]
+name = "scanifyme"
+...
+dependencies = [
+    "qrcode[pil]>=7.0",
+    "redis>=5.0.0",
+]
+```
+
+### Step 4: Validate TOML
+
+```bash
+python3 -c "import tomllib; f=open('pyproject.toml','rb'); d=tomllib.load(f); print('Valid TOML')"
+```
+
+## How to Update App-Level Python Dependencies Safely
+
+1. **Inspect actual imports** - Search codebase for third-party package usage
+   ```bash
+   grep -r "^import |^from .* import" scanifyme/ | grep -v "frappe\|scanifyme\|unittest\|typing"
+   ```
+
+2. **Update app-level TOML** - Add to `pyproject.toml` dependencies array
+   ```toml
+   dependencies = [
+       "package>=version",
+   ]
+   ```
+
+3. **Validate syntax** - Check TOML parses correctly
+   ```bash
+   python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))"
+   ```
+
+4. **Commit only clean app repo** - Stage and commit only app files
+   ```bash
+   git add pyproject.toml SYSTEM_STATE.md scanifyme/hooks.py scanifyme/utils/desk_setup.py
+   git commit -m "chore(packaging): add required Python dependencies"
+   ```
+
+5. **Push main** - Push to GitHub main branch
+   ```bash
+   git push origin main
+   ```
+
+## Files Changed
+
+| File | Change |
+|------|--------|
+| `pyproject.toml` | Added `qrcode[pil]>=7.0` and `redis>=5.0.0` |
+| `scanifyme/utils/desk_setup.py` | Created for workspace setup |
+| `scanifyme/hooks.py` | Added `after_install` hook |
+| `.gitignore` | Added workspace directory exclusions |
+| `SYSTEM_STATE.md` | Updated with Phase 16 documentation |
+
+## Commit
+
+- **Hash**: `9b479db`
+- **Message**: "chore(packaging): add required Python dependencies for QR and Redis"
+- **Pushed to**: main
+
+---
+
+*Document generated: 2026-04-01*
+*For full context, see SYSTEM_STATE.md sections on Phase 15 (Desk Navigation Fix)*
