@@ -12,7 +12,7 @@ fixtures = [
 		"filters": [
 			["name", "in", ["ScanifyMe User", "ScanifyMe Operations", "ScanifyMe Support", "ScanifyMe Admin"]]
 		],
-	},
+	}
 ]
 
 # Apps
@@ -95,7 +95,8 @@ add_to_apps_screen = [
 # Installation
 # ------------
 
-after_install = "scanifyme.utils.desk_setup.after_install"
+# before_install = "scanifyme.install.before_install"
+# after_install = "scanifyme.install.after_install"
 
 # Uninstallation
 # ------------
