@@ -1,0 +1,44 @@
+[
+   {
+     "doctype": "Workspace",
+     "name": "scanifyme",
+     "label": "scanifyme",
+     "title": "ScanifyMe",
+     "icon": "icon-qr",
+     "type": "Workspace",
+     "is_hidden": 0,
+     "public": 0,
+     "app": "scanifyme",
+     "sequence_id": 10,
+     "for_user": "",
+     "parent_page": "",
+     "module": "",
+    "roles": [
+      {"role": "System Manager"},
+      {"role": "ScanifyMe User"},
+      {"role": "ScanifyMe Operations"},
+      {"role": "ScanifyMe Support"},
+      {"role": "ScanifyMe Admin"}
+    ],
+    "shortcuts": [
+      {
+        "type": "DocType",
+        "label": "QR Customer",
+        "link_to": "QR Customer",
+        "icon": "icon-qr"
+      },
+      {
+        "type": "DocType",
+        "label": "Test Kilo",
+        "link_to": "Test Kilo",
+        "icon": "icon-flask"
+      }
+    ],
+    "links": [],
+    "charts": [],
+    "number_cards": [],
+    "quick_lists": [],
+     "custom_blocks": [],
+     "content": "[]"
+  }
+]

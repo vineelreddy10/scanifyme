@@ -1,0 +1,31 @@
+[
+  {
+    "doctype": "Workspace Sidebar",
+    "name": "scanifyme",
+    "title": "ScanifyMe",
+    "standard": 1,
+    "app": "scanifyme",
+    "module": "",
+    "header_icon": "icon-qr",
+    "items": [
+      {
+        "type": "Link",
+        "label": "QR Customer",
+        "link_type": "DocType",
+        "link_to": "QR Customer",
+        "icon": "icon-qr",
+        "indent": 0,
+        "collapsible": 0
+      },
+      {
+        "type": "Link",
+        "label": "Test Kilo",
+        "link_type": "DocType",
+        "link_to": "Test Kilo",
+        "icon": "icon-flask",
+        "indent": 0,
+        "collapsible": 0
+      }
+    ]
+  }
+]

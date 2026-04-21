@@ -1,0 +1,32 @@
+{
+  "name": "Test Kilo",
+  "module": "Scanifyme",
+  "doctype": "DocType",
+  "custom": 1,
+  "engine": "InnoDB",
+  "field_order": ["title", "description"],
+  "fields": [
+    {
+      "fieldname": "title",
+      "fieldtype": "Data",
+      "label": "Title"
+    },
+    {
+      "fieldname": "description",
+      "fieldtype": "Text",
+      "label": "Description"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "title_field": "title"
+}

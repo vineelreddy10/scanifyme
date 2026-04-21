@@ -12,7 +12,8 @@ fixtures = [
 		"filters": [
 			["name", "in", ["ScanifyMe User", "ScanifyMe Operations", "ScanifyMe Support", "ScanifyMe Admin"]]
 		],
-	}
+	},
+	"Workspace",
 ]
 
 # Apps
